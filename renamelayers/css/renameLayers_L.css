@@ -1,0 +1,69 @@
+.ccmenu {
+    -webkit-appearance: button;
+    -webkit-border-radius: 2px;
+    -webkit-box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.1);
+    -webkit-padding-end: 20px;
+    -webkit-padding-start: 2px;
+    -webkit-user-select: auto;
+    background-image: url(../Images/mkDownArrow_L.png), 
+    -webkit-linear-gradient(#FAFAFA, #F4F4F4 40%, #E5E5E5);
+    background-position: center right;
+    background-repeat: no-repeat;
+    border: 1px solid #727272;
+    color: inherit;
+    overflow: hidden;
+    padding-bottom: 2px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.ccstyle {
+    -webkit-border-radius: 2px;
+    border: 1px solid #727272;
+    color: #1C1C1C;
+    background-color: #F6F6F6;
+    background-image: -webkit-linear-gradient(#FAFAFA, #F4F4F4 40%, #E5E5E5);
+}
+
+/********Checkbox**********/
+input[type="checkbox"] {
+  -webkit-appearance: none;
+  display: inline-block;
+  width: 15px;
+  margin-top: 2px;
+  height: 15px;
+  margin-right: 3px;
+  margin-left: 2px;
+  vertical-align: middle;
+  background: url("../Images/mkCheckSheet_L.png") left top no-repeat;
+}
+input[type="checkbox"]:hover {
+  background: url("../Images/mkCheckSheet_L.png") -15px top no-repeat;
+}
+input[type="checkbox"]:checked {
+  background: url("../Images/mkCheckSheet_L.png") -30px top no-repeat;
+}
+input[type="checkbox"]:checked:hover {
+  background: url("../Images/mkCheckSheet_L.png") -44px top no-repeat;
+}
+/********radio button**********/
+input[type="radio"] {
+  display: none;
+}
+input[type="radio"] + label span {
+  display: inline-block;
+  width: 15px;
+  height: 15px;
+  margin-right: 4px;
+  vertical-align: middle;
+  background: url("../Images/mkCheckSheet_L.png") -60px top no-repeat;
+}
+input[type="radio"]:hover + label:hover span:hover {
+  background: url("../Images/mkCheckSheet_L.png") -75px top no-repeat;
+}
+input[type="radio"]:checked + label span {
+  background: url("../Images/mkCheckSheet_L.png") -90px top no-repeat;
+}
+input[type="radio"]:checked:hover + label:hover span:hover {
+  background: url("../Images/mkCheckSheet_L.png") -105px top no-repeat;
+}

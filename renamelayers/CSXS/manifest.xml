@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ExtensionManifest ExtensionBundleId="com.photoshop.renamelayers" ExtensionBundleName="Rename Layers" ExtensionBundleVersion="1.2" Version="4.0">
+  <ExtensionList>
+    <Extension Id="com.photoshop.renamelayers.extension" Version="1.1"/>
+  </ExtensionList>
+  <ExecutionEnvironment>
+    <HostList>
+      <Host Name="PHXS" Version="[14.0,14.9]"/>
+      <Host Name="PHSP" Version="[14.0,14.9]"/>
+    </HostList>
+    <LocaleList>
+      <Locale Code="All"/>
+    </LocaleList>
+    <RequiredRuntimeList>
+      <RequiredRuntime Name="CSXS" Version="4.0"/>
+    </RequiredRuntimeList>
+  </ExecutionEnvironment>
+  <DispatchInfoList>
+    <Extension Id="com.photoshop.renamelayers.extension">
+      <DispatchInfo>
+        <Resources>
+          <MainPath>./index.html</MainPath>
+          <ScriptPath>./host/RenameLayers.jsx</ScriptPath>
+        </Resources>
+        <UI>
+          <Type>Panel</Type>
+          <Menu>%rename-panel-menu-name</Menu>
+          <Geometry>
+            <MinSize>
+              <Height>150</Height>
+              <Width>200</Width>
+            </MinSize>
+            <Size>
+              <Height>160</Height>
+              <Width>216</Width>
+            </Size>
+          </Geometry>
+        </UI>
+      </DispatchInfo>
+    </Extension>
+  </DispatchInfoList>
+</ExtensionManifest>
