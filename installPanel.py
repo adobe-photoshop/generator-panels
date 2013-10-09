@@ -23,13 +23,6 @@
 import os, sys, shutil, re, getpass, stat, datetime
 import argparse, subprocess, zipfile, ftplib
 
-# Just edit this to add the path to your generator plugin source folder
-srcPaths = { "jpeterso":{"win32":"C:\\Work\\trplugins\\generatorpanels\\",
-                         "darwin":"/Work/trplugins/generatorpanels/"},
-             "yourname":{"win32":"win-path-to-your-generator-panel-src",
-                         "darwin":"mac-path-to-your-generator-panel-src"}
-           }
-
 # Dictionary of panel folders to copy (src file name, dest name)
 panels = {"renamelayers":"Rename Layers"}
 
@@ -40,9 +33,10 @@ PSexePath = {"win32":"C:\\Program Files\\Adobe\\Adobe Photoshop CC (64 Bit)\\Pho
 
 # Where the panel lives.  Uses current dir
 # unless there's an entry in srcPaths
-srcLocation = os.getcwd() + os.sep
-if srcPaths.has_key(getpass.getuser()):
-    srcLocation = srcPaths[getpass.getuser()][sys.platform]
+srcLocation = sys.path[0] + os.sep
+if (not os.path.exists( srcLocation + "renamelayers")):
+    print "# Error - Script must be run from the generator-panels folder"
+    sys.exit(-1)
 
 # Add Kuler if it's there.
 if (os.path.exists(srcLocation + "kuler")):

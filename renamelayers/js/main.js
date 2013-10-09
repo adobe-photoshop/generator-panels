@@ -6,7 +6,7 @@
 // John Peterson - Sep 2013
 //
 
-// Uncomment for debugger on load
+// Uncomment for debugger on load (Disabled in CEP 4.2)
 //window.__adobe_cep__.showDevTools();
 
 // Get a reference to a CSInterface object
@@ -98,7 +98,7 @@ function getParams() {
     
     var scaleTxt = (suffix != "") ? $("#scalevalue").val() + "%" : "100%";
     
-    return {'suffix': suffix, 'scale':scaleTxt, 'renfolder':false };
+    return {'suffix': suffix, 'scale':scaleTxt, 'renfolder':true };
 }
 
 function updateSample() {
@@ -144,7 +144,8 @@ $("#renamebutton").click( function() {
 });
 
 // These are just developer shortcuts; they shouldn't appear in final code.
-$("#debug").click( function() { window.__adobe_cep__.showDevTools(); } );
+// Unfortunately, debug is disabled in CEP 4.2
+//$("#debug").click( function() { window.__adobe_cep__.showDevTools(); } );
 $("#reload").click( function() { window.location.reload(true); } );
 
 initialize();
