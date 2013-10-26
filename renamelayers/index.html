@@ -5,6 +5,8 @@
 <link id="renameLayersBase" href="css/renameLayersBase.css" rel="stylesheet" type="text/css" />
 <link id="renameLayersTheme" href="css/renameLayers_D.css" rel="stylesheet" type="text/css" />
 
+<link id="topcoatTheme" href="css/topcoat-desktop-dark.css" rel="stylesheet" type="text/css" />
+
 <body>
 <div>
 	<span data-locale="rename-suffix-label">Suffix</span>
@@ -37,11 +39,12 @@
 </div>
     
 <p>
-    <label id="scalechklabel" for="scale">
-        <input type="checkbox" name="scale" id="scale">
+    <label id="scalechklabel"  for="scale">
+        <input type="checkbox" class="topcoat-checkbox" name="scale" id="scale"><div></div>
+        <div class="topcoat-checkbox__checkmark"></div>
         <span data-locale="rename-scale-checkbox" id="sclspan">Scale</span>
     </label>
-    <input id="scalevalue" class="ccstyle" type="text" size="4" maxlength="4" role="textbox" value="100" disabled />%
+    <input id="scalevalue" class="topcoat-text-input" type="text" size="4" maxlength="4" role="textbox" value="100" disabled />%
 </p>
     
 <button data-locale="rename-rename-button" class="ccstyle" id="renamebutton">Rename</button>

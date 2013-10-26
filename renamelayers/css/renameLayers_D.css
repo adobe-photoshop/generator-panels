@@ -25,7 +25,7 @@
 }
 
 /********Checkbox**********/
-input[type="checkbox"] {
+/*input[type="checkbox"] {
   -webkit-appearance: none;
   display: inline-block;
   width: 15px;
@@ -45,6 +45,7 @@ input[type="checkbox"]:checked {
 input[type="checkbox"]:checked:hover {
   background: url("../Images/mkCheckSheet_D.png") -44px top no-repeat;
 }
+*/
 /********radio button**********/
 input[type="radio"] {
   display: none;
