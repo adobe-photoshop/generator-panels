@@ -17,36 +17,12 @@
     white-space: nowrap;
 }
 
-.ccstyle {
-    -webkit-border-radius: 2px;
-    border: 1px solid #1F1F1F;
-    color: #D7D7D7;
-    background-image: -webkit-linear-gradient(#4E4E4E, #484848 40%, #3D3D3D);
-}
+/* ccstyle Button now defined by Topcoat */
 
 /********Checkbox**********/
-/*input[type="checkbox"] {
-  -webkit-appearance: none;
-  display: inline-block;
-  width: 15px;
-  margin-top: 2px;
-  height: 15px;
-  margin-right: 3px;
-  margin-left: 2px;
-  vertical-align: middle;
-  background: url("../Images/mkCheckSheet_D.png") left top no-repeat;
-}
-input[type="checkbox"]:hover {
-  background: url("../Images/mkCheckSheet_D.png") -15px top no-repeat;
-}
-input[type="checkbox"]:checked {
-  background: url("../Images/mkCheckSheet_D.png") -30px top no-repeat;
-}
-input[type="checkbox"]:checked:hover {
-  background: url("../Images/mkCheckSheet_D.png") -44px top no-repeat;
-}
-*/
-/********radio button**********/
+/* Now defined by TopCoat */
+
+/********radio button**********/ /* not used yet */
 input[type="radio"] {
   display: none;
 }

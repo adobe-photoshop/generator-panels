@@ -45,11 +45,17 @@ var sampleLayerName;
 // This swaps the light/dark stylesheets for the control widgets
 function swapCSS( isDark )
 {
-    if ($("#renameLayersTheme").length)
-        $("#renameLayersTheme").remove();
-    var link = document.createElement('link');
-    $("head").append('<link id="renameLayersTheme" href="css/renameLayers_'
-                     + (isDark ? 'D' : 'L') +'.css" rel="stylesheet" type="text/css" />');
+    function swapCSSfile( cssKey, cssFilename )
+    {
+        var cssID = "#" + cssKey;
+        if ($(cssID).length) $(cssID).remove();
+        var link = document.createElement('link');
+        $("head").append('<link id="' + cssKey + '" href="css/' 
+                         + cssFilename + '" rel="stylesheet" type="text/css" />');
+    }
+    
+    swapCSSfile( "renameLayersTheme", "renameLayers_" + (isDark ? 'D' : 'L') +".css" );
+    swapCSSfile( "topcoatTheme", "topcoat-desktop-" + (isDark ? "dark" : "light") + ".css" );
 }
 
 function dimScaleValue( isDim )
@@ -68,9 +74,14 @@ function setupColors()
 	window.document.bgColor = colorToHex( csInterface.hostEnvironment.appSkinInfo.panelBackgroundColor );
 
     var colors = colorTable[window.document.bgColor.slice(0,3)];
-	window.document.fgColor = grayToHex( colors.textfg );
     
     swapCSS(colors.textfg > 128);
+    // Topcoat breaks this...
+    //window.document.fgColor = grayToHex( colors.textfg );
+    
+    // Work around Topcoat color settings.
+    $("#panelBody").css( "color", grayToHex( colors.textfg ) );
+    $("#panelBody").css("background-color", window.document.bgColor );
 	
 	dimScaleValue( $("#scalevalue").is(":disabled") );
 }
@@ -145,7 +156,7 @@ $("#renamebutton").click( function() {
 
 // These are just developer shortcuts; they shouldn't appear in final code.
 // Unfortunately, debug is disabled in CEP 4.2
-//$("#debug").click( function() { window.__adobe_cep__.showDevTools(); } );
+$("#debug").click( function() { window.__adobe_cep__.showDevTools(); } );
 $("#reload").click( function() { window.location.reload(true); } );
 
 initialize();

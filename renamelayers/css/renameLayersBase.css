@@ -3,6 +3,17 @@ html * {
   font-size: 10pt;
 }
 
+/* Restore margins Topcoat hammered */
+#panelBody {
+  margin-top: 8px;
+  margin-left: 14px;
+}
+
+/* Tweak the Topcoat layout */
+.topcoat-checkbox__checkmark {
+    margin-top:3px; 
+}
+
 .graylabel {
   color: #808080 !important;
   text-decoration:line-through;

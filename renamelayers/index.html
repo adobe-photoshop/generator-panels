@@ -2,12 +2,12 @@
 <!-- Rename Layers Panel -->
 <html>
 <meta charset="utf-8">
+<link id="topcoatTheme" href="css/topcoat-desktop-dark.css" rel="stylesheet" type="text/css" />
 <link id="renameLayersBase" href="css/renameLayersBase.css" rel="stylesheet" type="text/css" />
 <link id="renameLayersTheme" href="css/renameLayers_D.css" rel="stylesheet" type="text/css" />
 
-<link id="topcoatTheme" href="css/topcoat-desktop-dark.css" rel="stylesheet" type="text/css" />
 
-<body>
+<body id="panelBody">
 <div>
 	<span data-locale="rename-suffix-label">Suffix</span>
     <select name="suffix" id="suffixmenu" class="ccmenu">
@@ -39,22 +39,22 @@
 </div>
     
 <p>
-    <label id="scalechklabel"  for="scale">
-        <input type="checkbox" class="topcoat-checkbox" name="scale" id="scale"><div></div>
+    <label id="scalechklabel" for="scale">
+        <input type="checkbox" name="scale" id="scale"><div></div>
         <div class="topcoat-checkbox__checkmark"></div>
         <span data-locale="rename-scale-checkbox" id="sclspan">Scale</span>
     </label>
     <input id="scalevalue" class="topcoat-text-input" type="text" size="4" maxlength="4" role="textbox" value="100" disabled />%
 </p>
     
-<button data-locale="rename-rename-button" class="ccstyle" id="renamebutton">Rename</button>
+<button data-locale="rename-rename-button" class="topcoat-button" id="renamebutton">Rename</button>
 <p>
     <div data-locale="rename-sample-name" id="samplename">layername</div>
 </p>
     
 <!-- These are debugging shortcuts - should not appear in final code -->
-<!-- Debug deprecated in CEP 4.2
-  <span data-locale="rename-debug-link" class="debuglink" id="debug">Debug</span> -->
+<!-- Debug deprecated in CEP 4.2-->
+<span data-locale="rename-debug-link" class="debuglink" id="debug">Debug</span> 
 <span data-locale="rename-reload-link" class="debuglink" id="reload">Reload</span>
 
 </body>
