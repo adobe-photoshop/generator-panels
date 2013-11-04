@@ -21,7 +21,7 @@
 # 
 
 import os, sys, shutil, re, getpass, stat, datetime
-import argparse, subprocess, zipfile, ftplib, string
+import argparse, subprocess, zipfile, ftplib
 
 # Dictionary of panel folders to copy (src file name, dest name)
 panels = {"renamelayers":"Rename Layers"}
@@ -207,6 +207,7 @@ elif (args.zip or (args.sign and args.sign[0].startswith("up"))):
             print "# Sent"
     if (args.sign and args.sign[0].startswith("up")):
         print "# Browse to 'http://matrix-ctrel/' and go to Start > Sign CSXS and ZXP"
+        print "# Name the new files using the same basename and a \".zxp\" suffix"
 
 #
 # Once the package is signed by buildforge,
@@ -223,8 +224,8 @@ elif (args.sign and args.sign[0].startswith("down")):
         todaysFolders.sort(reverse=True)
         for f in todaysFolders:
             contents = ftp.nlst(f)
-            if (f + "/" + k + "_signed.zip") in contents:
-                ftp.retrbinary( "RETR " + f+"/"+k+"_signed.zip", file(zxpTargetFolder + k + "_signed.zxp", 'wb').write )
+            if (f + "/" + k + ".zxp") in contents:
+                ftp.retrbinary( "RETR " + f+"/"+k+".zxp", file(zxpTargetFolder + k + "_signed.zxp", 'wb').write )
                 print "# Retreived " + zxpTargetFolder + k + "_signed.zxp from: " + f
                 break;
         ftp.quit()
