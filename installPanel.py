@@ -21,7 +21,7 @@
 # 
 
 import os, sys, shutil, re, getpass, stat, datetime
-import argparse, subprocess, zipfile, ftplib
+import argparse, subprocess, zipfile, ftplib, string
 
 # Dictionary of panel folders to copy (src file name, dest name)
 panels = {"renamelayers":"Rename Layers"}
@@ -53,7 +53,7 @@ osDestPath = { "win32":winAppData + extensionSubpath,
              }[sys.platform]
 
 def getTargetFolder():
-    targetFolder = os.path.abspath( os.path.join( srcLocation, "..", "Targets" ) ) + os.sep
+    targetFolder = os.path.abspath( os.path.join( srcLocation, "Targets" ) ) + os.sep
     if (not os.path.exists( targetFolder )):
         os.makedirs( targetFolder )
     return targetFolder
@@ -223,8 +223,8 @@ elif (args.sign and args.sign[0].startswith("down")):
         todaysFolders.sort(reverse=True)
         for f in todaysFolders:
             contents = ftp.nlst(f)
-            if (f + "/" + k + ".zxp") in contents:
-                ftp.retrbinary( "RETR " + f+"/"+k+".zxp", file(zxpTargetFolder + k + "_signed.zxp", 'wb').write )
+            if (f + "/" + k + "_signed.zip") in contents:
+                ftp.retrbinary( "RETR " + f+"/"+k+"_signed.zip", file(zxpTargetFolder + k + "_signed.zxp", 'wb').write )
                 print "# Retreived " + zxpTargetFolder + k + "_signed.zxp from: " + f
                 break;
         ftp.quit()
