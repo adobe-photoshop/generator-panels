@@ -155,7 +155,6 @@ $("#renamebutton").click( function() {
 });
 
 // These are just developer shortcuts; they shouldn't appear in final code.
-// Unfortunately, debug is disabled in CEP 4.2
 $("#debug").click( function() { window.__adobe_cep__.showDevTools(); } );
 $("#reload").click( function() { window.location.reload(true); } );
 

@@ -53,7 +53,7 @@ osDestPath = { "win32":winAppData + extensionSubpath,
              }[sys.platform]
 
 def getTargetFolder():
-    targetFolder = os.path.abspath( os.path.join( srcLocation, "..", "Targets" ) ) + os.sep
+    targetFolder = os.path.abspath( os.path.join( srcLocation, "Targets" ) ) + os.sep
     if (not os.path.exists( targetFolder )):
         os.makedirs( targetFolder )
     return targetFolder
@@ -207,6 +207,7 @@ elif (args.zip or (args.sign and args.sign[0].startswith("up"))):
             print "# Sent"
     if (args.sign and args.sign[0].startswith("up")):
         print "# Browse to 'http://matrix-ctrel/' and go to Start > Sign CSXS and ZXP"
+        print "# Name the new files using the same basename and a \".zxp\" suffix"
 
 #
 # Once the package is signed by buildforge,
