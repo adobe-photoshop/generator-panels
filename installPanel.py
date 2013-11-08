@@ -21,7 +21,7 @@
 # 
 
 import os, sys, shutil, re, getpass, stat, datetime
-import argparse, subprocess, zipfile, ftplib
+import argparse, subprocess, zipfile, ftplib, xml.dom.minidom
 
 # Dictionary of panel folders to copy (src file name, dest name)
 panels = {"renamelayers":"Rename Layers"}
@@ -51,6 +51,9 @@ winAppData = os.getenv("APPDATA") if (sys.platform == "win32") else ""
 osDestPath = { "win32":winAppData + extensionSubpath,
                "darwin":os.path.expanduser("~")+"/Library/Application Support" + extensionSubpath
              }[sys.platform]
+
+# Base port number used for remote debugger (each extra panel increments it)
+portNumber = 8000
 
 def getTargetFolder():
     targetFolder = os.path.abspath( os.path.join( srcLocation, "Targets" ) ) + os.sep
@@ -94,6 +97,30 @@ def erasePanels():
             for df in [root + os.sep + f for root, dirs, files in os.walk(destPath) for f in files]:
                 makeWritable(df)
             shutil.rmtree( destPath )
+
+# Create the .debug file for enabling the remote debugger
+def debugFilename( panel ):
+    return os.path.join( osDestPath, panels[panel], ".debug" )
+
+def createRemoteDebugXML(panel):
+    global portNumber
+    extensionTemplate = """  <Extension Id="%s">
+    <HostList>
+      <Host Name="PHXS" Port="%d"/>
+    </HostList>
+  </Extension>
+"""
+    manifestXML = xml.dom.minidom.parse( os.path.join( srcLocation, panel, "CSXS", "manifest.xml" ) )
+    extensions = manifestXML.getElementsByTagName("ExtensionList")[0].getElementsByTagName("Extension")
+    debugText = """<?xml version="1.0" encoding="UTF-8"?>\n"""
+    debugText += "<ExtensionList>\n"
+    for ext in extensions:
+        extName = ext.getAttribute("Id")
+        debugText += extensionTemplate % (extName, portNumber)
+        print "# Remote Debug %s at http://localhost:%d" % (extName, portNumber)
+        portNumber += 1
+    debugText += "</ExtensionList>\n"
+    file(debugFilename(panel), 'w' ).write(debugText)
 
 #
 # Examine the state of debugKey (either "Logging" or "PlayerDebugMode")
@@ -161,6 +188,13 @@ if (args.debug):
         # the change actually "stuck"
         if panelDebugValue != oldPanelDebugValue:
             print "# Panel debug mode " + ("enabled" if panelDebugValue=='1' else "disabled")
+            # Setup/remove remote debug config file
+            for k in panels.keys():
+                if panelDebugValue=='1':
+                    createRemoteDebugXML(k)
+                else:
+                    if (os.path.exists( debugFilename(k) )):
+                        os.remove( debugFilename(k) )
 
 #
 # Create a signed double-clickable install package
