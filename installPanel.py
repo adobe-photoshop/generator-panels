@@ -110,6 +110,7 @@ def createRemoteDebugXML(panel):
     </HostList>
   </Extension>
 """
+    # Fish the ID for each extension in the package out of the CSXS/manifest.xml file
     manifestXML = xml.dom.minidom.parse( os.path.join( srcLocation, panel, "CSXS", "manifest.xml" ) )
     extensions = manifestXML.getElementsByTagName("ExtensionList")[0].getElementsByTagName("Extension")
     debugText = """<?xml version="1.0" encoding="UTF-8"?>\n"""
