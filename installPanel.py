@@ -199,6 +199,8 @@ if (args.debug):
 
 #
 # Create a signed double-clickable install package
+# There's some more info on self-signing here:
+# http://forums.adobe.com/message/5714997
 #
 elif (args.package):
     pkgTargetFolder = getTargetFolder()
