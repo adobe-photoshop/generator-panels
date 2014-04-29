@@ -19,7 +19,7 @@
     <Extension Id="com.photoshop.renamelayers.extension">
       <DispatchInfo>
         <Resources>
-          <MainPath>./index.html</MainPath>
+          <MainPath>./renamelayers.html</MainPath>
           <ScriptPath>./host/RenameLayers.jsx</ScriptPath>
         </Resources>
         <UI>

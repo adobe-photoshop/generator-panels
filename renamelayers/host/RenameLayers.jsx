@@ -184,7 +184,7 @@ LayerOperations.prototype.setSelectedLayerSuffix = function( scale, suffix )
 			if (sfxPos >= 0)
 				newName = name.slice( 0, sfxPos );
 		}
-		else							
+		else
 		{
 			if (sfxPos < 0)			// No suffix, add one
 				newName = name + suffix;
