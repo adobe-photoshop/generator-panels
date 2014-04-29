@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ExtensionManifest ExtensionBundleId="com.photoshop.generatorconfig" ExtensionBundleName="Rename Layers" ExtensionBundleVersion="1.2" Version="4.0">
+  <ExtensionList>
+    <Extension Id="com.photoshop.generatorconfig.extension" Version="1.1"/>
+  </ExtensionList>
+  <ExecutionEnvironment>
+    <HostList>
+      <Host Name="PHXS" Version="[15.0,15.9]"/>
+      <Host Name="PHSP" Version="[15.0,15.9]"/>
+    </HostList>
+    <LocaleList>
+      <Locale Code="All"/>
+    </LocaleList>
+    <RequiredRuntimeList>
+      <RequiredRuntime Name="CSXS" Version="5.0"/>
+    </RequiredRuntimeList>
+  </ExecutionEnvironment>
+  <DispatchInfoList>
+    <Extension Id="com.photoshop.generatorconfig.extension">
+      <DispatchInfo>
+        <Resources>
+          <MainPath>./generatorconfig.html</MainPath>
+          <ScriptPath>./host/GeneratorConfig.jsx</ScriptPath>
+        </Resources>
+        <UI>
+          <Type>Panel</Type>
+          <Menu>%rename-panel-menu-name</Menu>
+          <Geometry>
+            <MinSize>
+              <Height>150</Height>
+              <Width>200</Width>
+            </MinSize>
+            <Size>
+              <Height>160</Height>
+              <Width>216</Width>
+            </Size>
+          </Geometry>
+        </UI>
+      </DispatchInfo>
+    </Extension>
+  </DispatchInfoList>
+</ExtensionManifest>

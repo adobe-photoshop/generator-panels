@@ -1,0 +1,39 @@
+html * {
+  font-family: Tahoma;
+  font-size: 10pt;
+}
+
+.graylabel {
+  color: #808080 !important;
+  text-decoration:line-through;
+}
+
+.hidmenu {
+    border: black;
+    margin-top: 2px;
+    font-size: 8pt;
+}
+
+option {            /* So text in popups is readable */
+    color: black;
+}
+
+.debuglink {
+    font-size: 7pt;
+    text-decoration: underline;
+    color: #808080;
+    cursor: pointer;
+}
+
+#debug {
+    position: absolute;
+    left: 158px;
+    top: 124px;
+}
+
+#reload {
+    position: absolute;
+    left: 158px;
+    top: 111px;
+}
+
