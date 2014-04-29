@@ -135,7 +135,7 @@ def createRemoteDebugXML(panel):
 def panelExecutionState( debugKey, panelDebugValue=None ):
     oldPanelDebugValue = 'err'
 
-    # Windows: add HKEY_CURRENT_USER/Software/Adobe/CSXS.4 (add key) PlayerDebugMode [String] "1"
+    # Windows: add HKEY_CURRENT_USER/Software/Adobe/CSXS.5 (add key) PlayerDebugMode [String] "1"
     if sys.platform == 'win32':
         import _winreg
         def tryKey(key):
@@ -157,7 +157,7 @@ def panelExecutionState( debugKey, panelDebugValue=None ):
 
         _winreg.CloseKey( ky )
 
-    # Mac: ~/Library/Preferences/com.adobe.CSXS.4.plist (add row) PlayerDebugMode [String] "1"
+    # Mac: ~/Library/Preferences/com.adobe.CSXS.5.plist (add row) PlayerDebugMode [String] "1"
     elif sys.platform == "darwin":
         import subprocess, plistlib
         plistFile = os.path.expanduser( "~/Library/Preferences/com.adobe.CSXS.5.plist" )
