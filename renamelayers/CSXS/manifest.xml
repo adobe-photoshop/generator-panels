@@ -5,21 +5,21 @@
   </ExtensionList>
   <ExecutionEnvironment>
     <HostList>
-      <Host Name="PHXS" Version="[14.0,14.9]"/>
-      <Host Name="PHSP" Version="[14.0,14.9]"/>
+      <Host Name="PHXS" Version="[15.0,15.9]"/>
+      <Host Name="PHSP" Version="[15.0,15.9]"/>
     </HostList>
     <LocaleList>
       <Locale Code="All"/>
     </LocaleList>
     <RequiredRuntimeList>
-      <RequiredRuntime Name="CSXS" Version="4.0"/>
+      <RequiredRuntime Name="CSXS" Version="5.0"/>
     </RequiredRuntimeList>
   </ExecutionEnvironment>
   <DispatchInfoList>
     <Extension Id="com.photoshop.renamelayers.extension">
       <DispatchInfo>
         <Resources>
-          <MainPath>./index.html</MainPath>
+          <MainPath>./renamelayers.html</MainPath>
           <ScriptPath>./host/RenameLayers.jsx</ScriptPath>
         </Resources>
         <UI>

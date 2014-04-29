@@ -46,7 +46,7 @@ if (os.path.exists(srcLocation + "kuler")):
 certPath = os.path.join( srcLocation, "cert", "panelcert.p12" )
 
 # Where to place the panel.
-extensionSubpath = os.path.normpath("/Adobe/CEPServiceManager4/extensions") + os.path.sep
+extensionSubpath = os.path.normpath("/Adobe/CEP/extensions") + os.path.sep
 winAppData = os.getenv("APPDATA") if (sys.platform == "win32") else ""
 osDestPath = { "win32":winAppData + extensionSubpath,
                "darwin":os.path.expanduser("~")+"/Library/Application Support" + extensionSubpath
@@ -70,18 +70,22 @@ def getTargetFolder():
 #
 # and deploys it to:
 #
-# (Mac) /Library/Application Support/Adobe/CEPServiceManager4/extensions/
-# (Win) C:\Program Files (x86)\Common Files\Adobe\CEPServiceManager4\extensions\
+# (Mac) /Library/Application Support/Adobe/CEP/extensions/
+# (Win) C:\Program Files (x86)\Common Files\Adobe\CEP\extensions\  [not sure about (x86)]
 #
 # This is different than the local copies used for debugging.
 
 argparser = argparse.ArgumentParser(description="Manage Photoshop CEP panels.  By default, installs the panels for debugging.")
-argparser.add_argument('--package', '-p', nargs=1, metavar='password', default=None, help="Package the item using the private certificate; specify the password for that cert")
-argparser.add_argument('--zip', '-z', action='store_true', default=False, help="Create ZIP archives for BuildForge signing")
-argparser.add_argument('--sign', '-s', nargs=1, default=None, choices=['up', 'down'], help="Make zip and upload to hancock for signing; or download signed .zxp from hancock")
-argparser.add_argument('--debug', '-d', nargs='?', const='status', default=None, choices=['status', 'on', 'off'], help="Enable panel without signing")
-argparser.add_argument('--launch', '-l', action='store_true', default=False, help="Launch Photoshop after copy")
-argparser.add_argument('--erase', '-e', action='store_true', default=False, help="Erase the panels from the debug install location")
+argparser.add_argument('--package', '-p', nargs=1, metavar='password', default=None,
+                       help="Package the item using the private certificate; specify the password for that cert")
+argparser.add_argument('--zip', '-z', action='store_true', default=False,
+                       help="Create ZIP archives for BuildForge signing")
+argparser.add_argument('--debug', '-d', nargs='?', const='status', default=None, choices=['status', 'on', 'off'],
+                       help="Enable panel without signing")
+argparser.add_argument('--launch', '-l', action='store_true', default=False,
+                       help="Launch Photoshop after copy")
+argparser.add_argument('--erase', '-e', action='store_true', default=False,
+                       help="Erase the panels from the debug install location")
 args = argparser.parse_args( sys.argv[1:] )
 
 def erasePanels():
@@ -110,6 +114,7 @@ def createRemoteDebugXML(panel):
     </HostList>
   </Extension>
 """
+    # Fish the ID for each extension in the package out of the CSXS/manifest.xml file
     manifestXML = xml.dom.minidom.parse( os.path.join( srcLocation, panel, "CSXS", "manifest.xml" ) )
     extensions = manifestXML.getElementsByTagName("ExtensionList")[0].getElementsByTagName("Extension")
     debugText = """<?xml version="1.0" encoding="UTF-8"?>\n"""
@@ -130,7 +135,7 @@ def createRemoteDebugXML(panel):
 def panelExecutionState( debugKey, panelDebugValue=None ):
     oldPanelDebugValue = 'err'
 
-    # Windows: add HKEY_CURRENT_USER/Software/Adobe/CSXS.4 (add key) PlayerDebugMode [String] "1"
+    # Windows: add HKEY_CURRENT_USER/Software/Adobe/CSXS.5 (add key) PlayerDebugMode [String] "1"
     if sys.platform == 'win32':
         import _winreg
         def tryKey(key):
@@ -141,7 +146,7 @@ def panelExecutionState( debugKey, panelDebugValue=None ):
 
         access = _winreg.KEY_READ if (not panelDebugValue) else _winreg.KEY_ALL_ACCESS
 
-        ky = _winreg.OpenKey( _winreg.HKEY_CURRENT_USER, "Software\\Adobe\\CSXS.4", 0, access )
+        ky = _winreg.OpenKey( _winreg.HKEY_CURRENT_USER, "Software\\Adobe\\CSXS.5", 0, access )
         keyValue = tryKey( ky )
         oldPanelDebugValue = '1' if keyValue and (keyValue[0] == '1') else '0'
 
@@ -152,10 +157,10 @@ def panelExecutionState( debugKey, panelDebugValue=None ):
 
         _winreg.CloseKey( ky )
 
-    # Mac: ~/Library/Preferences/com.adobe.CSXS.4.plist (add row) PlayerDebugMode [String] "1"
+    # Mac: ~/Library/Preferences/com.adobe.CSXS.5.plist (add row) PlayerDebugMode [String] "1"
     elif sys.platform == "darwin":
         import subprocess, plistlib
-        plistFile = os.path.expanduser( "~/Library/Preferences/com.adobe.CSXS.4.plist" )
+        plistFile = os.path.expanduser( "~/Library/Preferences/com.adobe.CSXS.5.plist" )
         
         # First, make sure the Plist is in text format
         subprocess.check_output( "plutil -convert xml1 " + plistFile, shell=True )
@@ -198,6 +203,8 @@ if (args.debug):
 
 #
 # Create a signed double-clickable install package
+# There's some more info on self-signing here:
+# http://forums.adobe.com/message/5714997
 #
 elif (args.package):
     pkgTargetFolder = getTargetFolder()
@@ -211,12 +218,9 @@ elif (args.package):
         print result
 
 #
-# Create a .zip archive for signing on BuildForge
-# See https://zerowing.corp.adobe.com/display/coresvcwiki/SigningKioskZXPandCSXS
-# for details.  If the "--sign up" option is used, the package file is sent to
-# the signing folder.  Go browse to http://matrix-ctrel/; > Start > Sign_CSXS_and_ZXP
+# Create a .zip archive
 #
-elif (args.zip or (args.sign and args.sign[0].startswith("up"))):
+elif (args.zip):
     zipTargetFolder = getTargetFolder()
 
     # Make the zip
@@ -230,40 +234,6 @@ elif (args.zip or (args.sign and args.sign[0].startswith("up"))):
             zf.write( f )
         zf.close()
 
-        # Upload to hancock
-        if (args.sign and args.sign[0].startswith("up")):
-            print "# Sending to ftp://sjshare.corp.adobe.com/hancock/UnSigned/" + k + ".zip"
-            password = getpass.getpass("LDAP password for ftp to sjshare:")
-            ftp = ftplib.FTP( "sjshare.corp.adobe.com", getpass.getuser(), password )
-            ftp.cwd("hancock/UnSigned/")
-            ftp.storbinary( "STOR "+k+".zip", file(zipTargetFile, 'rb') )
-            ftp.quit()
-            print "# Sent"
-    if (args.sign and args.sign[0].startswith("up")):
-        print "# Browse to 'http://matrix-ctrel/' and go to Start > Sign CSXS and ZXP"
-        print "# Name the new files using the same basename and a \".zxp\" suffix"
-
-#
-# Once the package is signed by buildforge,
-# --sign down retreives the signed copy from hancock
-#
-elif (args.sign and args.sign[0].startswith("down")):
-    zxpTargetFolder = getTargetFolder()
-    for k in panels.keys():
-        password = getpass.getpass("LDAP password for ftp to sjshare:")
-        ftp = ftplib.FTP( "sjshare.corp.adobe.com", getpass.getuser(), password )
-        ftp.cwd("hancock/Signed_ZXP/")
-        todaysFolders = ftp.nlst(datetime.date.today().strftime("%Y%m%d") + ".m.*")
-        # Sort folders so you only grab the most recent signed copy
-        todaysFolders.sort(reverse=True)
-        for f in todaysFolders:
-            contents = ftp.nlst(f)
-            if (f + "/" + k + ".zxp") in contents:
-                ftp.retrbinary( "RETR " + f+"/"+k+".zxp", file(zxpTargetFolder + k + "_signed.zxp", 'wb').write )
-                print "# Retreived " + zxpTargetFolder + k + "_signed.zxp from: " + f
-                break;
-        ftp.quit()
-        
 elif (args.erase):
     erasePanels()
 #
