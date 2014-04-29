@@ -46,7 +46,7 @@ if (os.path.exists(srcLocation + "kuler")):
 certPath = os.path.join( srcLocation, "cert", "panelcert.p12" )
 
 # Where to place the panel.
-extensionSubpath = os.path.normpath("/Adobe/CEPServiceManager4/extensions") + os.path.sep
+extensionSubpath = os.path.normpath("/Adobe/CEP/extensions") + os.path.sep
 winAppData = os.getenv("APPDATA") if (sys.platform == "win32") else ""
 osDestPath = { "win32":winAppData + extensionSubpath,
                "darwin":os.path.expanduser("~")+"/Library/Application Support" + extensionSubpath
@@ -70,8 +70,8 @@ def getTargetFolder():
 #
 # and deploys it to:
 #
-# (Mac) /Library/Application Support/Adobe/CEPServiceManager4/extensions/
-# (Win) C:\Program Files (x86)\Common Files\Adobe\CEPServiceManager4\extensions\
+# (Mac) /Library/Application Support/Adobe/CEP/extensions/
+# (Win) C:\Program Files (x86)\Common Files\Adobe\CEP\extensions\  [not sure about (x86)]
 #
 # This is different than the local copies used for debugging.
 
@@ -146,7 +146,7 @@ def panelExecutionState( debugKey, panelDebugValue=None ):
 
         access = _winreg.KEY_READ if (not panelDebugValue) else _winreg.KEY_ALL_ACCESS
 
-        ky = _winreg.OpenKey( _winreg.HKEY_CURRENT_USER, "Software\\Adobe\\CSXS.4", 0, access )
+        ky = _winreg.OpenKey( _winreg.HKEY_CURRENT_USER, "Software\\Adobe\\CSXS.5", 0, access )
         keyValue = tryKey( ky )
         oldPanelDebugValue = '1' if keyValue and (keyValue[0] == '1') else '0'
 
@@ -160,7 +160,7 @@ def panelExecutionState( debugKey, panelDebugValue=None ):
     # Mac: ~/Library/Preferences/com.adobe.CSXS.4.plist (add row) PlayerDebugMode [String] "1"
     elif sys.platform == "darwin":
         import subprocess, plistlib
-        plistFile = os.path.expanduser( "~/Library/Preferences/com.adobe.CSXS.4.plist" )
+        plistFile = os.path.expanduser( "~/Library/Preferences/com.adobe.CSXS.5.plist" )
         
         # First, make sure the Plist is in text format
         subprocess.check_output( "plutil -convert xml1 " + plistFile, shell=True )
