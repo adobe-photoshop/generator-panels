@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<ExtensionManifest ExtensionBundleId="com.photoshop.generatorconfig" ExtensionBundleName="Rename Layers" ExtensionBundleVersion="1.2" Version="4.0">
+<ExtensionManifest ExtensionBundleId="com.photoshop.generatorconfig" ExtensionBundleName="Generator Config" ExtensionBundleVersion="1.2" Version="4.0">
   <ExtensionList>
     <Extension Id="com.photoshop.generatorconfig.extension" Version="1.1"/>
   </ExtensionList>
@@ -24,7 +24,7 @@
         </Resources>
         <UI>
           <Type>Panel</Type>
-          <Menu>%rename-panel-menu-name</Menu>
+          <Menu>%config-panel-menu-name</Menu>
           <Geometry>
             <MinSize>
               <Height>150</Height>

@@ -28,12 +28,12 @@ option {            /* So text in popups is readable */
 #debug {
     position: absolute;
     left: 158px;
-    top: 124px;
+    top: 20px;
 }
 
 #reload {
     position: absolute;
     left: 158px;
-    top: 111px;
+    top: 33px;
 }
 

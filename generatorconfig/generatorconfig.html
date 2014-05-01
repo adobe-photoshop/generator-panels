@@ -2,62 +2,52 @@
 <!-- Rename Layers Panel -->
 <html>
 <meta charset="utf-8">
-<link id="renameLayersBase" href="css/renameLayersBase.css" rel="stylesheet" type="text/css" />
-<link id="renameLayersTheme" href="css/renameLayers_D.css" rel="stylesheet" type="text/css" />
+<link id="configBase" href="css/configBase.css" rel="stylesheet" type="text/css" />
+<link id="configTheme" href="css/config_D.css" rel="stylesheet" type="text/css" />
 
 <body>
-<div>
-	<span data-locale="rename-suffix-label">Suffix</span>
-    <select name="suffix" id="suffixmenu" class="ccmenu">
-        <option value=".jpg">.jpg</option>
-        <option value=".png">.png</option>
-        <option value=".gif">.gif</option>
-        <option value=".svg">.svg</option>
-        <option data-locale="suffix-menu-none" value="">None</option>
-    </select>
-    
-    <select class="ccmenu hidmenu" name="pngdepth" id="pngdepth">
-        <option data-locale="png-menu-depth" value="">Depth</option>
-        <option value="8">8</option>
-        <option value="24">24</option>
-        <option value="32">32</option>
-    </select>
 
-    <select class="ccmenu hidmenu" name="jpgqual" id="jpgqual">
-        <option data-locale="jpg-menu-quality" value="">Quality</option>
-        <option value="3">3</option>
-        <option value="4">4</option>
-        <option value="5">5</option>
-        <option value="6">6</option>
-        <option value="7">7</option>
-        <option value="8">8</option>
-        <option value="9">9</option>
-        <option value="10">10</option>
-    </select>
+<div>
+    <label id="svglabel" for="svg-enabled">
+        <input class="configchk" type="checkbox" name="svg-enabled" id="svg-enabled">
+        <span data-locale="svg-checkbox" id="svgspan">SVG Enabled</span>
+    </label>
+    <br>
+    <label id="webplabel" for="webp-enabled">
+        <input class="configchk" type="checkbox" name="webp-enabled" id="webp-enabled">
+        <span data-locale="webp-checkbox" id="webpspan">WebP Enabled</span>
+    </label>
+    <br>
+    <label id="smartscalelabel" for="use-smart-scaling">
+        <input class="configchk" type="checkbox" name="use-smart-scaling" id="use-smart-scaling">
+        <span data-locale="smartscale-checkbox" id="smartscalespan">Use Smart Scaling</span>
+    </label>
+    <br>
+    <label id="ancmaskslabel" for="include-ancestor-masks">
+        <input class="configchk" type="checkbox" name="include-ancestor-masks" id="include-ancestor-masks">
+        <span data-locale="ancmasks-checkbox" id="ancmasksspan">Included Ancestor Masks</span>
+    </label>
+    <br>
+    <label id="ditherlabel" for="allow-dither">
+        <input class="configchk" type="checkbox" name="allow-dither" id="allow-dither">
+        <span data-locale="dither-checkbox" id="ditherspan">Allow Dither</span>
+    </label>
+</div>
+
+<div align="center">
+<button data-locale="save-config-button" class="ccstyle" id="saveconfig">Save</button>
 </div>
     
-<p>
-    <label id="scalechklabel" for="scale">
-        <input type="checkbox" name="scale" id="scale">
-        <span data-locale="rename-scale-checkbox" id="sclspan">Scale</span>
-    </label>
-    <input id="scalevalue" class="ccstyle" type="text" size="4" maxlength="4" role="textbox" value="100" disabled />%
-</p>
-    
-<button data-locale="rename-rename-button" class="ccstyle" id="renamebutton">Rename</button>
-<p>
-    <div data-locale="rename-sample-name" id="samplename">layername</div>
-</p>
-    
 <!-- These are debugging shortcuts - should not appear in final code -->
-<span data-locale="rename-debug-link" class="debuglink" id="debug">Debug</span>
-<span data-locale="rename-reload-link" class="debuglink" id="reload">Reload</span>
+<span data-locale="config-debug-link" class="debuglink" id="debug">Debug</span>
+<span data-locale="config-reload-link" class="debuglink" id="reload">Reload</span>
 
 </body>
 
 <!-- Scripts at the end so everything's in place before access -->
 <script src="js/libs/jquery-2.0.2.min.js"></script>
 <script src="js/libs/CSInterface-4.0.0.js"></script>
-<script src="js/renamelayers.js"></script>
+<script src="js/themecolors.js"></script>
+<script src="js/generatorconfig.js"></script>
 
 </html>

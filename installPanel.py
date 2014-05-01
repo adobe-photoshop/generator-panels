@@ -22,9 +22,12 @@
 
 import os, sys, shutil, re, getpass, stat, datetime
 import argparse, subprocess, zipfile, ftplib, xml.dom.minidom
+if sys.platform == 'win32':
+    import _winreg
+
 
 # Dictionary of panel folders to copy (src file name, dest name)
-panels = {"renamelayers":"Rename Layers"}
+panels = {"renamelayers":"Rename Layers", "generatorconfig":"Generator Config"}
 
 # PS executable location, used just to launch PS
 PSexePath = {"win32":"C:\\Program Files\\Adobe\\Adobe Photoshop CC (64 Bit)\\Photoshop.exe",
@@ -137,7 +140,6 @@ def panelExecutionState( debugKey, panelDebugValue=None ):
 
     # Windows: add HKEY_CURRENT_USER/Software/Adobe/CSXS.5 (add key) PlayerDebugMode [String] "1"
     if sys.platform == 'win32':
-        import _winreg
         def tryKey(key):
             try:
                 return _winreg.QueryValueEx( key, debugKey )
@@ -177,11 +179,23 @@ def panelExecutionState( debugKey, panelDebugValue=None ):
     return oldPanelDebugValue
 
 #
+# Setup/remove remote debug config files
+#
+def setupRemoteDebugFiles():
+    debugEnabled = panelExecutionState( 'PlayerDebugMode' ) == '1'
+    for k in panels.keys():
+        if debugEnabled:
+            createRemoteDebugXML(k)
+        else:
+            if (os.path.exists( debugFilename(k) )):
+                os.remove( debugFilename(k) )
+
+#
 # Print or change PlayerDebugMode
 #
 if (args.debug):
     panelDebugValue = {'on':'1', 'off':'0', 'status':None}[args.debug]
-    oldPanelDebugValue = panelExecutionState( 'PlayerDebugMode', panelDebugValue )        
+    oldPanelDebugValue = panelExecutionState( 'PlayerDebugMode', panelDebugValue )
 
     if (args.debug == 'status'):
         if oldPanelDebugValue == '1':
@@ -193,13 +207,7 @@ if (args.debug):
         # the change actually "stuck"
         if panelDebugValue != oldPanelDebugValue:
             print "# Panel debug mode " + ("enabled" if panelDebugValue=='1' else "disabled")
-            # Setup/remove remote debug config file
-            for k in panels.keys():
-                if panelDebugValue=='1':
-                    createRemoteDebugXML(k)
-                else:
-                    if (os.path.exists( debugFilename(k) )):
-                        os.remove( debugFilename(k) )
+            setupRemoteDebugFiles()
 
 #
 # Create a signed double-clickable install package
@@ -246,6 +254,7 @@ else:
         destPath = osDestPath + panels[k]
         print "# Copying " + srcLocation + k + "\n  to " + destPath
         shutil.copytree( srcLocation + k, destPath )
+    setupRemoteDebugFiles()
 
 # Launch PS
 if (args.launch):
