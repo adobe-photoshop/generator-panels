@@ -24,6 +24,10 @@
     background-image: -webkit-linear-gradient(#4E4E4E, #484848 40%, #3D3D3D);
 }
 
+.ccstyle:disabled {
+    color: #808080;
+}
+
 /********Checkbox**********/
 input[type="checkbox"] {
   -webkit-appearance: none;

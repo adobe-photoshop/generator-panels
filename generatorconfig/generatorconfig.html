@@ -8,6 +8,8 @@
 <body>
 
 <div>
+    <!-- Note: This code assumes the CSS IDs of the checkbox elements
+         match the keys used by the generator-assets configuration file. -->
     <label id="svglabel" for="svg-enabled">
         <input class="configchk" type="checkbox" name="svg-enabled" id="svg-enabled">
         <span data-locale="svg-checkbox" id="svgspan">SVG Enabled</span>
@@ -35,11 +37,12 @@
 </div>
 
 <!-- These are debugging shortcuts - should not appear in final code -->
-<span data-locale="config-debug-link" class="debuglink" id="debug">Debug</span>
+<!--  <span data-locale="config-debug-link" class="debuglink" id="debug">Debug</span> -->
 <span data-locale="config-reload-link" class="debuglink" id="reload">Reload</span>
     
-<div align="center">
-<button data-locale="save-button" class="ccstyle" id="savebutton">Save</button>
+<div align="center" style="margin-top:10px;">
+<button data-locale="save-button" class="ccstyle configbutton" id="savebutton">Save</button>
+<button data-locale="revert-button" class="ccstyle configbutton" id="revertbutton">Revert</button>
 </div>
 
 </body>

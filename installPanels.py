@@ -13,8 +13,6 @@
 #  -p,--package PASSWORD        Package the panels signed with a
 #                               private certificate using PASSWORD
 #  -z,--zip                     Package the panels as a ZIP archives
-#  -s,--sign {up,down}          Upload/download panels to Hancock for
-#                               official Adobe signing (implies -z)
 #  -e,--erase                   Remove the panels from the debug location
 #  -l,--launch                  Launch Photoshop after copying.
 #
@@ -104,6 +102,9 @@ def erasePanels():
             for df in [root + os.sep + f for root, dirs, files in os.walk(destPath) for f in files]:
                 makeWritable(df)
             shutil.rmtree( destPath )
+            
+    # Leaving the cache around can cause problems.
+    shutil.rmtree( os.path.normpath( osDestPath + "../cache" ) );
 
 # Create the .debug file for enabling the remote debugger
 def debugFilename( panel ):

@@ -6,8 +6,8 @@
 // John Peterson - May 2014
 //
 
-// Uncomment for debugger on load (Disabled in CEP 4.2)
-//window.__adobe_cep__.showDevTools();
+// Note: This code assumes the CSS IDs of the checkbox elements
+// match the keys used by the generator-assets configuration file.
 
 var config = require("./js/config")
 
@@ -20,6 +20,7 @@ function loadConfig()
             $("#" + opt).prop('checked', currentConfig["generator-assets"][opt] );
         });
     }
+    $(".configbutton").prop( "disabled", true );
 }
 
 function initialize()
@@ -29,15 +30,27 @@ function initialize()
     
 }
 
-$(".configchk").change( function(checkEvent) {
+$(".configchk").change( function() {
     var itemID = this.id;
-	var value = ($("#" + itemID).is(":checked"));
-    var msg = value ? " is checked" : " is not checked";
-    alert( itemID + msg );
+    $(".configbutton").prop( "disabled", false );
+});
+
+$("#savebutton").click( function() {
+    var genOpts = { "generator-assets": {} };
+    $(".configchk").each(function (i, checkbox) {
+        genOpts["generator-assets"][checkbox.id] = checkbox.checked;
+    });
+    config.putConfig(genOpts);
+    $(".configbutton").prop("disabled", true);
+});
+
+$("#revertbutton").click( function() {
+    loadConfig();
+    $(".configbutton").prop("disabled", true);
 });
 
 // These are just developer shortcuts; they shouldn't appear in final code.
-$("#debug").click( function() { window.__adobe_cep__.showDevTools(); } );
+// $("#debug").click( function() { window.__adobe_cep__.showDevTools(); } );
 $("#reload").click( function() { window.location.reload(true); } );
 
 initialize();
