@@ -6,9 +6,6 @@
 // John Peterson - May 2014
 //
 
-// Uncomment for debugger on load (Disabled in CEP 4.2)
-//window.__adobe_cep__.showDevTools();
-
 // Get a reference to a CSInterface object
 var csInterface = new CSInterface();
 
@@ -43,15 +40,17 @@ var colorTable = {
 var sampleLayerName;
 
 // This swaps the light/dark stylesheets for the control widgets
+// <link id="ccstyleTheme" href="css/ccstyle_D.css" rel="stylesheet" type="text/css" />
+
 function swapCSS( isDark )
 {
     var panelName = "config";
     var themeID = panelName + "Theme";
 
-    if ($("#" + themeID).length)
-        $("#" + themeID).remove();
+    if ($("#ccstyleTheme").length)
+        $("#ccstyleTheme").remove();
     var link = document.createElement('link');
-    $("head").append('<link id="' + themeID +'" href="css/' + panelName
+    $("head").append('<link id="ccstyleTheme" href="css/ccstyle'
                      + (isDark ? '_D.css' : '_L.css') +'" rel="stylesheet" type="text/css" />');
 }
 
