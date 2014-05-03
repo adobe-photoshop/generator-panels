@@ -18,7 +18,7 @@
 #
 # 
 
-import os, sys, shutil, re, getpass, stat, datetime
+import os, sys, shutil, re, getpass, stat, datetime, platform
 import argparse, subprocess, zipfile, ftplib, xml.dom.minidom
 if sys.platform == 'win32':
     import _winreg
@@ -175,6 +175,21 @@ def panelExecutionState( debugKey, panelDebugValue=None ):
         if (panelDebugValue):
             plist[debugKey] = panelDebugValue
             plistlib.writePlist( plist, plistFile )
+
+            # On Mac OS X 10.9 and higher, must reset the cfprefsd process
+            # before changes in a plist file take effect
+            macOSVer = [int(x) for x in platform.mac_ver()[0].split('.')]
+            if (macOSVer[0] == 10) and (macOSVer[1] >= 9):
+                proc = subprocess.Popen("ps ax | grep cfprefsd | grep -v grep", shell=True,
+                                        stdout=subprocess.PIPE).stdout.read()
+                procID = re.findall("^\s*(\d+)", proc, re.MULTILINE)
+                if (procID):
+                    for p in procID:
+                        print "# MacOS 10.9: Killing cfprefsd process ID: " + p
+                    os.system( "kill -HUP " + p )
+                else:
+                    print "# MacOS 10.9: No cfprefsd process"
+
     else:
         print "Error: Unsupported platform: " + sys.platform
         sys.exit(0)
