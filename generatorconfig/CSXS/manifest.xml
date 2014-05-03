@@ -27,11 +27,11 @@
           <Menu>%config-panel-menu-name</Menu>
           <Geometry>
             <MinSize>
-              <Height>150</Height>
+              <Height>180</Height>
               <Width>200</Width>
             </MinSize>
             <Size>
-              <Height>160</Height>
+              <Height>180</Height>
               <Width>216</Width>
             </Size>
           </Geometry>

@@ -1,6 +1,6 @@
-// Copyright 2013 Adobe Systems Incorporated.  All Rights reserved.
+// Copyright 2013-2014 Adobe Systems Incorporated.  All Rights reserved.
 
-// Add or remove suffixes from selected layers.
+// Tools for stopping and re-starting Generator
 
 // Load the Photoshop Event Terminology definitions
 var g_StackScriptFolderPath = app.path + "/"+ localize("$$$/ScriptingSupport/InstalledScripts=Presets/Scripts") + "/"
@@ -30,8 +30,9 @@ function IsGeneratorRunning()
 
 function EnableGenerator( flag )
 {
-	if (IsGeneratorRunning() == flag)
+	if (IsGeneratorRunning() == flag) {
 		return;
+    }
 	var desc = new ActionDescriptor();
 	var ref = new ActionReference();
 	ref.putProperty( classProperty, classPluginPrefs );
@@ -44,3 +45,4 @@ function EnableGenerator( flag )
 	executeAction( eventSet, desc, DialogModes.NO );
 }
 
+// EnableGenerator( false ); $.sleep(2000); EnableGenerator( true );

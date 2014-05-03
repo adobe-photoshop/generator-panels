@@ -11,7 +11,7 @@
 # Other options:
 #  -d,--debug {on,off,status}   Set/check PanelDebugMode
 #  -p,--package PASSWORD        Package the panels signed with a
-#                               private certificate using PASSWORD
+#                               private certificate, using the certificate's PASSWORD
 #  -z,--zip                     Package the panels as a ZIP archives
 #  -e,--erase                   Remove the panels from the debug location
 #  -l,--launch                  Launch Photoshop after copying.
@@ -78,7 +78,7 @@ def getTargetFolder():
 
 argparser = argparse.ArgumentParser(description="Manage Photoshop CEP panels.  By default, installs the panels for debugging.")
 argparser.add_argument('--package', '-p', nargs=1, metavar='password', default=None,
-                       help="Package the item using the private certificate; specify the password for that cert")
+                       help="Package the item using the private certificate; specify the password used to create it")
 argparser.add_argument('--zip', '-z', action='store_true', default=False,
                        help="Create ZIP archives for BuildForge signing")
 argparser.add_argument('--debug', '-d', nargs='?', const='status', default=None, choices=['status', 'on', 'off'],
@@ -104,7 +104,9 @@ def erasePanels():
             shutil.rmtree( destPath )
             
     # Leaving the cache around can cause problems.
-    shutil.rmtree( os.path.normpath( osDestPath + "../cache" ) );
+    cachePath = os.path.normpath( osDestPath + "../cache" )
+    if os.path.exists(cachePath):
+        shutil.rmtree(cachePath);
 
 # Create the .debug file for enabling the remote debugger
 def debugFilename( panel ):

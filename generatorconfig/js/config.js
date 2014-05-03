@@ -21,6 +21,9 @@
  * 
  */
 
+// Modified version of the file from generator-core.
+// Adds the putConfig() method
+
 (function () {
     "use strict";
     
@@ -65,8 +68,7 @@
             config = {};
             configLocations.forEach(function (loc) {
                 try {
-//                    var addition = require(loc);  // This isn't working for me??
-                    var addition = JSON.parse(fs.readFileSync(loc));
+                    var addition = require(loc);
                     if (addition && addition instanceof Object) {
                         merge(config, addition);
                     }
@@ -79,6 +81,15 @@
         return config;
     }
     
+    function writeConfig(path, newConfig) {
+        var configText = JSON.stringify(newConfig);
+        // If the config is a .js file, write as a module
+        if (path.match(/[.]js$/)) {
+            configText = "module.exports = " + configText;
+        }
+        fs.writeFileSync(path, configText);
+    }
+
     function putConfig(newConfig) {
         // First search for the highest-priority existing config file.
         // For now we skip the current-working-directory, because
@@ -88,7 +99,7 @@
         for (var i = 0; i < revLocations.length; ++i) {
             if (fs.existsSync(revLocations[i])) {
                 try {
-                    fs.writeFileSync(revLocations[i], JSON.stringify(newConfig));
+                    writeConfig(revLocations[i], newConfig);
                     wroteLocation = revLocations[i];
                 } catch (err) {
                     // do nothing
@@ -98,7 +109,7 @@
                 
         if (! wroteLocation) {
             try {
-                fs.writeFileSync(revLocations[0], JSON.stringify(newConfig));
+                writeConfig(revLocations[0], newConfig);
             } catch (err) {
                 return err;
             }

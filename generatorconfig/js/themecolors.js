@@ -54,15 +54,6 @@ function swapCSS( isDark )
                      + (isDark ? '_D.css' : '_L.css') +'" rel="stylesheet" type="text/css" />');
 }
 
-function dimScaleValue( isDim )
-{
-	var colors = colorTable[window.document.bgColor.slice(0,3)];
-	var colorStr = grayToHex(isDim ? ((colors.textfg + colors.textbg)/2)|0 : colors.textfg);
-	// Note: Use ".css" instead of ".attr" if the attr is defined in a style sheet.
-	$("#scalevalue").css('color', colorStr );
-	$("#scalevalue").attr("disabled", isDim);
-}
-
 function setupColors()
 {
 	// You need to reload the host environment; the csInterface object won't do it for you
@@ -73,8 +64,6 @@ function setupColors()
 	window.document.fgColor = grayToHex( colors.textfg );
     
     swapCSS(colors.textfg > 128);
-	
-	dimScaleValue( $("#scalevalue").is(":disabled") );
 }
 
 function initColors()

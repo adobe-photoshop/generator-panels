@@ -15,11 +15,6 @@
         <span data-locale="svg-checkbox" id="svgspan">SVG Enabled</span>
     </label>
     <br>
-    <label id="webplabel" for="webp-enabled">
-        <input class="configchk" type="checkbox" name="webp-enabled" id="webp-enabled">
-        <span data-locale="webp-checkbox" id="webpspan">WebP Enabled</span>
-    </label>
-    <br>
     <label id="smartscalelabel" for="use-smart-scaling">
         <input class="configchk" type="checkbox" name="use-smart-scaling" id="use-smart-scaling">
         <span data-locale="smartscale-checkbox" id="smartscalespan">Use Smart Scaling</span>
@@ -34,15 +29,23 @@
         <input class="configchk" type="checkbox" name="allow-dither" id="allow-dither">
         <span data-locale="dither-checkbox" id="ditherspan">Allow Dither</span>
     </label>
+    <br>
+    <label id="webplabel" for="webp-enabled">
+        <input class="configchk" type="checkbox" name="webp-enabled" id="webp-enabled">
+        <span data-locale="webp-checkbox" id="webpspan">WebP Enabled</span>
+    </label>
 </div>
 
 <!-- These are debugging shortcuts - should not appear in final code -->
 <!--  <span data-locale="config-debug-link" class="debuglink" id="debug">Debug</span> -->
 <span data-locale="config-reload-link" class="debuglink" id="reload">Reload</span>
     
-<div align="center" style="margin-top:10px;">
+<div align="center" style="margin-top:8px;">
 <button data-locale="save-button" class="ccstyle configbutton" id="savebutton">Save</button>
 <button data-locale="revert-button" class="ccstyle configbutton" id="revertbutton">Revert</button>
+</div>
+<div data-locale="restarting" align="center" id="restarting" style="display:none; margin-top:5px">
+Restarting Generator...
 </div>
 
 </body>
