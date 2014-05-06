@@ -234,13 +234,14 @@ if (args.debug):
 #
 elif (args.package):
     pkgTargetFolder = getTargetFolder()
+    timestampURL = "http://tsa.starfieldtech.com"
 
     for k in panels.keys():
         pkgFile = pkgTargetFolder + panels[k] + ".zxp"
         print "# Creating package: '%s'" % pkgFile
-        result = subprocess.check_output('ZXPSignCmd -sign %s "%s" %s %s'
+        result = subprocess.check_output('ZXPSignCmd -sign %s "%s" %s %s -tsa %s'
                                          % (srcLocation + k, pkgFile,
-                                            certPath, args.package[0]), shell=True)
+                                            certPath, args.package[0], timestampURL), shell=True)
         print result
 
 #

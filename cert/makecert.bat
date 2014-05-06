@@ -11,4 +11,4 @@ for /f "tokens=* delims= " %%a in ("%fullName%") do set fullName=%%a
 
 set /P certpass="Enter certificate password: " %=%
 del panelcert.p12
-ZXPSignCmd -selfSignedCert US California %USERDOMAIN% "%fullName%" %certpass% panelcert.p12 -email %email% -validityDays 120
+ZXPSignCmd -selfSignedCert US California %USERDOMAIN% "%fullName%" %certpass% panelcert.p12 -email %email% -validityDays 3000
