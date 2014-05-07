@@ -6,51 +6,7 @@
 // John Peterson - Sep 2013
 //
 
-// Uncomment for debugger on load (Disabled in CEP 4.2)
-//window.__adobe_cep__.showDevTools();
-
-// Get a reference to a CSInterface object
-var csInterface = new CSInterface();
-
-function tohex(c) { return Math.round(c).toString(16); }
-
-// Trying to make this a method of UIColor fails...why?
-//UIColor.prototype.toHexString = function()
-function colorToHex( uicolor )
-{
-    var result = "#";
-    result += tohex( uicolor.color.red ) + tohex( uicolor.color.green ) + tohex( uicolor.color.blue );
-    if (uicolor.color.alpha < 255)
-        result += tohex( uicolor.color.alpha );
-    return result.toUpperCase();
-}
-
-function grayToHex( gray )
-{
-	var hex = tohex(gray);
-	return "#"+hex+hex+hex;
-}
-
-// UI item colors based on the four workspace brightness settings.  These are
-// hand-lifted off of the PS UI, because the CEP host environment doesn't
-// provide anything except for the background color.
-var colorTable = {
-	'#34':{ textfg:0xCE, textbg:0x22 },
-	'#53':{ textfg:0xE1, textbg:0x3A },
-	'#B8':{ textfg:0x18, textbg:0xEE },
-	'#D6':{ textfg:0x21, textbg:0xFF } };
-
 var sampleLayerName;
-
-// This swaps the light/dark stylesheets for the control widgets
-function swapCSS( isDark )
-{
-    if ($("#renameLayersTheme").length)
-        $("#renameLayersTheme").remove();
-    var link = document.createElement('link');
-    $("head").append('<link id="renameLayersTheme" href="css/renameLayers_'
-                     + (isDark ? 'D' : 'L') +'.css" rel="stylesheet" type="text/css" />');
-}
 
 function dimScaleValue( isDim )
 {
@@ -61,27 +17,15 @@ function dimScaleValue( isDim )
 	$("#scalevalue").attr("disabled", isDim);
 }
 
-function setupColors()
+// This gets called any time the app's color theme is updated.
+function setupColorHook()
 {
-	// You need to reload the host environment; the csInterface object won't do it for you
-	csInterface.hostEnvironment = JSON.parse(window.__adobe_cep__.getHostEnvironment());
-	window.document.bgColor = colorToHex( csInterface.hostEnvironment.appSkinInfo.panelBackgroundColor );
-
-    var colors = colorTable[window.document.bgColor.slice(0,3)];
-	window.document.fgColor = grayToHex( colors.textfg );
-    
-    swapCSS(colors.textfg > 128);
-	
 	dimScaleValue( $("#scalevalue").is(":disabled") );
 }
 
 function initialize()
 {
-    setupColors();
-    
-    // Causes setupColors() to get called when them color changes
-    csInterface.addEventListener( CSInterface.THEME_COLOR_CHANGED_EVENT, setupColors, null );
-    csInterface.initResourceBundle();
+    initColors( setupColorHook );
     
     // Pull the layername from the HTML so we get a localized string.
     sampleLayerName = $("#samplename").text();
@@ -144,7 +88,6 @@ $("#renamebutton").click( function() {
 });
 
 // These are just developer shortcuts; they shouldn't appear in final code.
-$("#debug").click( function() { window.__adobe_cep__.showDevTools(); } );
 $("#reload").click( function() { window.location.reload(true); } );
 
 initialize();
