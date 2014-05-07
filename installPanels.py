@@ -4,7 +4,7 @@
 #
 # John Peterson (jp@adobe.com), Aug 2013
 #
-# By default, this copies the extension panels into the debug panel
+# By default, this copies the extension panels into the user panel
 # location for the platform.  PanelDebugMode must be "on" for a panel
 # to operate this way.
 #
@@ -12,11 +12,13 @@
 #  -d,--debug {on,off,status}   Set/check PanelDebugMode
 #  -p,--package PASSWORD        Package the panels signed with a
 #                               private certificate, using the certificate's PASSWORD
+#  -i,--install                 Installs the signed panels created with -p into
+#                               the user panel location.  Does not require debug mode.
 #  -z,--zip                     Package the panels as a ZIP archives
 #  -e,--erase                   Remove the panels from the debug location
 #  -l,--launch                  Launch Photoshop after copying.
 #
-# 
+#
 
 import os, sys, shutil, re, getpass, stat, datetime, platform
 import argparse, subprocess, zipfile, ftplib, xml.dom.minidom
@@ -87,7 +89,13 @@ argparser.add_argument('--launch', '-l', action='store_true', default=False,
                        help="Launch Photoshop after copy")
 argparser.add_argument('--erase', '-e', action='store_true', default=False,
                        help="Erase the panels from the debug install location")
+argparser.add_argument('--install', '-i', action='store_true', default=False,
+                       help="Install the signed panels created with -p")
 args = argparser.parse_args( sys.argv[1:] )
+
+if (sum([args.package!=None, args.zip, args.erase, args.install]) > 1):
+    print "# Error: Only one of -p, -z, -e or -i is allowed"
+    sys.exit(0)
 
 def erasePanels():
     # Because Perforce may leave them locked.
@@ -209,6 +217,8 @@ def setupRemoteDebugFiles():
                 os.remove( debugFilename(k) )
 
 #
+# Execution starts here
+#
 # Print or change PlayerDebugMode
 #
 if (args.debug):
@@ -238,12 +248,39 @@ elif (args.package):
 
     for k in panels.keys():
         pkgFile = pkgTargetFolder + panels[k] + ".zxp"
+        # Must remove the file first, otherwise contents not updated.
+        if os.path.exists( pkgFile ):
+            os.remove( pkgFile )
         print "# Creating package: '%s'" % pkgFile
         result = subprocess.check_output('ZXPSignCmd -sign %s "%s" %s %s -tsa %s'
                                          % (srcLocation + k, pkgFile,
                                             certPath, args.package[0], timestampURL), shell=True)
         print result
 
+#
+# Unpack packaged panels into the user's extension folder
+#
+elif (args.install):
+    erasePanels()
+    pkgTargetFolder = getTargetFolder()
+    zxpFiles = filter(os.path.exists, [pkgTargetFolder + panels[k] + ".zxp" for k in panels.keys()])
+    if len(zxpFiles) > 0:
+        for f in zxpFiles:
+            zps = zipfile.ZipFile( f )
+            destFolder = osDestPath + os.path.splitext(os.path.basename(f))[0]
+            print "# Extracting %s \n   to %s" % (f, destFolder)
+            os.mkdir( destFolder )
+            os.chdir( destFolder )
+
+            zipNames = zps.namelist()
+            for n in zipNames:
+                if (n[-1] == '/'):
+                    os.mkdir( os.path.normpath( n ))
+                else:
+                    file( os.path.normpath(n), 'wb' ).write(zps.read(n))
+    else:
+        print "# No packaged panels to install, use --package first"
+        sys.exit(0)
 #
 # Create a .zip archive
 #
