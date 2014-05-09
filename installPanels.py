@@ -20,30 +20,50 @@
 #
 #
 
-import os, sys, shutil, re, getpass, stat, datetime, platform
+import os, sys, shutil, re, getpass, stat, datetime, platform, glob
 import argparse, subprocess, zipfile, ftplib, xml.dom.minidom
 if sys.platform == 'win32':
     import _winreg
-
-
-# Dictionary of panel folders to copy (src file name, dest name)
-panels = {"renamelayers":"Rename Layers", "generatorconfig":"Generator Config"}
 
 # PS executable location, used just to launch PS
 PSexePath = {"win32":"C:\\Program Files\\Adobe\\Adobe Photoshop CC (64 Bit)\\Photoshop.exe",
              "darwin": "/Applications/Adobe Photoshop CC/Adobe Photoshop CC.app/Contents/MacOS/Adobe Photoshop CC"
              }[sys.platform]
 
-# Where the panel lives.  Uses current dir
-# unless there's an entry in srcPaths
+#
+# Pull out the panel ID and name from the manifest file
+#
+def getPanelInfo(manifestPath):
+    extInfo = [s for s in open(manifestPath,'r').readlines() if re.match("^<ExtensionManifest.*", s)]
+    if (len(extInfo) > 0):
+        extInfo = extInfo[0]
+    m = re.search('ExtensionBundleId\s*=\s*["][\w.]*[.](\w+)["]', extInfo)
+    extID = m.group(1) if m else "ERROR_FINDING_ID"
+    m = re.search('ExtensionBundleName\s*=\s*["]([\w\s]+)["]', extInfo)
+    extName = m.group(1) if m else extID
+    return (extID, extName)
+
+# Dictionary of panel folders to copy (src file name, dest name)
+#panels = {"renamelayers":"Rename Layers", "generatorconfig":"Generator Config"}
+panels = {}
+panelFolders = {}
+
+#
+# Find installable extensions.  Assumes this script is in
+# the top level folder containing the extension sources.
+#
 srcLocation = sys.path[0] + os.sep
-if (not os.path.exists( srcLocation + "renamelayers")):
-    print "# Error - Script must be run from the generator-panels folder"
+os.chdir(srcLocation)
+manifestFiles = glob.glob("*/CSXS/manifest.xml")
+
+if len(manifestFiles) == 0:
+    print "# Error - no extension manifests found"
     sys.exit(-1)
 
-# Add Kuler if it's there.
-if (os.path.exists(srcLocation + "kuler")):
-    panels['kuler'] = "Kuler"
+for f in manifestFiles:
+    ID, name = getPanelInfo(f)
+    panels[ID] = name
+    panelFolders[ID] = f.split(os.sep)[0]
 
 # Location of the certificate file used to sign the package.
 certPath = os.path.join( srcLocation, "cert", "panelcert.p12" )
@@ -110,7 +130,7 @@ def erasePanels():
             for df in [root + os.sep + f for root, dirs, files in os.walk(destPath) for f in files]:
                 makeWritable(df)
             shutil.rmtree( destPath )
-            
+
     # Leaving the cache around can cause problems.
     cachePath = os.path.normpath( osDestPath + "../cache" )
     if os.path.exists(cachePath):
@@ -129,7 +149,7 @@ def createRemoteDebugXML(panel):
   </Extension>
 """
     # Fish the ID for each extension in the package out of the CSXS/manifest.xml file
-    manifestXML = xml.dom.minidom.parse( os.path.join( srcLocation, panel, "CSXS", "manifest.xml" ) )
+    manifestXML = xml.dom.minidom.parse( os.path.join( srcLocation, panelFolders[panel], "CSXS", "manifest.xml" ) )
     extensions = manifestXML.getElementsByTagName("ExtensionList")[0].getElementsByTagName("Extension")
     debugText = """<?xml version="1.0" encoding="UTF-8"?>\n"""
     debugText += "<ExtensionList>\n"
@@ -174,7 +194,7 @@ def panelExecutionState( debugKey, panelDebugValue=None ):
     elif sys.platform == "darwin":
         import subprocess, plistlib
         plistFile = os.path.expanduser( "~/Library/Preferences/com.adobe.CSXS.5.plist" )
-        
+
         # First, make sure the Plist is in text format
         subprocess.check_output( "plutil -convert xml1 " + plistFile, shell=True )
         plist = plistlib.readPlist( plistFile )
@@ -288,6 +308,7 @@ elif (args.install):
                     os.mkdir( os.path.normpath( n ))
                 else:
                     file( os.path.normpath(n), 'wb' ).write(zps.read(n))
+            zps.close()
     else:
         print "# No packaged panels to install, use --package first"
         sys.exit(0)
@@ -302,7 +323,7 @@ elif (args.zip):
         zipTargetFile = zipTargetFolder + k + ".zip"
         print "# Creating archive: " + zipTargetFile
         zf = zipfile.ZipFile( zipTargetFile, 'w', zipfile.ZIP_DEFLATED )
-        os.chdir( srcLocation + k )
+        os.chdir( srcLocation + panelFolders[k] )
         fileList = [root + os.sep + f for root, dirs, files in os.walk(".") for f in files]
         for f in fileList:
             zf.write( f )
