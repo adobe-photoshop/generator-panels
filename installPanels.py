@@ -254,7 +254,7 @@ elif (args.package):
         print "# Creating package: '%s'" % pkgFile
         result = ""
         try:
-            result = subprocess.check_output('xxZXPSignCmd -sign %s "%s" %s %s -tsa %s'
+            result = subprocess.check_output('ZXPSignCmd -sign %s "%s" %s %s -tsa %s'
                                              % (srcLocation + k, pkgFile,
                                                 certPath, args.package[0], timestampURL), shell=True)
         except subprocess.CalledProcessError as procErr:
