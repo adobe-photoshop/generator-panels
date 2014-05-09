@@ -252,10 +252,19 @@ elif (args.package):
         if os.path.exists( pkgFile ):
             os.remove( pkgFile )
         print "# Creating package: '%s'" % pkgFile
-        result = subprocess.check_output('ZXPSignCmd -sign %s "%s" %s %s -tsa %s'
-                                         % (srcLocation + k, pkgFile,
-                                            certPath, args.package[0], timestampURL), shell=True)
-        print result
+        result = ""
+        try:
+            result = subprocess.check_output('ZXPSignCmd -sign %s "%s" %s %s -tsa %s'
+                                             % (srcLocation + k, pkgFile,
+                                                certPath, args.package[0], timestampURL), shell=True)
+        except subprocess.CalledProcessError as procErr:
+            if (procErr.returncode == 1):
+                print "## Signing package failed.  ZXPSignCmd is not installed?"
+            else:
+                print "## Signing package %s failed." % (panels[k] + ".zxp")
+            break
+        else:
+            print result
 
 #
 # Unpack packaged panels into the user's extension folder
