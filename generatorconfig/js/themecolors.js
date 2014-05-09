@@ -78,5 +78,14 @@ function initColors( setupHook )
     // Causes setupColors() to get called when them color changes
     csInterface.addEventListener( CSInterface.THEME_COLOR_CHANGED_EVENT, setupColors, null );
     csInterface.initResourceBundle();
+
+    // Look for the debug control file, and if it exists,
+    // enable debugging controls
+    var path = require("path");
+    var fs = require("fs");
+    var debugPath = path.join(csInterface.getSystemPath( SystemPath.EXTENSION ), ".debug")
+    $(".debuglink").toggle( fs.existsSync(debugPath) );
 }
 
+// These are just developer shortcuts; they shouldn't appear in final code.
+$("#reload").click( function() { window.location.reload(true); } );

@@ -7,6 +7,7 @@
 //
 
 var sampleLayerName;
+var isDebugOn = false;
 
 function dimScaleValue( isDim )
 {
@@ -33,6 +34,9 @@ function initialize()
 
     // Force one call so sample name and option pop-ups are initialized
     $("#suffixmenu").change();
+    
+    var plugPath = csInterface.getSystemPath( SystemPath.EXTENSION );
+    plugPath + "Rename Layers" + ".debug"
 }
 
 function getParams() {

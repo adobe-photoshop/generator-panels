@@ -70,8 +70,4 @@ $("#revertbutton").click( function() {
     $(".configbutton").prop("disabled", true);
 });
 
-// These are just developer shortcuts; they shouldn't appear in final code.
-// $("#debug").click( function() { window.__adobe_cep__.showDevTools(); } );
-$("#reload").click( function() { window.location.reload(true); } );
-
 initialize();
