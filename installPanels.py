@@ -37,6 +37,9 @@ def getPanelInfo(manifestPath):
     extInfo = [s for s in open(manifestPath,'r').readlines() if re.match("^<ExtensionManifest.*", s)]
     if (len(extInfo) > 0):
         extInfo = extInfo[0]
+    else:
+         print "# No ExtensionManifest for %s" % manifestPath
+         return (None, None)
     m = re.search('ExtensionBundleId\s*=\s*["][\w.]*[.](\w+)["]', extInfo)
     extID = m.group(1) if m else "ERROR_FINDING_ID"
     m = re.search('ExtensionBundleName\s*=\s*["]([\w\s]+)["]', extInfo)
@@ -62,8 +65,9 @@ if len(manifestFiles) == 0:
 
 for f in manifestFiles:
     ID, name = getPanelInfo(f)
-    panels[ID] = name
-    panelFolders[ID] = f.split(os.sep)[0]
+    if (ID):
+        panels[ID] = name
+        panelFolders[ID] = f.split(os.sep)[0]
 
 # Location of the certificate file used to sign the package.
 certPath = os.path.join( srcLocation, "cert", "panelcert.p12" )
@@ -339,8 +343,8 @@ else:
     # Copy the files
     for k in panels.keys():
         destPath = osDestPath + panels[k]
-        print "# Copying " + srcLocation + k + "\n  to " + destPath
-        shutil.copytree( srcLocation + k, destPath )
+        print "# Copying " + srcLocation + panelFolders[k] + "\n  to " + destPath
+        shutil.copytree( srcLocation + panelFolders[k], destPath )
     setupRemoteDebugFiles()
 
 # Launch PS
