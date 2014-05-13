@@ -30,25 +30,123 @@ PSexePath = {"win32":"C:\\Program Files\\Adobe\\Adobe Photoshop CC (64 Bit)\\Pho
              "darwin": "/Applications/Adobe Photoshop CC/Adobe Photoshop CC.app/Contents/MacOS/Adobe Photoshop CC"
              }[sys.platform]
 
-#
-# Pull out the panel ID and name from the manifest file
-#
-def getPanelInfo(manifestPath):
+# Extract the panel ID and name from the Manifest file
+def getExtensionInfo(manifestPath):
     extInfo = [s for s in open(manifestPath,'r').readlines() if re.match("^<ExtensionManifest.*", s)]
     if (len(extInfo) > 0):
         extInfo = extInfo[0]
+        return extInfo
     else:
-         print "# No ExtensionManifest for %s" % manifestPath
-         return (None, None)
-    m = re.search('ExtensionBundleId\s*=\s*["][\w.]*[.](\w+)["]', extInfo)
-    extID = m.group(1) if m else "ERROR_FINDING_ID"
-    m = re.search('ExtensionBundleName\s*=\s*["]([\w\s]+)["]', extInfo)
-    extName = m.group(1) if m else extID
-    return (extID, extName)
+        print "# No ExtensionManifest for %s" % manifestPath
+        return None
 
-# Dictionary of panel folders to copy (src file name, dest name)
-panels = {}
-panelFolders = {}
+class Panel:
+    #
+    # Pull out the panel ID and name from the manifest file
+    #
+    def __init__(self, extInfo, manifestPath):
+        m = re.search('ExtensionBundleId\s*=\s*["][\w.]*[.](\w+)["]', extInfo)
+        self.panelID = m.group(1) if m else "ERROR_FINDING_ID"
+        m = re.search('ExtensionBundleName\s*=\s*["]([\w\s]+)["]', extInfo)
+        self.panelName = m.group(1) if m else self.panelID
+        self.panelSrcFolder = manifestPath.split(os.sep)[0]
+
+    # Copy panel source to the deployment folder
+    def copyPanel(self):
+        destPath = osDestPath + self.panelName
+        print "# Copying " + srcLocation + self.panelSrcFolder + "\n  to " + destPath
+        shutil.copytree( srcLocation + self.panelSrcFolder, destPath )
+
+    # Unlock, then remove the panels
+    def erasePanel(self):
+        # Because Perforce may leave them locked.
+        def makeWritable( path ):
+            os.chmod( path, os.stat( path ).st_mode | stat.S_IWRITE )
+
+        # Unlock, then remove the panels
+        destPath = osDestPath + self.panelName
+        if (os.path.exists( destPath )):
+            print "# Removing " + destPath
+            for df in [root + os.sep + f for root, dirs, files in os.walk(destPath) for f in files]:
+                makeWritable( df )
+            shutil.rmtree( destPath )
+            
+    # Create the .debug file for enabling the remote debugger
+    def debugFilename(self):
+        return os.path.join( osDestPath, self.panelName, ".debug" )
+
+    # Setup/remove remote debug config files
+    def createRemoteDebugXML(self):
+        global portNumber
+        extensionTemplate = """  <Extension Id="%s">
+    <HostList>
+      <Host Name="PHXS" Port="%d"/>
+    </HostList>
+  </Extension>
+"""
+        # Fish the ID for each extension in the package out of the CSXS/manifest.xml file
+        manifestXML = xml.dom.minidom.parse( os.path.join( srcLocation, self.panelSrcFolder, "CSXS", "manifest.xml" ) )
+        extensions = manifestXML.getElementsByTagName("ExtensionList")[0].getElementsByTagName("Extension")
+        debugText = """<?xml version="1.0" encoding="UTF-8"?>\n"""
+        debugText += "<ExtensionList>\n"
+        for ext in extensions:
+            extName = ext.getAttribute("Id")
+            debugText += extensionTemplate % (extName, portNumber)
+            print "# Remote Debug %s at http://localhost:%d" % (extName, portNumber)
+            portNumber += 1
+        debugText += "</ExtensionList>\n"
+        file(self.debugFilename(), 'w' ).write(debugText)
+        
+    def setupRemoteDebugFile(self, debugEnabled):
+        if debugEnabled:
+            self.createRemoteDebugXML()
+        else:
+            if (os.path.exists( self.debugFilename() )):
+                os.remove( self.debugFilename() )
+                print "# Removing debug file for %s" % self.panelName
+
+    #
+    # Create a signed double-clickable install package
+    # There's some more info on self-signing here:
+    # http://forums.adobe.com/message/5714997
+    #
+    def packagePanel(self):
+        pkgTargetFolder = getTargetFolder()
+        timestampURL = "http://tsa.starfieldtech.com"
+
+        pkgFile = pkgTargetFolder + self.panelName + ".zxp"
+        # Must remove the file first, otherwise contents not updated.
+        if os.path.exists( pkgFile ):
+            os.remove( pkgFile )
+        print "# Creating package: '%s'" % pkgFile
+        result = ""
+        try:
+            result = subprocess.check_output('ZXPSignCmd -sign %s "%s" %s %s -tsa %s'
+                                             % (srcLocation + self.panelSrcFolder, pkgFile,
+                                                certPath, args.package[0], timestampURL), shell=True)
+        except subprocess.CalledProcessError as procErr:
+            if (procErr.returncode == 1):
+                print
+                print "## Signing package failed.  ZXPSignCmd is not installed?"
+            else:
+                print "## Signing package %s failed." % (self.panelName + ".zxp")
+            return False
+        else:
+            print result
+            return True
+            
+    # Make the zip of the panel source
+    def zipPanel(self):
+        zipTargetFolder = getTargetFolder()
+
+        zipTargetFile = zipTargetFolder + self.panelID + ".zip"
+        print "# Creating archive: " + zipTargetFile
+        zf = zipfile.ZipFile( zipTargetFile, 'w', zipfile.ZIP_DEFLATED )
+        os.chdir( srcLocation + self.panelSrcFolder )
+        fileList = [root + os.sep + f for root, dirs, files in os.walk(".") for f in files]
+        for f in fileList:
+            zf.write( f )
+        zf.close()
 
 #
 # Find installable extensions.  Assumes this script is in
@@ -62,11 +160,8 @@ if len(manifestFiles) == 0:
     print "# Error - no extension manifests found"
     sys.exit(-1)
 
-for f in manifestFiles:
-    ID, name = getPanelInfo(f)
-    if (ID):
-        panels[ID] = name
-        panelFolders[ID] = f.split(os.sep)[0]
+# Load the panel info from the extension
+panelList = [Panel(getExtensionInfo(f), f) for f in manifestFiles if getExtensionInfo(f)]
 
 # Location of the certificate file used to sign the package.
 certPath = os.path.join( srcLocation, "cert", "panelcert.p12" )
@@ -121,48 +216,14 @@ if (sum([args.package!=None, args.zip, args.erase, args.install]) > 1):
     sys.exit(0)
 
 def erasePanels():
-    # Because Perforce may leave them locked.
-    def makeWritable( path ):
-        os.chmod( path, os.stat( path ).st_mode | stat.S_IWRITE )
-
     # Unlock, then remove the panels
-    for k in panels.keys():
-        destPath = osDestPath + panels[k]
-        if (os.path.exists( destPath )):
-            print "# Removing " + destPath
-            for df in [root + os.sep + f for root, dirs, files in os.walk(destPath) for f in files]:
-                makeWritable(df)
-            shutil.rmtree( destPath )
+    for p in panelList:
+        p.erasePanel()
 
     # Leaving the cache around can cause problems.
     cachePath = os.path.normpath( osDestPath + "../cache" )
     if os.path.exists(cachePath):
         shutil.rmtree(cachePath);
-
-# Create the .debug file for enabling the remote debugger
-def debugFilename( panel ):
-    return os.path.join( osDestPath, panels[panel], ".debug" )
-
-def createRemoteDebugXML(panel):
-    global portNumber
-    extensionTemplate = """  <Extension Id="%s">
-    <HostList>
-      <Host Name="PHXS" Port="%d"/>
-    </HostList>
-  </Extension>
-"""
-    # Fish the ID for each extension in the package out of the CSXS/manifest.xml file
-    manifestXML = xml.dom.minidom.parse( os.path.join( srcLocation, panelFolders[panel], "CSXS", "manifest.xml" ) )
-    extensions = manifestXML.getElementsByTagName("ExtensionList")[0].getElementsByTagName("Extension")
-    debugText = """<?xml version="1.0" encoding="UTF-8"?>\n"""
-    debugText += "<ExtensionList>\n"
-    for ext in extensions:
-        extName = ext.getAttribute("Id")
-        debugText += extensionTemplate % (extName, portNumber)
-        print "# Remote Debug %s at http://localhost:%d" % (extName, portNumber)
-        portNumber += 1
-    debugText += "</ExtensionList>\n"
-    file(debugFilename(panel), 'w' ).write(debugText)
 
 #
 # Examine the state of debugKey (either "Logging" or "PlayerDebugMode")
@@ -232,15 +293,11 @@ def panelExecutionState( debugKey, panelDebugValue=None ):
 #
 def setupRemoteDebugFiles():
     debugEnabled = panelExecutionState( 'PlayerDebugMode' ) == '1'
-    for k in panels.keys():
-        if debugEnabled:
-            createRemoteDebugXML(k)
-        else:
-            if (os.path.exists( debugFilename(k) )):
-                os.remove( debugFilename(k) )
+    for p in panelList:
+        p.setupRemoteDebugFile(debugEnabled)
 
 #
-# Execution starts here
+# Argument processing starts here
 #
 # Print or change PlayerDebugMode
 #
@@ -266,37 +323,16 @@ if (args.debug):
 # http://forums.adobe.com/message/5714997
 #
 elif (args.package):
-    pkgTargetFolder = getTargetFolder()
-    timestampURL = "http://tsa.starfieldtech.com"
-
-    for k in panels.keys():
-        pkgFile = pkgTargetFolder + panels[k] + ".zxp"
-        # Must remove the file first, otherwise contents not updated.
-        if os.path.exists( pkgFile ):
-            os.remove( pkgFile )
-        print "# Creating package: '%s'" % pkgFile
-        result = ""
-        try:
-            result = subprocess.check_output('ZXPSignCmd -sign %s "%s" %s %s -tsa %s'
-                                             % (srcLocation + k, pkgFile,
-                                                certPath, args.package[0], timestampURL), shell=True)
-        except subprocess.CalledProcessError as procErr:
-            if (procErr.returncode == 1):
-                print
-                print "## Signing package failed.  ZXPSignCmd is not installed?"
-            else:
-                print "## Signing package %s failed." % (panels[k] + ".zxp")
+    for p in panelList:
+        if not p.packagePanel():
             break
-        else:
-            print result
-
 #
 # Unpack packaged panels into the user's extension folder
 #
 elif (args.install):
     erasePanels()
     pkgTargetFolder = getTargetFolder()
-    zxpFiles = filter(os.path.exists, [pkgTargetFolder + panels[k] + ".zxp" for k in panels.keys()])
+    zxpFiles = filter(os.path.exists, [pkgTargetFolder + p.panelName + ".zxp" for p in panelList])
     if len(zxpFiles) > 0:
         for f in zxpFiles:
             zps = zipfile.ZipFile( f )
@@ -319,18 +355,8 @@ elif (args.install):
 # Create a .zip archive
 #
 elif (args.zip):
-    zipTargetFolder = getTargetFolder()
-
-    # Make the zip
-    for k in panels.keys():
-        zipTargetFile = zipTargetFolder + k + ".zip"
-        print "# Creating archive: " + zipTargetFile
-        zf = zipfile.ZipFile( zipTargetFile, 'w', zipfile.ZIP_DEFLATED )
-        os.chdir( srcLocation + panelFolders[k] )
-        fileList = [root + os.sep + f for root, dirs, files in os.walk(".") for f in files]
-        for f in fileList:
-            zf.write( f )
-        zf.close()
+    for p in panelList:
+        p.zipPanel()
 
 elif (args.erase):
     erasePanels()
@@ -340,10 +366,8 @@ elif (args.erase):
 else:
     erasePanels()
     # Copy the files
-    for k in panels.keys():
-        destPath = osDestPath + panels[k]
-        print "# Copying " + srcLocation + panelFolders[k] + "\n  to " + destPath
-        shutil.copytree( srcLocation + panelFolders[k], destPath )
+    for p in panelList:
+        p.copyPanel()
     setupRemoteDebugFiles()
 
 # Launch PS
