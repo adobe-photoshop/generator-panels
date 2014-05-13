@@ -47,7 +47,6 @@ def getPanelInfo(manifestPath):
     return (extID, extName)
 
 # Dictionary of panel folders to copy (src file name, dest name)
-#panels = {"renamelayers":"Rename Layers", "generatorconfig":"Generator Config"}
 panels = {}
 panelFolders = {}
 
