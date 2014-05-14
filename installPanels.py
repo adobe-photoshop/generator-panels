@@ -130,11 +130,10 @@ class Panel:
                 print "## Signing package failed.  ZXPSignCmd is not installed?"
             else:
                 print "## Signing package %s failed." % (self.panelName + ".zxp")
-            return False
+            sys.exit(procErr.returncode)
         else:
             print result
-            return True
-            
+
     # Make the zip of the panel source
     def zipPanel(self):
         zipTargetFolder = getTargetFolder()
@@ -324,8 +323,8 @@ if (args.debug):
 #
 elif (args.package):
     for p in panelList:
-        if not p.packagePanel():
-            break
+        packagePanel():
+
 #
 # Unpack packaged panels into the user's extension folder
 #
