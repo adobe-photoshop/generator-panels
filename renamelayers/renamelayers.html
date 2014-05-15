@@ -36,22 +36,27 @@
     </select>
 </div>
     
-<p>
+<div style="margin-bottom:0px; margin-top:10px">
 <div>
     <label id="scalechklabel" for="scale">
         <input type="checkbox" name="scale" id="scale">
         <span data-locale="rename-scale-checkbox" id="sclspan">Scale</span>
     </label>
-    <input id="scalevalue" class="ccstyle" type="text" size="4" maxlength="4" role="textbox" value="100" disabled />%
+    <input style="margin-left:8px;" id="scalevalue" class="ccstyle" type="text" size="4" maxlength="4" role="textbox" value="100" disabled />%
 </div>
+<div style="margin-top:3px">
 	<label id="resizechklabel" for="resize">
     	<input type="checkbox" name="resize" id="resize">
         <span data-locale="rename-resize-checkbox" id="rszspan">Resize</span>
     </label>
     <input id="resizeX" class="ccstyle" type="text" size="4" maxlength="4" role="textbox" disabled />x<input id="resizeY" class="ccstyle" type="text" size="4" maxlength="4" role="textbox" disabled />
-</p>
+</div>
+<div>
+	<input style="margin-left:112px; margin-top:0px" class="chainlink" type="checkbox" name="locksize" id="locksize" checked>
+</div>
+</div>
     
-<button data-locale="rename-rename-button" class="ccstyle" id="renamebutton">Rename</button>
+<button style="margin-top:-2px" data-locale="rename-rename-button" class="ccstyle" id="renamebutton">Rename</button>
 <p>
     <div data-locale="rename-sample-name" id="samplename">layername</div>
 </p>

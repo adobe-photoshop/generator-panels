@@ -9,24 +9,47 @@
 var sampleLayerName;
 var isDebugOn = false;
 
-function dimScaleValue( isDim )
+function dimTextValue( textID, isDim )
 {
 	var colors = colorTable[window.document.bgColor.slice(0,3)];
 	var colorStr = grayToHex(isDim ? ((colors.textfg + colors.textbg)/2)|0 : colors.textfg);
 	// Note: Use ".css" instead of ".attr" if the attr is defined in a style sheet.
-	$("#scalevalue").css('color', colorStr );
-	$("#scalevalue").attr("disabled", isDim);
+	$(textID).css('color', colorStr );
+	$(textID).attr("disabled", isDim);
 }
 
 // This gets called any time the app's color theme is updated.
 function setupColorHook()
 {
-	dimScaleValue( $("#scalevalue").is(":disabled") );
+    function dimTxt(id) { dimTextValue( id, $(id).is(":disabled") ); }
+    
+    dimTxt( "#scalevalue" );
+	dimTxt( "#resizeX" );
+    dimTxt( "#resizeY" );
+}
+
+function setResizeValues(sizeText)
+{
+    size = JSON.parse(sizeText)
+    if (size) {
+        $("#resizeX").val(String(size.width));
+        $("#resizeY").val(String(size.height));
+    }
+    else {
+        $("#resizeX").val("");
+        $("#resizeY").val("");
+    }
+}
+
+function loadLayerSize()
+{
+    csInterface.evalScript("layerOps.activeLayerBounds()", setResizeValues);
 }
 
 function initialize()
 {
     initColors( setupColorHook );
+    loadLayerSize();
     
     // Pull the layername from the HTML so we get a localized string.
     sampleLayerName = $("#samplename").text();
@@ -35,8 +58,6 @@ function initialize()
     // Force one call so sample name and option pop-ups are initialized
     $("#suffixmenu").change();
     
-    var plugPath = csInterface.getSystemPath( SystemPath.EXTENSION );
-    plugPath + "Rename Layers" + ".debug"
 }
 
 function getParams() {
@@ -72,10 +93,18 @@ $("#scale").change( function() {
 	var scaleOff = !($("#scale").is(":checked"))
 	if (scaleOff)
 		$("#scalevalue").val("100");
-	dimScaleValue( scaleOff );
+	dimTextValue( "#scalevalue", scaleOff );
 	// Curious: changing scalevalue here does
 	// not kick off an onchange call for it.
 	updateSample();
+});
+
+$("#resize").change( function() {
+    var resizeOn = $("#resize").is(":checked");
+    if (resizeOn)
+        loadLayerSize();
+    dimTextValue( "#resizeX", !resizeOn );
+    dimTextValue( "#resizeY", !resizeOn );
 });
 
 // Handle keyup so sample layer name
@@ -90,8 +119,5 @@ $("#renamebutton").click( function() {
     // The path to this script is defined in the manifest.xml file.
     csInterface.evalScript("layerOps.doRename(" + JSON.stringify( getParams() ) + ");");
 });
-
-// These are just developer shortcuts; they shouldn't appear in final code.
-$("#reload").click( function() { window.location.reload(true); } );
 
 initialize();

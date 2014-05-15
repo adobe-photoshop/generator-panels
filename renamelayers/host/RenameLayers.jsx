@@ -124,6 +124,16 @@ LayerOperations.prototype.layerKind = function( layerIndex )
 	return resultDesc.getInteger( klayerKindStr );
 }
 
+LayerOperations.prototype.activeLayerBounds = function()
+{
+    if (app.documents.length === 0)
+        return "null";
+    var bounds = app.activeDocument.activeLayer.bounds;
+    var width = (bounds[2]-bounds[0]).as('px');
+    var height = (bounds[3]-bounds[1]).as('px');
+    return '{ "width":' + width + ', "height":' + height +'}';
+}
+
 // Return a list of the currently selected layers.  This handles LayerSets.
 LayerOperations.prototype.getSelectedLayerIndicies = function()
 {
@@ -230,3 +240,4 @@ layerOps.doRename = function(params) {
 
 //layerOps.doRename({suffix:".jpg",scale:"",renfolder:false});
 
+//layerOps.activeLayerBounds().width;

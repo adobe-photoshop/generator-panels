@@ -49,6 +49,24 @@ input[type="checkbox"]:checked {
 input[type="checkbox"]:checked:hover {
   background: url("../Images/mkCheckSheet_D.png") -44px top no-repeat;
 }
+/********Chain Checkbox**********/
+input.chainlink[type="checkbox"] {
+  -webkit-appearance: none;
+  display: inline-block;
+  width: 16px;
+  margin-top: 2px;
+  height: 10px;
+  margin-right: 0px;
+  margin-left: 0px;
+  vertical-align: middle;
+  background: url("../Images/unchain_D.png") left top no-repeat,
+      -webkit-linear-gradient(#4E4E4E, #484848 40%, #3D3D3D);
+}
+input.chainlink[type="checkbox"]:checked {
+  background: url("../Images/chain_D.png") top no-repeat,
+      -webkit-linear-gradient(#4E4E4E, #484848 40%, #3D3D3D);
+}
+
 /********radio button**********/
 input[type="radio"] {
   display: none;
