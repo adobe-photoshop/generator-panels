@@ -323,7 +323,7 @@ if (args.debug):
 #
 elif (args.package):
     for p in panelList:
-        packagePanel():
+        p.packagePanel()
 
 #
 # Unpack packaged panels into the user's extension folder
