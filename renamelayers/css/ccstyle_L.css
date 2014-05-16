@@ -50,20 +50,23 @@ input[type="checkbox"]:checked {
 input[type="checkbox"]:checked:hover {
   background: url("../Images/mkCheckSheet_L.png") -44px top no-repeat;
 }
+
 /********Chain Checkbox**********/
 input.chainlink[type="checkbox"] {
   -webkit-appearance: none;
   display: inline-block;
-  width: 16px;
-  margin-top: 2px;
-  height: 10px;
+  width: 14px;
+  margin-top: 0px;
+  border: 0px;
+  padding: 0px;
+  height: 11px;
   margin-right: 0px;
   margin-left: 0px;
   vertical-align: middle;
-  background: url("../Images/mkCheckSheet_L.png") left top no-repeat;
+  background: url("../Images/P_UnLinkHori_Sm_N.png");
 }
 input.chainlink[type="checkbox"]:checked {
-  background: url("../Images/chain_N.png") top no-repeat;
+  background: url("../Images/P_LinkHori_Sm_N.png");
 }
 
 /********radio button**********/

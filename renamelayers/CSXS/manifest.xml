@@ -27,11 +27,11 @@
           <Menu>%rename-panel-menu-name</Menu>
           <Geometry>
             <MinSize>
-              <Height>195</Height>
+              <Height>160</Height>
               <Width>200</Width>
             </MinSize>
             <Size>
-              <Height>195</Height>
+              <Height>160</Height>
               <Width>216</Width>
             </Size>
           </Geometry>

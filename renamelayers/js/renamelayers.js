@@ -8,6 +8,16 @@
 
 var sampleLayerName;
 var isDebugOn = false;
+var layerSize;
+
+// The event IDs are decoded from the OSType values
+// in Photoshop.
+var PSEventIDs = [
+    1298866208,      // "Mk  " eventMake
+    1147958304,      // "Dlt " eventDelete
+    1131180832,      // "Cls " eventClose
+    1936483188,      // "slct" eventSelect
+    1936028772];     // "setd" eventSet
 
 function dimTextValue( textID, isDim )
 {
@@ -30,15 +40,17 @@ function setupColorHook()
 
 function setResizeValues(sizeText)
 {
-    size = JSON.parse(sizeText)
-    if (size) {
-        $("#resizeX").val(String(size.width));
-        $("#resizeY").val(String(size.height));
+    layerSize = JSON.parse(sizeText);
+    if (layerSize) {
+        $("#resizeX").val(String(layerSize.width));
+        $("#resizeY").val(String(layerSize.height));
     }
     else {
         $("#resizeX").val("");
         $("#resizeY").val("");
+        layerSize = null;
     }
+    updateSample(); // Must update here to avoid race condition
 }
 
 function loadLayerSize()
@@ -46,14 +58,37 @@ function loadLayerSize()
     csInterface.evalScript("layerOps.activeLayerBounds()", setResizeValues);
 }
 
+function HandlePSEvent(csEvent)
+{
+    console.log("Event!");
+    try {
+        if (csEvent.extensionId === csInterface.getExtensionID())
+        {
+            loadLayerSize();
+            if (typeof csEvent.data != "undefined") {
+                console.log(csEvent.data);
+            }
+        }
+    } catch (err) {
+        console.log("PSCallback error: " + err);
+    }
+}
+
 function initialize()
 {
     initColors( setupColorHook );
-    loadLayerSize();
+    
+    // Register callback for PS events
+    csInterface.addEventListener("com.adobe.PhotoshopCallback", HandlePSEvent);
+    // Send an event to register for events
+    var event = new CSEvent("com.adobe.PhotshopRegisterEvent", "APPLICATION");
+    event.extensionId = csInterface.getExtensionID();
+    event.data = PSEventIDs.join(", ");
+    csInterface.dispatchEvent(event);
     
     // Pull the layername from the HTML so we get a localized string.
     sampleLayerName = $("#samplename").text();
-    updateSample();
+    loadLayerSize();
 
     // Force one call so sample name and option pop-ups are initialized
     $("#suffixmenu").change();
@@ -66,14 +101,31 @@ function getParams() {
     if (suffix == ".jpg") suffix += $("#jpgqual").val();
     
     var scaleTxt = (suffix != "") ? $("#scalevalue").val() + "%" : "100%";
-    
-    return {'suffix': suffix, 'scale':scaleTxt, 'renfolder':true };
+    var resizeTxt = "";
+    if ((suffix != "") && $("#resize").is(":checked")) {
+        resizeTxt = $("#resizeX").val() + "x" + $("#resizeY").val();
+    }
+
+    return {'suffix': suffix, 'scale':scaleTxt, 'resize':resizeTxt, 'renfolder':true };
 }
 
 function updateSample() {
 	var params = getParams();
 	var scaleTxt = (params.scale == "100%") ? "" : (params.scale + " ");
-	$("#samplename").text( scaleTxt + sampleLayerName + params.suffix );
+    $("#samplename").css("font-size", "10pt");
+    if (params.resize === "") {
+        // just rename, or scale only
+        $("#samplename").text( scaleTxt + sampleLayerName + params.suffix );
+    }
+    else if (scaleTxt === "") {
+        // Resize text only
+        $("#samplename").text( params.resize + " " + sampleLayerName + params.suffix );
+    }
+    else {// Both resize and scale
+        $("#samplename").css("font-size", "7pt");
+        $("#samplename").text( scaleTxt + sampleLayerName + params.suffix + ","
+                               + params.resize + " " + sampleLayerName + params.suffix );
+    }
 }
 
 // Menu / control handlers
@@ -99,19 +151,41 @@ $("#scale").change( function() {
 	updateSample();
 });
 
+// Handle keyup so sample layer name updates as you type the scale.
+$("#scalevalue").keyup( function() {
+	if ($("#scale").is(":checked"))
+		updateSample();
+});
+
+
 $("#resize").change( function() {
     var resizeOn = $("#resize").is(":checked");
     if (resizeOn)
         loadLayerSize();
+    else
+        updateSample();
     dimTextValue( "#resizeX", !resizeOn );
     dimTextValue( "#resizeY", !resizeOn );
 });
 
-// Handle keyup so sample layer name
-// updates as you type the scale.
-$("#scalevalue").keyup( function() {
-	if ($("#scale").is(":checked"))
-		updateSample();
+$("#resizeX").keyup( function() {
+    if ($("#resize").is(":checked") 
+        && $("#locksize").is(":checked")
+        && layerSize) {
+        var ratio = Number($("#resizeX").val()) / layerSize.width;
+        $("#resizeY").val(String(Math.round(ratio * layerSize.height)));
+    }
+    updateSample();
+});
+
+$("#resizeY").keyup( function() {
+    if ($("#resize").is(":checked")
+        && $("#locksize").is(":checked")
+        && layerSize) {
+        var ratio = Number($("#resizeY").val()) / layerSize.height;
+        $("#resizeX").val(String(Math.round(ratio * layerSize.width)));
+    }
+    updateSample();
 });
 
 $("#renamebutton").click( function() {

@@ -160,7 +160,7 @@ LayerOperations.prototype.getSelectedLayerIndicies = function()
 }
 
 // Walk through the selected layers, and add (or remove) suffixes from them.
-LayerOperations.prototype.setSelectedLayerSuffix = function( scale, suffix )
+LayerOperations.prototype.setSelectedLayerSuffix = function( scale, resize, suffix )
 {
 	const kLayerGroupSheet		= 7;
 	var i, name, selectedLayers = this.getSelectedLayerIndicies();
@@ -185,42 +185,25 @@ LayerOperations.prototype.setSelectedLayerSuffix = function( scale, suffix )
 			
 		var newName = null;
 		var name = this.layerName( layerIndex );
-		var sfxPos = name.search(/[.](\w)+$/ );
-		var scalePos = name.match(/^(\d+[%]\s*)/);
-		scalePos = scalePos ? scalePos[0].length : null;
-		
-		if (suffix.length == 0)	// remove suffix
-		{
-			if (sfxPos >= 0)
-				newName = name.slice( 0, sfxPos );
-		}
-		else
-		{
-			if (sfxPos < 0)			// No suffix, add one
-				newName = name + suffix;
-			else
-			{
-				if (name.slice(sfxPos) != suffix)	// Replace suffix if different
-				{
-					name = name.slice( 0, sfxPos );
-					newName = name + suffix;
-				}
-			}
-		}
-		if (newName)
-			name = newName;
-		if ((scale.length == 0) || (scale == "100%"))	// Remove %
-		{
-			if (scalePos)
-				newName = name.slice( scalePos );
-		}
-		else
-		{
-			if (! scalePos)	// No scale, add it
-				newName = scale + " " + name;
-			else
-				newName = scale + " " + name.slice( scalePos );
-		}
+         // Weed out just the base layer name, skipping any previous generator crap
+         var m = name.match(/(?:[\dx% ])*([\w /]+)(?:[.]\w+)*$/);
+         if (! m)
+            continue;       // Just give up if we can't figure out the layer's base name
+         var baseName = m[1];
+		 
+		if (scale === "100%")
+			scale = "";
+         
+         if (resize === "") 			// just rename, or scale only
+			newName = scale +" " + baseName + suffix;
+		else if (scale === "")			// Resize text only
+			newName = resize + " " + baseName + suffix;
+		else								// Both resize and scale
+			newName = scale + " " + baseName + suffix + "," + resize + " " + baseName + suffix;
+			
+		if (newName === name)	// No change
+			continue;
+
 		if (newName)
 			this.renameLayer( layerIndex, newName );
 	}
@@ -235,9 +218,9 @@ var layerOps = new LayerOperations();
 layerOps.doRename = function(params) {
   this.skipRenamingFolders = ! params.renfolder;
   if (app.documents.length > 0)
-    this.setSelectedLayerSuffix( params.scale, params.suffix );
+    this.setSelectedLayerSuffix( params.scale, params.resize, params.suffix );
 };
 
-//layerOps.doRename({suffix:".jpg",scale:"",renfolder:false});
+//ayerOps.doRename({suffix:".jpg",scale:"50%",resize:"200x300", renfolder:false});
 
 //layerOps.activeLayerBounds().width;
