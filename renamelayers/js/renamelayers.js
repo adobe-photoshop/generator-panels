@@ -116,7 +116,8 @@ function getParams() {
         resizeTxt = $("#resizeX").val() + "x" + $("#resizeY").val();
     }
     
-    folderTxt = $("#folder").is(":checked") ? $("#foldervalue").val() : "";
+    folderTxt = ((suffix != "") && $("#folder").is(":checked"))
+                ? $("#foldervalue").val() : "";
 
     return {'suffix': suffix, 'scale':scaleTxt, 'folder':folderTxt,
             'resize':resizeTxt, 'renfolder':true };
