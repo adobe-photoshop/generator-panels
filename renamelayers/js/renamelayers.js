@@ -44,7 +44,6 @@ function setLayerInfo(infoText)
         $("#resizeX").val(String(gPSLayerInfo.width));
         $("#resizeY").val(String(gPSLayerInfo.height));
         $("#foldervalue").val(gPSLayerInfo.folder);
-        $("#folder").prop("checked", gPSLayerInfo.folder.length > 0);
     }
     else {
         $("#resizeX").val("");
@@ -146,6 +145,8 @@ function updateSample() {
 
 // Menu / control handlers
 
+//////////////// Suffix menus ////////////////
+
 $("#suffixmenu").change( function() {
 	var suffix = $("#suffixmenu").val();
     // Turn on the auxillary pop-up menus if needed.
@@ -156,6 +157,8 @@ $("#suffixmenu").change( function() {
 
 $("#jpgqual").change( function() { updateSample(); } );
 $("#pngdepth").change( function() { updateSample(); } );
+
+//////////////// Scale ////////////////
 
 $("#scale").change( function() {
 	var scaleOff = !($("#scale").is(":checked"))
@@ -173,22 +176,23 @@ $("#scalevalue").keyup( function() {
 		updateSample();
 });
 
+/////////////// Folder /////////////////
+
 $("#folder").change( function() {
     updateSample();
 });
 
 $("#foldervalue").keyup( function() {
     // Auto turn-on the checkbox if there's content
-    $("#folder").prop(":checked", $("#foldervalue").val().length > 0);
+    $("#folder").prop("checked", $("#foldervalue").val().length > 0);
     updateSample();
 });
 
+////////////// Resize ///////////////////
+
 $("#resize").change( function() {
     var resizeOn = $("#resize").is(":checked");
-    if (resizeOn)
-        loadLayerInfo();
-    else
-        updateSample();
+    updateSample();
     dimTextValue( "#resizeX", !resizeOn );
     dimTextValue( "#resizeY", !resizeOn );
 });
@@ -212,6 +216,8 @@ $("#resizeY").keyup( function() {
     }
     updateSample();
 });
+
+////////////// Rename ////////////////
 
 $("#renamebutton").click( function() {
     // Call function defined in host/RenameLayers.jsx
