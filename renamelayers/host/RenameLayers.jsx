@@ -124,14 +124,36 @@ LayerOperations.prototype.layerKind = function( layerIndex )
 	return resultDesc.getInteger( klayerKindStr );
 }
 
-LayerOperations.prototype.activeLayerBounds = function()
+LayerOperations.prototype.activeLayerInfo = function()
 {
+	function enquote(s) { return (typeof s ==="string") ? '"'+s+'"' : s.toString(); }
+	
     if (app.documents.length === 0)
         return "null";
+		
     var bounds = app.activeDocument.activeLayer.bounds;
-    var width = (bounds[2]-bounds[0]).as('px');
-    var height = (bounds[3]-bounds[1]).as('px');
-    return '{ "width":' + width + ', "height":' + height +'}';
+	var name = app.activeDocument.activeLayer.name;
+	var result = {folder:"", baseName:name, genPrefix:"", suffix:""};
+
+	 // Break apart generator info from the name
+	 var m = name.match(/([\dx% ]*)([\w \/]+)([.]\w+)*$/);
+	 if (m)
+	 {
+		var compName = m[2].split("/");
+		result.folder = (compName.length > 1) ? compName[0] : "";
+		result.baseName = (compName.length > 1) ? compName[1] : compName[0];
+		result.genPrefix = m[1];
+		result.suffix = (typeof m[3] === "undefined") ? "" : m[3];
+	}
+
+    result.width = (bounds[2]-bounds[0]).as('px');
+    result.height = (bounds[3]-bounds[1]).as('px');
+	
+	// This sucks...ES doesn't have JSON.stringify....
+	var i, valueList = [], props=['folder', 'baseName', 'genPrefix', 'suffix', 'width', 'height'];
+	for (i=0; i < props.length; ++i)
+		valueList.push( enquote(props[i])+':'+enquote(result[props[i]]) );
+    return "{" + valueList.join(",") + "}";
 }
 
 // Return a list of the currently selected layers.  This handles LayerSets.
@@ -160,7 +182,7 @@ LayerOperations.prototype.getSelectedLayerIndicies = function()
 }
 
 // Walk through the selected layers, and add (or remove) suffixes from them.
-LayerOperations.prototype.setSelectedLayerSuffix = function( scale, resize, suffix )
+LayerOperations.prototype.setSelectedLayerSuffix = function( scale, resize, suffix, folder )
 {
 	const kLayerGroupSheet		= 7;
 	var i, name, selectedLayers = this.getSelectedLayerIndicies();
@@ -186,10 +208,17 @@ LayerOperations.prototype.setSelectedLayerSuffix = function( scale, resize, suff
 		var newName = null;
 		var name = this.layerName( layerIndex );
          // Weed out just the base layer name, skipping any previous generator crap
-         var m = name.match(/(?:[\dx% ])*([\w /]+)(?:[.]\w+)*$/);
+         var m = name.match(/(?:[\dx% ])*([\w \/]+)(?:[.]\w+)*$/);
          if (! m)
             continue;       // Just give up if we can't figure out the layer's base name
-         var baseName = m[1];
+			
+		// Strip off previous folder
+		var nameComp = m[1].split("/");
+         var baseName =  ((nameComp.length > 1) ? nameComp[1] : nameComp[0]);
+		
+		// Add new folder, if present
+		if (folder.length > 0)
+			baseName = folder + "/" + baseName;
 		 
 		if (scale === "100%")
 			scale = "";
@@ -218,9 +247,9 @@ var layerOps = new LayerOperations();
 layerOps.doRename = function(params) {
   this.skipRenamingFolders = ! params.renfolder;
   if (app.documents.length > 0)
-    this.setSelectedLayerSuffix( params.scale, params.resize, params.suffix );
+    this.setSelectedLayerSuffix( params.scale, params.resize, params.suffix, params.folder );
 };
 
-//ayerOps.doRename({suffix:".jpg",scale:"50%",resize:"200x300", renfolder:false});
+//layerOps.doRename({suffix:".jpg",scale:"50%", resize:"", folder:"cat", renfolder:false});
 
-//layerOps.activeLayerBounds().width;
+//$.writeln(layerOps.activeLayerInfo());

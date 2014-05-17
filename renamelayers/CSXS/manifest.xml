@@ -6,7 +6,6 @@
   <ExecutionEnvironment>
     <HostList>
       <Host Name="PHXS" Version="[15.0,15.9]"/>
-      <Host Name="PHSP" Version="[15.0,15.9]"/>
     </HostList>
     <LocaleList>
       <Locale Code="All"/>
@@ -27,11 +26,11 @@
           <Menu>%rename-panel-menu-name</Menu>
           <Geometry>
             <MinSize>
-              <Height>160</Height>
-              <Width>200</Width>
+              <Height>210</Height>
+              <Width>216</Width>
             </MinSize>
             <Size>
-              <Height>160</Height>
+              <Height>210</Height>
               <Width>216</Width>
             </Size>
           </Geometry>

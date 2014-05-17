@@ -38,21 +38,28 @@
     
 <div style="margin-bottom:0px; margin-top:10px">
 <div>
+    <label id="folderchklabel" for="folder">
+        <input type="checkbox" name="folder" id="folder">
+        <span data-locale="rename-folder" id="fldspan">Folder</span>
+    </label>
+    <input style="margin-left:18px;" id="foldervalue" class="ccstyle" type="text" size="11" role="textbox" />/
+</div>
+<div style="margin-top:3px">
     <label id="scalechklabel" for="scale">
         <input type="checkbox" name="scale" id="scale">
         <span data-locale="rename-scale-checkbox" id="sclspan">Scale</span>
     </label>
-    <input style="margin-left:8px;" id="scalevalue" class="ccstyle" type="text" size="4" maxlength="4" role="textbox" value="100" disabled />%
+    <input style="margin-left:24px;" id="scalevalue" class="ccstyle" type="text" size="4" maxlength="4" role="textbox" value="100" disabled />%
 </div>
 <div style="margin-top:3px; margin-bottom:0px">
 	<label id="resizechklabel" for="resize">
     	<input type="checkbox" name="resize" id="resize">
         <span data-locale="rename-resize-checkbox" id="rszspan">Resize</span>
     </label>
-    <input id="resizeX" class="ccstyle" type="text" size="4" maxlength="4" role="textbox" disabled /> x <input id="resizeY" class="ccstyle" type="text" size="4" maxlength="4" role="textbox" disabled />
+    <input style="margin-left:18px;" id="resizeX" class="ccstyle" type="text" size="3" maxlength="4" role="textbox" disabled />x <input id="resizeY" class="ccstyle" type="text" size="3" maxlength="4" role="textbox" disabled />
 </div>
 <div style="margin-top:-6px">
-	<input style="margin-left:117px; margin-top:0px" class="chainlink" type="checkbox" name="locksize" id="locksize" checked>
+	<input style="margin-left:124px; margin-top:0px" class="chainlink" type="checkbox" name="locksize" id="locksize" checked>
 </div>
 </div>
     

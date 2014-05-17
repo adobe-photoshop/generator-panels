@@ -6,9 +6,8 @@
 // John Peterson - Sep 2013
 //
 
-var sampleLayerName;
-var isDebugOn = false;
-var layerSize;
+var gSampleLayerName;
+var gPSLayerInfo;
 
 // The event IDs are decoded from the OSType values
 // in Photoshop.
@@ -38,35 +37,47 @@ function setupColorHook()
     dimTxt( "#resizeY" );
 }
 
-function setResizeValues(sizeText)
+function setLayerInfo(infoText)
 {
-    layerSize = JSON.parse(sizeText);
-    if (layerSize) {
-        $("#resizeX").val(String(layerSize.width));
-        $("#resizeY").val(String(layerSize.height));
+    gPSLayerInfo = JSON.parse(infoText);
+    if (gPSLayerInfo) {
+        $("#resizeX").val(String(gPSLayerInfo.width));
+        $("#resizeY").val(String(gPSLayerInfo.height));
+        $("#foldervalue").val(gPSLayerInfo.folder);
+        $("#folder").prop("checked", gPSLayerInfo.folder.length > 0);
     }
     else {
         $("#resizeX").val("");
         $("#resizeY").val("");
-        layerSize = null;
+        gPSLayerInfo = null;
     }
     updateSample(); // Must update here to avoid race condition
 }
 
-function loadLayerSize()
+function loadLayerInfo()
 {
-    csInterface.evalScript("layerOps.activeLayerBounds()", setResizeValues);
+    csInterface.evalScript("layerOps.activeLayerInfo()", setLayerInfo);
 }
 
-function HandlePSEvent(csEvent)
+// This handles events sent back by Photoshop.  It
+// *must* be called PhotoshopCallback.
+function PhotoshopCallback(csEvent)
 {
-    console.log("Event!");
     try {
+        // Check to make sure it's for us.
         if (csEvent.extensionId === csInterface.getExtensionID())
         {
-            loadLayerSize();
+            loadLayerInfo();
             if (typeof csEvent.data != "undefined") {
-                console.log(csEvent.data);
+                // The returned event data is two comma separated
+                // numbers, the first is the PS event ID, the
+                // second is a number you can use with desc.fromID
+                // that's an argument of the event.
+                //console.log(csEvent.data);
+                
+                // In our case we don't really care what the
+                // event actually was, it's just a signal we need
+                // to go ask PS to update our layer information.
             }
         }
     } catch (err) {
@@ -79,16 +90,16 @@ function initialize()
     initColors( setupColorHook );
     
     // Register callback for PS events
-    csInterface.addEventListener("com.adobe.PhotoshopCallback", HandlePSEvent);
+    csInterface.addEventListener("PhotoshopCallback", PhotoshopCallback);
     // Send an event to register for events
-    var event = new CSEvent("com.adobe.PhotshopRegisterEvent", "APPLICATION");
+    var event = new CSEvent("com.adobe.PhotoshopRegisterEvent", "APPLICATION");
     event.extensionId = csInterface.getExtensionID();
     event.data = PSEventIDs.join(", ");
     csInterface.dispatchEvent(event);
     
     // Pull the layername from the HTML so we get a localized string.
-    sampleLayerName = $("#samplename").text();
-    loadLayerSize();
+    gSampleLayerName = $("#samplename").text();
+    loadLayerInfo();
 
     // Force one call so sample name and option pop-ups are initialized
     $("#suffixmenu").change();
@@ -105,26 +116,31 @@ function getParams() {
     if ((suffix != "") && $("#resize").is(":checked")) {
         resizeTxt = $("#resizeX").val() + "x" + $("#resizeY").val();
     }
+    
+    folderTxt = $("#folder").is(":checked") ? $("#foldervalue").val() : "";
 
-    return {'suffix': suffix, 'scale':scaleTxt, 'resize':resizeTxt, 'renfolder':true };
+    return {'suffix': suffix, 'scale':scaleTxt, 'folder':folderTxt,
+            'resize':resizeTxt, 'renfolder':true };
 }
 
 function updateSample() {
 	var params = getParams();
+    var nameTxt = ((params.folder.length > 0) ? (params.folder + "/") : "")
+                    + gSampleLayerName + params.suffix;
 	var scaleTxt = (params.scale == "100%") ? "" : (params.scale + " ");
     $("#samplename").css("font-size", "10pt");
     if (params.resize === "") {
         // just rename, or scale only
-        $("#samplename").text( scaleTxt + sampleLayerName + params.suffix );
+        $("#samplename").text( scaleTxt + nameTxt );
     }
     else if (scaleTxt === "") {
         // Resize text only
-        $("#samplename").text( params.resize + " " + sampleLayerName + params.suffix );
+        $("#samplename").text( params.resize + " " + nameTxt );
     }
     else {// Both resize and scale
         $("#samplename").css("font-size", "7pt");
-        $("#samplename").text( scaleTxt + sampleLayerName + params.suffix + ","
-                               + params.resize + " " + sampleLayerName + params.suffix );
+        $("#samplename").text( scaleTxt + nameTxt + ","
+                               + params.resize + " " + nameTxt );
     }
 }
 
@@ -157,11 +173,20 @@ $("#scalevalue").keyup( function() {
 		updateSample();
 });
 
+$("#folder").change( function() {
+    updateSample();
+});
+
+$("#foldervalue").keyup( function() {
+    // Auto turn-on the checkbox if there's content
+    $("#folder").prop(":checked", $("#foldervalue").val().length > 0);
+    updateSample();
+});
 
 $("#resize").change( function() {
     var resizeOn = $("#resize").is(":checked");
     if (resizeOn)
-        loadLayerSize();
+        loadLayerInfo();
     else
         updateSample();
     dimTextValue( "#resizeX", !resizeOn );
@@ -171,9 +196,9 @@ $("#resize").change( function() {
 $("#resizeX").keyup( function() {
     if ($("#resize").is(":checked") 
         && $("#locksize").is(":checked")
-        && layerSize) {
-        var ratio = Number($("#resizeX").val()) / layerSize.width;
-        $("#resizeY").val(String(Math.round(ratio * layerSize.height)));
+        && gPSLayerInfo) {
+        var ratio = Number($("#resizeX").val()) / gPSLayerInfo.width;
+        $("#resizeY").val(String(Math.round(ratio * gPSLayerInfo.height)));
     }
     updateSample();
 });
@@ -181,9 +206,9 @@ $("#resizeX").keyup( function() {
 $("#resizeY").keyup( function() {
     if ($("#resize").is(":checked")
         && $("#locksize").is(":checked")
-        && layerSize) {
-        var ratio = Number($("#resizeY").val()) / layerSize.height;
-        $("#resizeX").val(String(Math.round(ratio * layerSize.width)));
+        && gPSLayerInfo) {
+        var ratio = Number($("#resizeY").val()) / gPSLayerInfo.height;
+        $("#resizeX").val(String(Math.round(ratio * gPSLayerInfo.width)));
     }
     updateSample();
 });
