@@ -16,14 +16,14 @@
         <option data-locale="suffix-menu-none" value="">None</option>
     </select>
     
-    <select class="ccmenu hidmenu" name="pngdepth" id="pngdepth">
+    <select class="ccmenu" name="pngdepth" id="pngdepth">
         <option data-locale="png-menu-depth" value="">Depth</option>
         <option value="8">8</option>
         <option value="24">24</option>
         <option value="32">32</option>
     </select>
 
-    <select class="ccmenu hidmenu" name="jpgqual" id="jpgqual">
+    <select class="ccmenu" name="jpgqual" id="jpgqual">
         <option data-locale="jpg-menu-quality" value="">Quality</option>
         <option value="3">3</option>
         <option value="4">4</option>
@@ -36,15 +36,34 @@
     </select>
 </div>
     
-<p>
+<div style="margin-bottom:0px; margin-top:10px">
+<div>
+    <label id="folderchklabel" for="folder">
+        <input type="checkbox" name="folder" id="folder">
+        <span data-locale="rename-folder" id="fldspan">Folder</span>
+    </label>
+    <input style="margin-left:18px;" id="foldervalue" class="ccstyle" type="text" size="11" role="textbox" />/
+</div>
+<div style="margin-top:3px">
     <label id="scalechklabel" for="scale">
         <input type="checkbox" name="scale" id="scale">
         <span data-locale="rename-scale-checkbox" id="sclspan">Scale</span>
     </label>
-    <input id="scalevalue" class="ccstyle" type="text" size="4" maxlength="4" role="textbox" value="100" disabled />%
-</p>
+    <input style="margin-left:24px;" id="scalevalue" class="ccstyle" type="text" size="4" maxlength="4" role="textbox" value="100" disabled />%
+</div>
+<div style="margin-top:3px; margin-bottom:0px">
+	<label id="resizechklabel" for="resize">
+    	<input type="checkbox" name="resize" id="resize">
+        <span data-locale="rename-resize-checkbox" id="rszspan">Resize</span>
+    </label>
+    <input style="margin-left:18px;" id="resizeX" class="ccstyle" type="text" size="3" maxlength="4" role="textbox" disabled />x <input id="resizeY" class="ccstyle" type="text" size="3" maxlength="4" role="textbox" disabled />
+</div>
+<div style="margin-top:-6px">
+	<input style="margin-left:124px; margin-top:0px" class="chainlink" type="checkbox" name="locksize" id="locksize" checked>
+</div>
+</div>
     
-<button data-locale="rename-rename-button" class="ccstyle" id="renamebutton">Rename</button>
+<button style="margin-top:-2px" data-locale="rename-rename-button" class="ccstyle" id="renamebutton">Rename</button>
 <p>
     <div data-locale="rename-sample-name" id="samplename">layername</div>
 </p>
