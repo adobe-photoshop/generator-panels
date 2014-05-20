@@ -1,12 +1,13 @@
-// Copyright 2013 Adobe Systems Incorporated.  All Rights reserved.
+// Copyright 2013 - 2014 Adobe Systems Incorporated.  All Rights reserved.
 
+// Photoshop-side ExtendScript code for renaming layers.
 // Add or remove suffixes from selected layers.
 
 // Load the Photoshop Event Terminology definitions
 var g_StackScriptFolderPath = app.path + "/"+ localize("$$$/ScriptingSupport/InstalledScripts=Presets/Scripts") + "/"
 										+ localize("$$$/private/Exposuremerge/StackScriptOnly=Stack Scripts Only/");
 if (typeof typeNULL == "undefined")
-    $.evalFile(g_StackScriptFolderPath + "Terminology.jsx");
+	$.evalFile(g_StackScriptFolderPath + "Terminology.jsx");
 
 //
 // Utility routines for turning Generator on/off & checking status
@@ -44,6 +45,7 @@ function EnableGenerator( flag )
 	executeAction( eventSet, desc, DialogModes.NO );
 }
 
+// Define object for scoping the routines below
 function LayerOperations()
 {
 	this.skipRenamingFolders = false;
@@ -59,7 +61,7 @@ function LayerOperations()
 }
 
 // Rename a layer via eventSet.  Unfortunately, eventSet on layers
-// ONLY pays attention to the target, not the layerID, so there's no 
+// ONLY pays attention to the target, not the layerID, so there's no
 // way to set the layer's name (or anything else!) without making it
 // active.  Ugh.
 LayerOperations.prototype.renameLayerFail = function( layerID, newName )
@@ -124,21 +126,22 @@ LayerOperations.prototype.layerKind = function( layerIndex )
 	return resultDesc.getInteger( klayerKindStr );
 }
 
+// Called by the panel to return information about the active layer
 LayerOperations.prototype.activeLayerInfo = function()
 {
 	function enquote(s) { return (typeof s ==="string") ? '"'+s+'"' : s.toString(); }
-	
-    if (app.documents.length === 0)
-        return "null";
-		
-    var bounds = app.activeDocument.activeLayer.bounds;
+
+	if (app.documents.length === 0)
+		return "null";
+
+	var bounds = app.activeDocument.activeLayer.bounds;
 	var name = app.activeDocument.activeLayer.name;
 	var result = {folder:"", baseName:name, genPrefix:"", suffix:""};
 
-	 // Break apart generator info from the name
-	 var m = name.match(/([\dx% ]*)([\w \/]+)([.]\w+)*$/);
-	 if (m)
-	 {
+	// Break apart generator info from the name
+	var m = name.match(/([\dx% ]*)([\w \/]+)([.]\w+)*$/);
+	if (m)
+	{
 		var compName = m[2].split("/");
 		result.folder = (compName.length > 1) ? compName[0] : "";
 		result.baseName = (compName.length > 1) ? compName[1] : compName[0];
@@ -146,14 +149,14 @@ LayerOperations.prototype.activeLayerInfo = function()
 		result.suffix = (typeof m[3] === "undefined") ? "" : m[3];
 	}
 
-    result.width = (bounds[2]-bounds[0]).as('px');
-    result.height = (bounds[3]-bounds[1]).as('px');
+	result.width = (bounds[2]-bounds[0]).as('px');
+	result.height = (bounds[3]-bounds[1]).as('px');
 	
-	// This sucks...ES doesn't have JSON.stringify....
+	// This sucks...ES doesn't have JSON.stringify, so manually pack up a JSON version
 	var i, valueList = [], props=['folder', 'baseName', 'genPrefix', 'suffix', 'width', 'height'];
 	for (i=0; i < props.length; ++i)
 		valueList.push( enquote(props[i])+':'+enquote(result[props[i]]) );
-    return "{" + valueList.join(",") + "}";
+	return "{" + valueList.join(",") + "}";
 }
 
 // Return a list of the currently selected layers.  This handles LayerSets.
@@ -204,32 +207,32 @@ LayerOperations.prototype.setSelectedLayerSuffix = function( scale, resize, suff
 			
 		if (this.isBackgroundLayer( layerIndex ))
 			continue;
-			
+
 		var newName = null;
 		var name = this.layerName( layerIndex );
-         // Weed out just the base layer name, skipping any previous generator crap
-         var m = name.match(/(?:[\dx% ])*([\w \/]+)(?:[.]\w+)*$/);
-         if (! m)
-            continue;       // Just give up if we can't figure out the layer's base name
-			
+		// Weed out just the base layer name, skipping any previous generator crap
+		var m = name.match(/(?:[\dx% ])*([\w \/]+)(?:[.]\w+)*$/);
+		if (! m)
+			continue;       // Just give up if we can't figure out the layer's base name
+
 		// Strip off previous folder
 		var nameComp = m[1].split("/");
-         var baseName =  ((nameComp.length > 1) ? nameComp[1] : nameComp[0]);
-		
+		var baseName = ((nameComp.length > 1) ? nameComp[1] : nameComp[0]);
+
 		// Add new folder, if present
 		if (folder.length > 0)
 			baseName = folder + "/" + baseName;
-		 
+
 		if (scale === "100%")
 			scale = "";
-         
-         if (resize === "") 			// just rename, or scale only
+		 
+		if (resize === "") 			// just rename, or scale only
 			newName = scale +" " + baseName + suffix;
 		else if (scale === "")			// Resize text only
 			newName = resize + " " + baseName + suffix;
 		else								// Both resize and scale
 			newName = scale + " " + baseName + suffix + "," + resize + " " + baseName + suffix;
-			
+
 		if (newName === name)	// No change
 			continue;
 
@@ -245,10 +248,12 @@ var layerOps = new LayerOperations();
 
 // entry point for rename panel
 layerOps.doRename = function(params) {
-  this.skipRenamingFolders = ! params.renfolder;
-  if (app.documents.length > 0)
-    this.setSelectedLayerSuffix( params.scale, params.resize, params.suffix, params.folder );
+	this.skipRenamingFolders = ! params.renfolder;
+	if (app.documents.length > 0)
+		this.setSelectedLayerSuffix( params.scale, params.resize, params.suffix, params.folder );
 };
+
+// Test code for running in ESTK
 
 //layerOps.doRename({suffix:".jpg",scale:"50%", resize:"", folder:"cat", renfolder:false});
 

@@ -54,6 +54,7 @@ function swapCSS( isDark )
                      + (isDark ? '_D.css' : '_L.css') +'" rel="stylesheet" type="text/css" />');
 }
 
+// Called by the theme color changed event.
 function setupColors()
 {
 	// You need to reload the host environment; the csInterface object won't do it for you
@@ -69,6 +70,7 @@ function setupColors()
         themeColorSetupHook();
 }
 
+// Set up the colors and listen to the theme color changed event
 function initColors( setupHook )
 {
     if (typeof setupHook !== "undefined")

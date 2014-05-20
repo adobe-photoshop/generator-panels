@@ -9,8 +9,8 @@
 var gSampleLayerName;
 var gPSLayerInfo;
 
-// The event IDs are decoded from the OSType values
-// in Photoshop.
+// The event IDs are decoded from the OSType values in Photoshop.
+// This is the list of Photoshop events we wish to respond to.
 var PSEventIDs = [
     1298866208,      // "Mk  " eventMake
     1147958304,      // "Dlt " eventDelete
@@ -18,6 +18,8 @@ var PSEventIDs = [
     1936483188,      // "slct" eventSelect
     1936028772];     // "setd" eventSet
 
+// Dim text fields according to the current theme color
+// (should be moved to themecolors.js)
 function dimTextValue( textID, isDim )
 {
 	var colors = colorTable[window.document.bgColor.slice(0,3)];
@@ -37,29 +39,34 @@ function setupColorHook()
     dimTxt( "#resizeY" );
 }
 
-function setLayerInfo(infoText)
-{
-    gPSLayerInfo = JSON.parse(infoText);
-    if (gPSLayerInfo) {
-        $("#resizeX").val(String(gPSLayerInfo.width));
-        $("#resizeY").val(String(gPSLayerInfo.height));
-        $("#foldervalue").val(gPSLayerInfo.folder);
-    }
-    else {
-        $("#resizeX").val("");
-        $("#resizeY").val("");
-        gPSLayerInfo = null;
-    }
-    updateSample(); // Must update here to avoid race condition
-}
-
+// Query Photoshop for the current layer's information
 function loadLayerInfo()
 {
+    // Callback for fetching information about the document from PS
+    function setLayerInfo(infoText)
+    {
+        gPSLayerInfo = JSON.parse(infoText);
+        if (gPSLayerInfo) {
+            $("#resizeX").val(String(gPSLayerInfo.width));
+            $("#resizeY").val(String(gPSLayerInfo.height));
+            $("#foldervalue").val(gPSLayerInfo.folder);
+        }
+        else {
+            $("#resizeX").val("");
+            $("#resizeY").val("");
+            $("#foldervalue").val("");
+            $("#folder").prop("checked", false);
+            $("#resize").prop("checked", false);
+            gPSLayerInfo = null;
+        }
+        updateSample(); // Must update here to avoid race condition
+    }
+
     csInterface.evalScript("layerOps.activeLayerInfo()", setLayerInfo);
 }
 
-// This handles events sent back by Photoshop.  It
-// *must* be called PhotoshopCallback.
+// This handles events sent back by Photoshop
+// It *must* be named PhotoshopCallback.
 function PhotoshopCallback(csEvent)
 {
     try {
@@ -105,6 +112,7 @@ function initialize()
     
 }
 
+// Get the current filename parameters from the panel's controls
 function getParams() {
     var suffix = $("#suffixmenu").val();
     if (suffix == ".png") suffix += $("#pngdepth").val();
