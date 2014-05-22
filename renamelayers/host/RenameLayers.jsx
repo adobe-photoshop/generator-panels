@@ -49,6 +49,10 @@ function EnableGenerator( flag )
 function LayerOperations()
 {
 	this.skipRenamingFolders = false;
+}
+
+LayerOperations.prototype.setupBackgroundOffset = function()
+{
 	// Work-around for screwy layer indexing.
 	this.backgroundIndexOffset = 0;
 	try {
@@ -162,6 +166,7 @@ LayerOperations.prototype.activeLayerInfo = function()
 // Return a list of the currently selected layers.  This handles LayerSets.
 LayerOperations.prototype.getSelectedLayerIndicies = function()
 {
+    this.setupBackgroundOffset();
 	// ktargetLayers is missing from Terminology.jsx
 	const ktargetLayers = app.stringIDToTypeID("targetLayers");
 
