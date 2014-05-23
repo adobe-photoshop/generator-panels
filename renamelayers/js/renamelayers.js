@@ -114,13 +114,17 @@ function initialize()
 
 // Get the current filename parameters from the panel's controls
 function getParams() {
+    function hasText(id) {return $(id).val().length > 0;}
+
     var suffix = $("#suffixmenu").val();
     if (suffix == ".png") suffix += $("#pngdepth").val();
     if (suffix == ".jpg") suffix += $("#jpgqual").val();
     
     var scaleTxt = (suffix != "") ? $("#scalevalue").val() + "%" : "100%";
     var resizeTxt = "";
-    if ((suffix != "") && $("#resize").is(":checked")) {
+    if ((suffix != "") && $("#resize").is(":checked")
+        && hasText("#resizeX") && hasText("#resizeY"))
+    {
         resizeTxt = $("#resizeX").val() + "x" + $("#resizeY").val();
     }
     
