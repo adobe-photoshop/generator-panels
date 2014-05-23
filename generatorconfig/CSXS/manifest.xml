@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<ExtensionManifest ExtensionBundleId="com.photoshop.generatorconfig" ExtensionBundleName="Generator Config" ExtensionBundleVersion="1.2" Version="4.0">
+<ExtensionManifest ExtensionBundleId="com.photoshop.generatorconfig" ExtensionBundleName="Generator Config" ExtensionBundleVersion="1.3" Version="4.0">
   <Author>
     <![CDATA[J. Peterson]]>
   </Author>
@@ -38,6 +38,12 @@
               <Width>216</Width>
             </Size>
           </Geometry>
+          <Icons>
+            <Icon Type="Normal">./icons/GenPanelIcon_N.png</Icon>
+            <Icon Type="RollOver">./icons/GenPanelIcon_N.png</Icon>
+            <Icon Type="DarkNormal">./icons/GenPanelIcon_D.png</Icon>
+            <Icon Type="DarkRollOver">./icons/GenPanelIcon_D.png</Icon>
+          </Icons>
         </UI>
       </DispatchInfo>
     </Extension>

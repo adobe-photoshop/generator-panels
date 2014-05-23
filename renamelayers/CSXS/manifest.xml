@@ -38,6 +38,12 @@
               <Width>216</Width>
             </Size>
           </Geometry>
+          <Icons>
+            <Icon Type="Normal">./icons/RenamePanelIcon_N.png</Icon>
+            <Icon Type="RollOver">./icons/RenamePanelIcon_N.png</Icon>
+            <Icon Type="DarkNormal">./icons/RenamePanelIcon_D.png</Icon>
+            <Icon Type="DarkRollOver">./icons/RenamePanelIcon_D.png</Icon>
+          </Icons>
         </UI>
       </DispatchInfo>
     </Extension>
