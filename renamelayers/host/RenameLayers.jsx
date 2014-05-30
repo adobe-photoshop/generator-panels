@@ -216,7 +216,7 @@ LayerOperations.prototype.setSelectedLayerSuffix = function( scale, resize, suff
 		var newName = null;
 		var name = this.layerName( layerIndex );
 		// Weed out just the base layer name, skipping any previous generator crap
-		var m = name.match(/(?:[\dx% ])*([\w \/]+)(?:[.]\w+)*$/);
+		var m = name.match(/(?:[\dx% ])*([^.,\n\r]+)(?:[.]\w+)*$/);
 		if (! m)
 			continue;       // Just give up if we can't figure out the layer's base name
 
@@ -230,10 +230,12 @@ LayerOperations.prototype.setSelectedLayerSuffix = function( scale, resize, suff
 
 		if (scale === "100%")
 			scale = "";
-		 
-		if (resize === "") 			// just rename, or scale only
+
+		if ((resize==="") && (scale===""))
+			newName = baseName + suffix;	// Just rename
+		else if (resize === "") 			// Scale only
 			newName = scale +" " + baseName + suffix;
-		else if (scale === "")			// Resize text only
+		else if (scale === "")				// Resize text only
 			newName = resize + " " + baseName + suffix;
 		else								// Both resize and scale
 			newName = scale + " " + baseName + suffix + "," + resize + " " + baseName + suffix;
