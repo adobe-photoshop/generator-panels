@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<ExtensionManifest ExtensionBundleId="com.photoshop.renamelayers" ExtensionBundleName="Rename Layers" ExtensionBundleVersion="1.2" Version="4.0">
+<ExtensionManifest ExtensionBundleId="com.photoshop.renamelayers" ExtensionBundleName="Rename Layers" ExtensionBundleVersion="1.9.0" Version="4.0">
   <Author>
     <![CDATA[J. Peterson]]>
   </Author>
   <ExtensionList>
-    <Extension Id="com.photoshop.renamelayers.extension" Version="1.1"/>
+    <Extension Id="com.photoshop.renamelayers.extension" Version="1.9.0"/>
   </ExtensionList>
   <ExecutionEnvironment>
     <HostList>
