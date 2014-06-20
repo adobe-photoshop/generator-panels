@@ -18,7 +18,6 @@ The simplest way to start using the panels is to run:
 
 to run the panels in debug mode.  After you re-launch Photoshop, the panels should appear in the Windows > Extensions menu.
 
-  
 ### License
 
 (MIT License)
@@ -42,3 +41,5 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
+
+The panels use [jQuery 2.0.2](http://jQuery.com), also provided under the [terms of the MIT license](https://jquery.org/license/).
