@@ -5,7 +5,7 @@ This repo contains the source for two extension panels for Photoshop, Generator 
 
 The **Generator Configuration** panel lets you easily change the [configuration options](https://github.com/adobe-photoshop/generator-assets/wiki/Configuration-Options) for the Generator Assets plugin that ships with Photoshop.
 
-The **Rename Layer Suffix** panel lets you easily change the suffix, scale, size and folder parameters of the selected layers in Photoshop.  This is an easy way to update existing Photoshop design files to take advantage of Generator to export assets.
+The **Rename Layer Suffix** panel lets you easily change the suffix, scale, size and folder [parameters](https://github.com/adobe-photoshop/generator-assets/wiki/Generate-Web-Assets-Functional-Spec) of the selected layers in Photoshop.  This is an easy way to update existing Photoshop design files to take advantage of Generator to export assets.
 
 ### Installation
 
