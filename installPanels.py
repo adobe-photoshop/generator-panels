@@ -47,7 +47,7 @@ if sys.platform == 'win32':
     import _winreg
 
 # PS executable location, used just to launch PS
-PSexePath = {"win32":"C:\\Program Files\\Adobe\\Adobe Photoshop CC (64 Bit)\\Photoshop.exe",
+PSexePath = {"win32":"C:\\Program Files\\Adobe\\Adobe Photoshop CC 2014\\Photoshop.exe",
              "darwin": "/Applications/Adobe Photoshop CC/Adobe Photoshop CC.app/Contents/MacOS/Adobe Photoshop CC"
              }[sys.platform]
 
