@@ -1,25 +1,25 @@
 #!/usr/bin/python
 #
 # Copyright (c) 2013-2014 Adobe Systems Incorporated. All rights reserved.
-#  
+#
 # Permission is hereby granted, free of charge, to any person obtaining a
-# copy of this software and associated documentation files (the "Software"), 
-# to deal in the Software without restriction, including without limitation 
-# the rights to use, copy, modify, merge, publish, distribute, sublicense, 
-# and/or sell copies of the Software, and to permit persons to whom the 
+# copy of this software and associated documentation files (the "Software"),
+# to deal in the Software without restriction, including without limitation
+# the rights to use, copy, modify, merge, publish, distribute, sublicense,
+# and/or sell copies of the Software, and to permit persons to whom the
 # Software is furnished to do so, subject to the following conditions:
-#  
+#
 # The above copyright notice and this permission notice shall be included in
 # all copies or substantial portions of the Software.
-#  
+#
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 # FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING 
-# FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+# FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 # DEALINGS IN THE SOFTWARE.
-# 
+#
 #
 # Install & manage the extension panels.
 #
@@ -91,7 +91,7 @@ class Panel:
             for df in [root + os.sep + f for root, dirs, files in os.walk(destPath) for f in files]:
                 makeWritable( df )
             shutil.rmtree( destPath )
-            
+
     # Create the .debug file for enabling the remote debugger
     def debugFilename(self):
         return os.path.join( osDestPath, self.panelName, ".debug" )
@@ -117,7 +117,7 @@ class Panel:
             portNumber += 1
         debugText += "</ExtensionList>\n"
         file(self.debugFilename(), 'w' ).write(debugText)
-        
+
     def setupRemoteDebugFile(self, debugEnabled):
         if debugEnabled:
             self.createRemoteDebugXML()
@@ -351,6 +351,8 @@ elif (args.package):
 #
 elif (args.install):
     erasePanels()
+    if (not os.path.exists(osDestPath)):
+        os.mkdir(osDestPath)
     pkgTargetFolder = getTargetFolder()
     zxpFiles = filter(os.path.exists, [pkgTargetFolder + p.panelName + ".zxp" for p in panelList])
     if len(zxpFiles) > 0:
