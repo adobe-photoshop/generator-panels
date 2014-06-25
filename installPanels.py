@@ -31,6 +31,7 @@
 #
 # Other options:
 #  -d,--debug {on,off,status}   Set/check PanelDebugMode
+#  -a,--all						Install panels for All users
 #  -p,--package PASSWORD        Package the panels signed with a
 #                               private certificate, using the certificate's PASSWORD
 #  -i,--install                 Installs the signed panels created with -p into
@@ -186,13 +187,6 @@ panelList = [Panel(getExtensionInfo(f), f) for f in manifestFiles if getExtensio
 # Location of the certificate file used to sign the package.
 certPath = os.path.join( srcLocation, "cert", "panelcert.p12" )
 
-# Where to place the panel.
-extensionSubpath = os.path.normpath("/Adobe/CEP/extensions") + os.path.sep
-winAppData = os.getenv("APPDATA") if (sys.platform == "win32") else ""
-osDestPath = { "win32":winAppData + extensionSubpath,
-               "darwin":os.path.expanduser("~")+"/Library/Application Support" + extensionSubpath
-             }[sys.platform]
-
 # Base port number used for remote debugger (each extra panel increments it)
 portNumber = 8000
 
@@ -202,7 +196,7 @@ def getTargetFolder():
         os.makedirs( targetFolder )
     return targetFolder
 
-# For future reference, the Extension Manager stores the bundle in
+# For future reference, the Extension Manager stages the bundle in
 #
 # (Mac) /Library/Application Support/Adobe/Extension Manager CC/EM Store/Photoshop/
 # (Win) %APPDATA%\Adobe\Extension Manager CC\EM Store\Photoshop{32,64} (No?)
@@ -211,10 +205,11 @@ def getTargetFolder():
 #
 # and deploys it to:
 #
-# (Mac) /Library/Application Support/Adobe/CEP/extensions/
-# (Win) C:\Program Files (x86)\Common Files\Adobe\CEP\extensions\  [not sure about (x86)]
+# (Mac) /Library/Application Support/Adobe/CEP/extensions/  (for all users)
+#       ~/Library/Application Support/Adobe/CEP/extensions/ (for current user)
+# (Win) C:\Program Files\Common Files\Adobe\CEP\extensions\  (for all users)
+# 		C:\<username>\AppData\Roaming\Adobe\CEP\extensions\  (for current user)
 #
-# This is different than the local copies used for debugging.
 
 argparser = argparse.ArgumentParser(description="Manage Photoshop CEP panels.  By default, installs the panels for debugging.")
 argparser.add_argument('--package', '-p', nargs=1, metavar='password', default=None,
@@ -227,6 +222,8 @@ argparser.add_argument('--launch', '-l', action='store_true', default=False,
                        help="Launch Photoshop after copy")
 argparser.add_argument('--erase', '-e', action='store_true', default=False,
                        help="Erase the panels from the debug install location")
+argparser.add_argument('--all', '-a', action='store_true', default=False,
+					   help="Install panel for all users")
 argparser.add_argument('--install', '-i', action='store_true', default=False,
                        help="Install the signed panels created with -p")
 args = argparser.parse_args( sys.argv[1:] )
@@ -234,6 +231,16 @@ args = argparser.parse_args( sys.argv[1:] )
 if (sum([args.package!=None, args.zip, args.erase, args.install]) > 1):
     print "# Error: Only one of -p, -z, -e or -i is allowed"
     sys.exit(0)
+
+# Where to place the panel.
+extensionSubpath = os.path.normpath("/Adobe/CEP/extensions") + os.path.sep
+winAppData = os.getenv("APPDATA") if (sys.platform == "win32") else ""
+winCommon = os.getenv("CommonProgramFiles") if (sys.platform == "win32") else ""
+osDestPath = { "win32": {False:winAppData + extensionSubpath,
+						 True:winCommon + extensionSubpath},
+               "darwin":{False:os.path.expanduser("~")+"/Library/Application Support" + extensionSubpath,
+               			 True:"/Library/Application Support" + extensionSubpath}
+             }[sys.platform][args.all]
 
 def erasePanels():
     # Unlock, then remove the panels
