@@ -48,7 +48,7 @@ if sys.platform == 'win32':
 
 # PS executable location, used just to launch PS
 PSexePath = {"win32":"C:\\Program Files\\Adobe\\Adobe Photoshop CC 2014\\Photoshop.exe",
-             "darwin": "/Applications/Adobe Photoshop CC/Adobe Photoshop CC.app/Contents/MacOS/Adobe Photoshop CC"
+             "darwin": "/Applications/Adobe Photoshop CC 2014/Adobe Photoshop CC 2014.app/Contents/MacOS/Adobe Photoshop CC 2014"
              }[sys.platform]
 
 # Extract the panel ID and name from the Manifest file
