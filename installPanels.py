@@ -117,7 +117,11 @@ class Panel:
             print "# Remote Debug %s at http://localhost:%d" % (extName, portNumber)
             portNumber += 1
         debugText += "</ExtensionList>\n"
-        file(self.debugFilename(), 'w' ).write(debugText)
+        try:
+            file(self.debugFilename(), 'w' ).write(debugText)
+        except IOError as writeErr:
+            if (writeErr.errno == 2):
+               print "# Note: Panel %s is not installed" % self.panelName
 
     def setupRemoteDebugFile(self, debugEnabled):
         if debugEnabled:
@@ -222,7 +226,7 @@ argparser.add_argument('--launch', '-l', action='store_true', default=False,
                        help="Launch Photoshop after copy")
 argparser.add_argument('--erase', '-e', action='store_true', default=False,
                        help="Erase the panels from the debug install location")
-argparser.add_argument('--all', '-a', action='store_true', default=False,
+argparser.add_argument('--allusers', '-a', action='store_true', default=False,
 					   help="Install panel for all users")
 argparser.add_argument('--install', '-i', action='store_true', default=False,
                        help="Install the signed panels created with -p")
@@ -235,12 +239,29 @@ if (sum([args.package!=None, args.zip, args.erase, args.install]) > 1):
 # Where to place the panel.
 extensionSubpath = os.path.normpath("/Adobe/CEP/extensions") + os.path.sep
 winAppData = os.getenv("APPDATA") if (sys.platform == "win32") else ""
-winCommon = os.getenv("CommonProgramFiles") if (sys.platform == "win32") else ""
+winCommon = os.getenv("CommonProgramFiles(x86)") if (sys.platform == "win32") else ""
 osDestPath = { "win32": {False:winAppData + extensionSubpath,
 						 True:winCommon + extensionSubpath},
                "darwin":{False:os.path.expanduser("~")+"/Library/Application Support" + extensionSubpath,
                			 True:"/Library/Application Support" + extensionSubpath}
-             }[sys.platform][args.all]
+             }[sys.platform][args.allusers]
+
+# If writing to the system folders, make sure we actually can
+if (args.allusers):
+    try:
+        if (not os.path.exists(osDestPath)):
+           os.makedirs(osDestPath)
+        testfile = osDestPath + os.sep + "test.txt"
+        f = file( testfile, 'w')
+        f.write("test")
+        f.close()
+        os.remove(testfile)
+    except (IOError, WindowsError) as writeErr:
+        if (writeErr.errno == 13):
+           print "# Error - Must run as admin to access %s" % osDestPath
+        else:
+           print "# Error - Unable to access %s" % osDestPath
+        sys.exit(1)
 
 def erasePanels():
     # Unlock, then remove the panels
