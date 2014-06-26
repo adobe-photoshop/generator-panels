@@ -248,6 +248,9 @@ osDestPath = { "win32": {False:winAppData + extensionSubpath,
 
 # If writing to the system folders, make sure we actually can
 if (args.allusers):
+    # Python bug: os.makedirs() should throw IOError, not WindowsError
+    if (sys.platform == "darwin"):
+        WindowsError = IOError
     try:
         if (not os.path.exists(osDestPath)):
            os.makedirs(osDestPath)
