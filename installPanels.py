@@ -31,7 +31,7 @@
 #
 # Other options:
 #  -d,--debug {on,off,status}   Set/check PanelDebugMode
-#  -a,--all						Install panels for All users
+#  -a,--allusers		        Install panels for All users
 #  -p,--package PASSWORD        Package the panels signed with a
 #                               private certificate, using the certificate's PASSWORD
 #  -i,--install                 Installs the signed panels created with -p into
