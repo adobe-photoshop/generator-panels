@@ -248,9 +248,6 @@ osDestPath = { "win32": {False:winAppData + extensionSubpath,
 
 # If writing to the system folders, make sure we actually can
 if (args.allusers):
-    # Python bug: os.makedirs() should throw IOError, not WindowsError
-    if (sys.platform == "darwin"):
-        WindowsError = IOError
     try:
         if (not os.path.exists(osDestPath)):
            os.makedirs(osDestPath)
@@ -259,7 +256,7 @@ if (args.allusers):
         f.write("test")
         f.close()
         os.remove(testfile)
-    except (IOError, WindowsError) as writeErr:
+    except (OSError, IOError) as writeErr:
         if (writeErr.errno == 13):
            print "# Error - Must run as admin to access %s" % osDestPath
         else:
