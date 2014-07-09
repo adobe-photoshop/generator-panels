@@ -213,9 +213,51 @@ LayerOperations.prototype.getSelectedLayerIndicies = function()
 // Walk through the selected layers, and add (or remove) suffixes from them.
 LayerOperations.prototype.setSelectedLayerSuffix = function( scale, resize, suffix, folder )
 {
+    // This code manually replaces the regex /(?:[\d]+[\dx% ]+[ ])*([^.,\n\r]+)(?:[.]\w+)*$/, which
+    // is broken in the ExtendScript implementation (works w/ other JavaScript interpreters).
+    function parseName( s )
+    {
+        function isDigit(c) { return (c >= '0' && c <= '9'); }
+        
+        var i = 0, foundLeadingDigits = false, foundScaleSize = false;
+        while ((i < s.length) && (isDigit(s[i]))) {
+            i++;
+            foundLeadingDigits = true;
+        }
+        if (foundLeadingDigits)
+            while ((i < s.length) && (isDigit(s[i]) || (s[i] in {'%':1, 'x':1, '%':1, ' ':1}))) {
+                i++;
+                foundScaleSize = true;
+            }
+        if ((i < s.length) && (i > 0) && foundScaleSize)
+            // Make sure foundScaleSize pattern ends with a space.
+            if (s[i-1] !== ' ') {
+                var j = 1;
+                while ((j < i) && (s[i-j] !== ' '))
+                    j++;
+                if (s[i-j] === ' ') {
+                    i = i-j+1;
+                }
+                else {
+                    foundScaleSize = false;
+                    i = 0;  // pattern for the scale/size did not match, start over
+                }
+            }
+         if (foundLeadingDigits && !foundScaleSize)
+            i = 0;
+         var start = i;
+         while ((i < s.length) && !(s[i] in {'.':1, ',':1}))
+             i++;
+         var end=i;
+         if (start === end)
+            return null;        // Didn't find anything?
+         // Return fake match() result
+         return [s, s.slice(start, end)];
+     }
+	
 	const kLayerGroupSheet		= 7;
 	var i, name, selectedLayers = this.getSelectedLayerIndicies();
-	
+    
 	var turnGenBackOn = false;
 	
 //	if ((selectedLayers.length > 1) && IsGeneratorRunning())
@@ -237,7 +279,10 @@ LayerOperations.prototype.setSelectedLayerSuffix = function( scale, resize, suff
 		var newName = null;
 		var name = this.layerName( layerIndex );
 		// Weed out just the base layer name, skipping any previous generator crap
-		var m = name.match(/(?:[\dx% ])*([^.,\n\r]+)(?:[.]\w+)*$/);
+// We can't use a regular expression due to a bug in ExtendScript's RE (Watson  3781620)
+//		var m = name.match(/(?:[\d]+[\dx% ]+[ ])*([^.,\n\r]+)(?:[.]\w+)*$/);
+
+        var m = parseName( name );
 		if (! m)
 			continue;       // Just give up if we can't figure out the layer's base name
 
