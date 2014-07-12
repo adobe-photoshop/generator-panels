@@ -36,15 +36,28 @@ kgeneratorStatusStr = app.stringIDToTypeID( "generatorStatus" );
 classPluginPrefs             = app.charIDToTypeID('PlgP');
 kgeneratorDisabledStr        = app.stringIDToTypeID("generatorDisabled");
 kgeneratorEnabledStr         = app.stringIDToTypeID("generatorEnabled");
+kinterpolationMethodStr     = app.stringIDToTypeID("interpolationMethod");
 
-function IsGeneratorRunning()
+function GetApplicationAttr( attr )
 {
 	var ref = new ActionReference();
 	var desc1 = new ActionDescriptor();
-	ref.putProperty( classProperty, kgeneratorStatusStr );
+	ref.putProperty( classProperty, attr );
 	ref.putEnumerated( classApplication, typeOrdinal, enumTarget );
 	desc1.putReference( typeNULL, ref );
-	var desc = executeAction( eventGet, desc1, DialogModes.NO );
+	return executeAction( eventGet, desc1, DialogModes.NO );
+}
+
+function DefaultInterpolationMethod()
+{
+    var desc = GetApplicationAttr( kinterpolationMethodStr );
+    var v = desc.getEnumerationValue( kinterpolationMethodStr );
+    return app.typeIDToStringID( v );
+}
+
+function IsGeneratorRunning()
+{
+    var desc = GetApplicationAttr( kgeneratorStatusStr );
 	var v = desc.getObjectValue( kgeneratorStatusStr );
 	return v.getInteger( kgeneratorStatusStr ) === 1;
 }
@@ -67,3 +80,5 @@ function EnableGenerator( flag )
 }
 
 // EnableGenerator( false ); $.sleep(2000); EnableGenerator( true );
+//$.writeln("Gen running: " + IsGeneratorRunning () );
+//$.writeln("Interp: " + DefaultInterpolationMethod() );

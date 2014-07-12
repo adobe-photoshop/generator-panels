@@ -110,3 +110,5 @@ function initColors( setupHook )
 
 // These are just developer shortcuts; they shouldn't appear in final code.
 $("#reload").click( function() { window.location.reload(true); } );
+// This doesn't work...
+$("#sources").click( function() { window.open("https://github.com/adobe-photoshop/generator-panels", '_blank'); });

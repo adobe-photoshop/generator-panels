@@ -55,7 +55,12 @@ option {            /* So text in popups is readable */
 
 #reload {
     position: absolute;
-    left: 158px;
-    top: 33px;
+    right: 10px;
+    top: 5px;
 }
 
+#sources {
+    position: absolute;
+    right: 10px;
+    top: 18px;
+}

@@ -54,16 +54,41 @@
         <span data-locale="dither-checkbox" id="ditherspan">Allow Dither</span>
     </label>
     <br>
-    <label id="webplabel" for="webp-enabled">
+    <label id="usesmartobjectlabel" for="use-psd-smart-object-pixel-scaling">
+    	<input class="configchk" type="checkbox" name="use-psd-smart-object-pixel-scaling"
+               id="use-psd-smart-object-pixel-scaling">
+        <span data-locale="usesmart-checkbox" id="usesmartobjspan">Smart Object Pixel Scaling</span>
+    </label>
+    <br>
+  <label id="webplabel" for="webp-enabled">
         <input class="configchk" type="checkbox" name="webp-enabled" id="webp-enabled">
         <span data-locale="webp-checkbox" id="webpspan">WebP Enabled</span>
     </label>
+    <br>
+    <div>
+        <div style="margin-left:3px;" data-locale="interpolationtype">Interpolation: </div>
+        <div style="margin-left:1px;">
+        <select class="ccmenu" name="interpolation-type" id="interpolation-type">
+            <option data-locale="nearestNeighbor" value="nearestNeighbor">Nearest Neighbor</option>
+            <option data-locale="bilinear" value="bilinear">Bilinear</option>
+            <option data-locale="bicubic" value="bicubic">Plain Bicubic</option>
+            <option data-locale="bicubicSmoother" value="bicubicSmoother">Bicubic Smoother</option>
+            <option data-locale="bicubicSharper" value="bicubicSharper">Bicubic Sharper</option>
+            <option data-locale="bicubicAutomatic" value="bicubicAutomatic">Bicubic Automatic</option>
+            <option data-locale="preserveDetailsUpscale" value="preserveDetailsUpscale">Preserve Details Upscale</option>
+            <option data-locale="automaticInterpolation" value="automaticInterpolation">Automatic Interpolation</option>
+        </select>
+        </div>
+     </div>
 </div>
 
 <!-- These are debugging shortcuts.  Class debuglink items only appear in debug mode  -->
-<!--  <span data-locale="config-debug-link" class="debuglink" id="debug">Debug</span> -->
 <span data-locale="config-reload-link" class="debuglink" id="reload">Reload</span>
-    
+<!--
+<a data-locale="sources-link" class="debuglink" id="sources"
+   href="https://github.com/adobe-photoshop/generator-panels" TARGET="_blank">Sources</a>
+-->
+
 <div align="center" style="margin-top:8px;">
 <button data-locale="save-button" class="ccstyle configbutton" id="savebutton">Save</button>
 <button data-locale="revert-button" class="ccstyle configbutton" id="revertbutton">Revert</button>
