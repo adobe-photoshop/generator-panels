@@ -106,9 +106,23 @@ function initColors( setupHook )
     // enable debugging controls
     var path = require("path");
     var fs = require("fs");
-    var debugPath = path.join(csInterface.getSystemPath( SystemPath.EXTENSION ), ".debug")
-    $(".debuglink").toggle( fs.existsSync(debugPath) );
+    var debugPath = path.join(csInterface.getSystemPath( SystemPath.EXTENSION ), ".debug");
+    if (fs.existsSync(debugPath)) {
+        $(".debuglink").toggle( true );
+        var debugText = fs.readFileSync(debugPath, "utf8");
+        var m = debugText.match(/<Host.*Port="(\d+)"[/]>/m);
+        // Enable the debug link only if we know the port.
+        if (m)
+            debugPort = m[1];
+        else
+            $("#debug").toggle( false );
+    }
+    else
+        $(".debuglink").toggle( false );
 }
 
-// These are just developer shortcuts; they shouldn't appear in final code.
+// These are just developer shortcuts; they shouldn't appear in non-debug panels
 $("#reload").click( function() { window.location.reload(true); } );
+$("#sources").click( function() { csInterface.openURLInDefaultBrowser("https://github.com/adobe-photoshop/generator-panels"); } );
+// This assumes CHROME is your default browser!
+$("#debug").click( function() { if (debugPort) csInterface.openURLInDefaultBrowser("http://localhost:"+debugPort); } );
