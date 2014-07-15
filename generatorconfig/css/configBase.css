@@ -59,8 +59,14 @@ option {            /* So text in popups is readable */
     top: 5px;
 }
 
-#sources {
+#debug {
     position: absolute;
     right: 10px;
     top: 18px;
+}
+
+#sources {
+    position: absolute;
+    right: 10px;
+    top: 31px;
 }
