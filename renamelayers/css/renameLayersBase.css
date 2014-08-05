@@ -48,14 +48,20 @@ option {            /* So text in popups is readable */
     cursor: pointer;
 }
 
-#debug {
-    position: absolute;
-    left: 158px;
-    top: 124px;
-}
-
 #reload {
     position: absolute;
-    left: 158px;
-    top: 135px;
+    right: 10px;
+    bottom: 70px;
+}
+
+#debug {
+    position: absolute;
+    right: 10px;
+    bottom: 57px;
+}
+
+#sources {
+    position: absolute;
+    right: 10px;
+    bottom: 44px;
 }

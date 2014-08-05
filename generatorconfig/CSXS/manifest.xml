@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<ExtensionManifest ExtensionBundleId="com.photoshop.generatorconfig" ExtensionBundleName="Generator Config" ExtensionBundleVersion="1.5.0" Version="4.0">
+<ExtensionManifest ExtensionBundleId="com.photoshop.generatorconfig" ExtensionBundleName="Generator Config" ExtensionBundleVersion="1.5.1" Version="4.0">
   <Author>
     <![CDATA[J. Peterson]]>
   </Author>
   <ExtensionList>
-    <Extension Id="com.photoshop.generatorconfig.extension" Version="1.5.0"/>
+    <Extension Id="com.photoshop.generatorconfig.extension" Version="1.5.1"/>
   </ExtensionList>
   <ExecutionEnvironment>
     <HostList>
@@ -30,11 +30,11 @@
           <Menu>%config-panel-menu-name</Menu>
           <Geometry>
             <MinSize>
-              <Height>180</Height>
+              <Height>240</Height>
               <Width>200</Width>
             </MinSize>
             <Size>
-              <Height>180</Height>
+              <Height>240</Height>
               <Width>216</Width>
             </Size>
           </Geometry>

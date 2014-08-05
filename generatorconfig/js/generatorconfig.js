@@ -30,7 +30,12 @@
 // Note: This code assumes the CSS IDs of the checkbox elements
 // match the keys used by the generator-assets configuration file.
 
-var config = require("./js/config")
+var config = require("./js/config");
+
+function saveDisable(flag)
+{
+    $(".configbutton").prop( "disabled", flag );
+}
 
 // Load the configuration and set the checkboxes.
 function loadConfig()
@@ -40,27 +45,41 @@ function loadConfig()
         var optionList = Object.keys(currentConfig["generator-assets"]);
         // Set the checkbox values
         optionList.forEach( function( opt ) {
-            $("#" + opt).prop('checked', currentConfig["generator-assets"][opt] );
+            if ($("#" + opt).attr("class") === "configchk")
+                $("#" + opt).prop('checked', currentConfig["generator-assets"][opt] );
+            if ($("#" + opt).attr("class") === "ccmenu")
+                $("#" + opt).val( currentConfig["generator-assets"][opt] );
         });
+
+        // If the interpolation method isn't in the config file,
+        // set the menu to the current Photoshop default.
+        if (! ("interpolation-type" in currentConfig)) {
+            csInterface.evalScript("DefaultInterpolationMethod();",
+                                   function( method ) { $("#interpolation-type").val(method); } );
+        }
     }
 
     // Checkboxes now match config file on disk, so save/revert buttons disable.
-    $(".configbutton").prop( "disabled", true );
+    saveDisable( true );
+    return currentConfig;
 }
 
 function initialize()
 {
     initColors();
     loadConfig();
-    
+
     if (process.platform !== "darwin")
         $("#webplabel").toggle(false);  // This option is Mac-only
 }
 
+// Control state no longer matches file on disk, so enable save & revert
 $(".configchk").change( function() {
-    var itemID = this.id;
-    // Checkbox state no longer matches file on disk, so enable save & revert
-    $(".configbutton").prop( "disabled", false );
+    saveDisable( false );
+});
+
+$(".ccmenu").change( function() {
+    saveDisable( false );
 });
 
 $("#savebutton").click( function() {
@@ -69,10 +88,13 @@ $("#savebutton").click( function() {
     $(".configchk").each(function (i, checkbox) {
         genOpts["generator-assets"][checkbox.id] = checkbox.checked;
     });
+    $(".ccmenu").each(function(i, menu) {
+        genOpts["generator-assets"][menu.id] = menu.value;
+    });
     
     // Save results and disable save/revert
     config.putConfig(genOpts);
-    $(".configbutton").prop("disabled", true);
+    saveDisable( true );
     
     // Restart generator
     csInterface.evalScript( "IsGeneratorRunning();", function(result) {
@@ -88,7 +110,7 @@ $("#savebutton").click( function() {
 
 $("#revertbutton").click( function() {
     loadConfig();
-    $(".configbutton").prop("disabled", true);
+    saveDisable( true );
 });
 
 initialize();

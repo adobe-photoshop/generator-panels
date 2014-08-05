@@ -4,7 +4,7 @@
     <![CDATA[J. Peterson]]>
   </Author>
   <ExtensionList>
-    <Extension Id="com.photoshop.renamelayers.extension" Version="1.9.1"/>
+    <Extension Id="com.photoshop.renamelayers.extension" Version="1.9.2"/>
   </ExtensionList>
   <ExecutionEnvironment>
     <HostList>
