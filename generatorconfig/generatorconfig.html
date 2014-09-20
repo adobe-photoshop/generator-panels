@@ -31,45 +31,12 @@
 
 <body>
 
-<div id="controlset">
-    <!-- Note: This code assumes the CSS IDs of the checkbox elements
-         match the keys used by the generator-assets configuration file. -->
-    <label id="svglabel" for="svg-enabled">
-        <input class="configchk" type="checkbox" name="svg-enabled" id="svg-enabled">
-        <span data-locale="svg-checkbox" id="svgspan">SVG Enabled</span>
-    </label>
-    <br>
-    <label id="svgomglabel" for="svgomg-enabled">
-        <input class="configchk" type="checkbox" name="svgomg-enabled" id="svgomg-enabled">
-        <span data-locale="svgomg-checkbox" id="svgomgspan">SVG OMG Enabled</span>
-    </label>
-    <br>
-    <label id="smartscalelabel" for="use-smart-scaling">
-        <input class="configchk" type="checkbox" name="use-smart-scaling" id="use-smart-scaling">
-        <span data-locale="smartscale-checkbox" id="smartscalespan">Use Smart Scaling</span>
-    </label>
-    <br>
-    <label id="ancmaskslabel" for="include-ancestor-masks">
-        <input class="configchk" type="checkbox" name="include-ancestor-masks" id="include-ancestor-masks">
-        <span data-locale="ancmasks-checkbox" id="ancmasksspan">Included Ancestor Masks</span>
-    </label>
-    <br>
-    <label id="ditherlabel" for="allow-dither">
-        <input class="configchk" type="checkbox" name="allow-dither" id="allow-dither">
-        <span data-locale="dither-checkbox" id="ditherspan">Allow Dither</span>
-    </label>
-    <br>
-    <label id="usesmartobjectlabel" for="use-psd-smart-object-pixel-scaling">
-    	<input class="configchk" type="checkbox" name="use-psd-smart-object-pixel-scaling"
-               id="use-psd-smart-object-pixel-scaling">
-        <span data-locale="usesmartobject-checkbox" id="usesmartobjspan">Smart Object Pixel Scaling</span>
-    </label>
-    <br>
-    <label id="webplabel" for="webp-enabled">
-        <input class="configchk" type="checkbox" name="webp-enabled" id="webp-enabled">
-        <span data-locale="webp-checkbox" id="webpspan">WebP Enabled</span>
-    </label>
-    <br>
+<!-- Note: This code assumes the CSS IDs of the checkbox elements
+     match the keys used by the generator-assets configuration file. -->
+<div>
+    <div id="checkboxes">
+        <!-- Checkboxes will go here, created by generatorconfig.js -->
+    </div>
     <div style="margin-top:4px;">
         <div style="margin-left:3px;" data-locale="interpolationtype">Interpolation: </div>
         <div style="margin-left:1px;">
@@ -84,7 +51,10 @@
             <option data-locale="automaticInterpolation" value="automaticInterpolation">Automatic Interpolation</option>
         </select>
         </div>
-     </div>
+    </div>
+    <div id="infolink">
+        <span data-locale="infolink">More information...</span>
+    </div>
 </div>
 
 <div align="center" style="margin-top:8px;">

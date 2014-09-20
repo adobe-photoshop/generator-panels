@@ -46,6 +46,13 @@ option {            /* So text in popups is readable */
     color: black;
 }
 
+#infolink {
+    font-size: 8pt;
+    cursor: pointer;
+    text-decoration: underline;
+    text-align: center;
+}
+
 .debuglink {
     font-size: 7pt;
     text-decoration: underline;
