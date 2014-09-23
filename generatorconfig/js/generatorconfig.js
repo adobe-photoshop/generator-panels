@@ -64,14 +64,58 @@ function loadConfig()
     return currentConfig;
 }
 
+// This table defines all of the checkbox (true/false) controls
+// Table is: HTML tag | config ID | English text label
+// Note the CSS IDs of the checkbox elements match the
+// keys used by the generator-assets configuration file.
+var checkboxes = [
+    ["svg",            "svg-enabled",                        "SVG Enabled"],
+    ["svgomg",         "svgomg-enabled",                     "SVG OMG Enabled"],
+    ["copycss",        "css-enabled",                        "Enable Copy CSS"],
+    ["smartscale",     "use-smart-scaling",                  "Use Smart Scaling"],
+    ["ancmasks",       "include-ancestor-masks",             "Included Ancestor Masks"],
+    ["dither",         "allow-dither",                       "Allow Dither"],
+    ["usesmartobject", "use-psd-smart-object-pixel-scaling", "Smart Object Pixel Scaling"],
+    ["pngquant",       "use-pngquant",                       "Use pngquant for PNG-8"],
+    ["convcolorspace", "convert-color-space",                "Color convert pixels"],
+    // WebP must be last - it's only visible on the Mac
+    ["webp",           "webp-enabled",                       "WebP Enabled"]];
+
+function generateCheckboxes()
+{
+    function addBox( tag, id, message )
+    {
+        var boxContent = ['<label id="#TAG#label" for="#ID#">',
+                          '<input class="configchk" type="checkbox" name="#ID#" id="#ID#">',
+                          '<span data-locale="#TAG#-checkbox" id="#TAG#span">#MESSAGE#</span>',
+                          '</label><br>'].join("\n");
+
+        // Clever hack for search/replace - http://stackoverflow.com/a/1145525/105767
+        boxContent = boxContent.split("#TAG#").join(tag);
+        boxContent = boxContent.split("#ID#").join(id);
+        boxContent = boxContent.split("#MESSAGE#").join(message);
+        $("#checkboxes").append( boxContent );
+    }
+    
+    for (var i in checkboxes) {
+        var box = checkboxes[i];
+        addBox( box[0], box[1], box[2] );
+    }
+}
+
 function initialize()
 {
     initColors();
+    generateCheckboxes();
     loadConfig();
 
     if (process.platform !== "darwin")
         $("#webplabel").toggle(false);  // This option is Mac-only
 }
+
+// Initialize must be called -before- the change() callback is
+// defined, so the controls exist.
+initialize();
 
 // Control state no longer matches file on disk, so enable save & revert
 $(".configchk").change( function() {
@@ -113,4 +157,6 @@ $("#revertbutton").click( function() {
     saveDisable( true );
 });
 
-initialize();
+$(".infolink").click( function() {
+    csInterface.openURLInDefaultBrowser("https://github.com/adobe-photoshop/generator-assets/wiki/Configuration-Options");
+} );
