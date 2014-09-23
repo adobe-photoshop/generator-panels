@@ -71,13 +71,13 @@ function loadConfig()
 var checkboxes = [
     ["svg",            "svg-enabled",                        "SVG Enabled"],
     ["svgomg",         "svgomg-enabled",                     "SVG OMG Enabled"],
+    ["copycss",        "css-enabled",                        "Enable Copy CSS"],
     ["smartscale",     "use-smart-scaling",                  "Use Smart Scaling"],
     ["ancmasks",       "include-ancestor-masks",             "Included Ancestor Masks"],
     ["dither",         "allow-dither",                       "Allow Dither"],
     ["usesmartobject", "use-psd-smart-object-pixel-scaling", "Smart Object Pixel Scaling"],
     ["pngquant",       "use-pngquant",                       "Use pngquant for PNG-8"],
     ["convcolorspace", "convert-color-space",                "Color convert pixels"],
-    ["copycss",        "css-enabled",                        "Enable Copy CSS"],
     // WebP must be last - it's only visible on the Mac
     ["webp",           "webp-enabled",                       "WebP Enabled"]];
 
@@ -157,6 +157,6 @@ $("#revertbutton").click( function() {
     saveDisable( true );
 });
 
-$("#infolink").click( function() {
+$(".infolink").click( function() {
     csInterface.openURLInDefaultBrowser("https://github.com/adobe-photoshop/generator-assets/wiki/Configuration-Options");
 } );
