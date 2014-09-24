@@ -27,10 +27,11 @@
 // John Peterson - May 2014
 //
 
-// Note: This code assumes the CSS IDs of the checkbox elements
-// match the keys used by the generator-assets configuration file.
-
+// Configuration code (taken from Generator)
 var config = require("./js/config");
+
+// Hard-coded defaults.  These should match the defaults
+// from the Generator code.
 
 // This table defines all of the checkbox (true/false) controls
 // Table is: default | HTML tag | config ID | English text label
@@ -51,11 +52,13 @@ var checkboxes = [
 
 var defaultPSInterpolation = "bicubicAutomatic";
 
+// Disable/enable the Save & Revert buttons (class saverev)
 function saveDisable(flag)
 {
     $(".saverev").prop( "disabled", flag );
 }
 
+// Set controls to their default values
 function setDefaultValues()
 {
     for (var i in checkboxes)
@@ -66,7 +69,8 @@ function setDefaultValues()
 // Load the configuration and set the checkboxes.
 function loadConfig()
 {
-    // Start w/ the hard-coded defaults
+    // Start w/ the hard-coded defaults, they'll be
+    // overwritten with values from the config file.
     setDefaultValues();
 
     var currentConfig = config.getConfig();
@@ -86,6 +90,8 @@ function loadConfig()
     return currentConfig;
 }
 
+// Since the checkboxes all use the same boilerplate HTML,
+// generate them on the fly.
 function generateCheckboxes()
 {
     function addBox( tag, id, message )
@@ -108,17 +114,18 @@ function generateCheckboxes()
     }
 }
 
+// Called when the panel loads
 function initialize()
 {
     initColors();
 
-    // Query the default interpolation now to avoid a race condition
-    // when setting the control.
+    // Query the default interpolation now to avoid
+    // a race condition when setting the control.
     csInterface.evalScript("DefaultInterpolationMethod();",
                             function( method ) { defaultPSInterpolation = method; } );
 
     generateCheckboxes();
-    loadConfig(true);
+    loadConfig();
 
     if (process.platform !== "darwin")
         $("#webplabel").toggle(false);  // This option is Mac-only
