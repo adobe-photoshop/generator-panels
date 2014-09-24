@@ -27,19 +27,52 @@
 // John Peterson - May 2014
 //
 
-// Note: This code assumes the CSS IDs of the checkbox elements
-// match the keys used by the generator-assets configuration file.
-
+// Configuration code (taken from Generator)
 var config = require("./js/config");
 
+// Hard-coded defaults.  These should match the defaults
+// from the Generator code.
+
+// This table defines all of the checkbox (true/false) controls
+// Table is: default | HTML tag | config ID | English text label
+// Note the CSS IDs of the checkbox elements match the
+// keys used by the generator-assets configuration file.
+var checkboxes = [
+    [true,  "svg",            "svg-enabled",                        "SVG Enabled"],
+    [true,  "svgomg",         "svgomg-enabled",                     "SVG OMG Enabled"],
+    [false, "copycss",        "css-enabled",                        "Enable Copy CSS"],
+    [false, "smartscale",     "use-smart-scaling",                  "Use Smart Scaling"],
+    [false, "ancmasks",       "include-ancestor-masks",             "Included Ancestor Masks"],
+    [false, "dither",         "allow-dither",                       "Allow Dither"],
+    [false, "usesmartobject", "use-psd-smart-object-pixel-scaling", "Smart Object Pixel Scaling"],
+    [false, "pngquant",       "use-pngquant",                       "Use pngquant for PNG-8"],
+    [false, "convcolorspace", "convert-color-space",                "Color convert pixels"],
+    // WebP must be last - it's only visible on the Mac
+    [false, "webp",           "webp-enabled",                       "WebP Enabled"]];
+
+var defaultPSInterpolation = "bicubicAutomatic";
+
+// Disable/enable the Save & Revert buttons (class saverev)
 function saveDisable(flag)
 {
-    $(".configbutton").prop( "disabled", flag );
+    $(".saverev").prop( "disabled", flag );
+}
+
+// Set controls to their default values
+function setDefaultValues()
+{
+    for (var i in checkboxes)
+        $("#" + checkboxes[i][2]).prop('checked', checkboxes[i][0]);
+    $("#interpolation-type").val( defaultPSInterpolation );
 }
 
 // Load the configuration and set the checkboxes.
 function loadConfig()
 {
+    // Start w/ the hard-coded defaults, they'll be
+    // overwritten with values from the config file.
+    setDefaultValues();
+
     var currentConfig = config.getConfig();
     if (currentConfig && currentConfig["generator-assets"]) {
         var optionList = Object.keys(currentConfig["generator-assets"]);
@@ -50,13 +83,6 @@ function loadConfig()
             if ($("#" + opt).attr("class") === "ccmenu")
                 $("#" + opt).val( currentConfig["generator-assets"][opt] );
         });
-
-        // If the interpolation method isn't in the config file,
-        // set the menu to the current Photoshop default.
-        if (! ("interpolation-type" in currentConfig)) {
-            csInterface.evalScript("DefaultInterpolationMethod();",
-                                   function( method ) { $("#interpolation-type").val(method); } );
-        }
     }
 
     // Checkboxes now match config file on disk, so save/revert buttons disable.
@@ -64,23 +90,8 @@ function loadConfig()
     return currentConfig;
 }
 
-// This table defines all of the checkbox (true/false) controls
-// Table is: HTML tag | config ID | English text label
-// Note the CSS IDs of the checkbox elements match the
-// keys used by the generator-assets configuration file.
-var checkboxes = [
-    ["svg",            "svg-enabled",                        "SVG Enabled"],
-    ["svgomg",         "svgomg-enabled",                     "SVG OMG Enabled"],
-    ["copycss",        "css-enabled",                        "Enable Copy CSS"],
-    ["smartscale",     "use-smart-scaling",                  "Use Smart Scaling"],
-    ["ancmasks",       "include-ancestor-masks",             "Included Ancestor Masks"],
-    ["dither",         "allow-dither",                       "Allow Dither"],
-    ["usesmartobject", "use-psd-smart-object-pixel-scaling", "Smart Object Pixel Scaling"],
-    ["pngquant",       "use-pngquant",                       "Use pngquant for PNG-8"],
-    ["convcolorspace", "convert-color-space",                "Color convert pixels"],
-    // WebP must be last - it's only visible on the Mac
-    ["webp",           "webp-enabled",                       "WebP Enabled"]];
-
+// Since the checkboxes all use the same boilerplate HTML,
+// generate them on the fly.
 function generateCheckboxes()
 {
     function addBox( tag, id, message )
@@ -99,13 +110,20 @@ function generateCheckboxes()
     
     for (var i in checkboxes) {
         var box = checkboxes[i];
-        addBox( box[0], box[1], box[2] );
+        addBox( box[1], box[2], box[3] );
     }
 }
 
+// Called when the panel loads
 function initialize()
 {
     initColors();
+
+    // Query the default interpolation now to avoid
+    // a race condition when setting the control.
+    csInterface.evalScript("DefaultInterpolationMethod();",
+                            function( method ) { defaultPSInterpolation = method; } );
+
     generateCheckboxes();
     loadConfig();
 
@@ -155,6 +173,11 @@ $("#savebutton").click( function() {
 $("#revertbutton").click( function() {
     loadConfig();
     saveDisable( true );
+});
+
+$("#defaultbutton").click( function() {
+    setDefaultValues();
+    saveDisable( false );
 });
 
 $(".infolink").click( function() {
