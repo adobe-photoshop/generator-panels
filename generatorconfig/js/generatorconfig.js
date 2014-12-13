@@ -45,7 +45,7 @@ var checkboxes = [
     [false, "ancmasks",       "include-ancestor-masks",             "Included Ancestor Masks"],
     [false, "dither",         "allow-dither",                       "Allow Dither"],
     [false, "usesmartobject", "use-psd-smart-object-pixel-scaling", "Smart Object Pixel Scaling"],
-    [false, "pngquant",       "use-pngquant",                       "Use pngquant for PNG-8"],
+    [true,  "pngquant",       "use-pngquant",                       "Use pngquant for PNG-8"],
     [false, "convcolorspace", "convert-color-space",                "Color convert pixels"],
     // WebP must be last - it's only visible on the Mac
     [false, "webp",           "webp-enabled",                       "WebP Enabled"]];

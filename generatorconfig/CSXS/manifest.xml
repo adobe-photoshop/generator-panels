@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<ExtensionManifest ExtensionBundleId="com.photoshop.generatorconfig" ExtensionBundleName="Generator Config" ExtensionBundleVersion="1.5.2" Version="4.0">
+<ExtensionManifest ExtensionBundleId="com.photoshop.generatorconfig" ExtensionBundleName="Generator Config" ExtensionBundleVersion="1.5.3" Version="4.0">
   <Author>
     <![CDATA[J. Peterson]]>
   </Author>
   <ExtensionList>
-    <Extension Id="com.photoshop.generatorconfig.extension" Version="1.5.2"/>
+    <Extension Id="com.photoshop.generatorconfig.extension" Version="1.5.3"/>
   </ExtensionList>
   <ExecutionEnvironment>
     <HostList>
