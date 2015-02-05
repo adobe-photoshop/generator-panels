@@ -69,13 +69,18 @@ class Panel:
     def __init__(self, extInfo, manifestPath):
         m = re.search('ExtensionBundleId\s*=\s*["][\w.]*[.](\w+)["]', extInfo)
         self.panelID = m.group(1) if m else "ERROR_FINDING_ID"
+        m = re.search('ExtensionBundleId\s*=\s*["]([\w.]+)["]', extInfo)
+        self.fullPanelID = m.group(1) if m else "ERROR_FINDING_ID"
         m = re.search('ExtensionBundleName\s*=\s*["]([\w\s]+)["]', extInfo)
         self.panelName = m.group(1) if m else self.panelID
         self.panelSrcFolder = manifestPath.split(os.sep)[0]
 
+    def destPath(self):
+        return osDestPath + (self.fullPanelID if args.allusers else self.panelName)
+
     # Copy panel source to the deployment folder
     def copyPanel(self):
-        destPath = osDestPath + self.panelName
+        destPath = self.destPath()
         print "# Copying " + srcLocation + self.panelSrcFolder + "\n  to " + destPath
         shutil.copytree( srcLocation + self.panelSrcFolder, destPath )
 
@@ -86,7 +91,8 @@ class Panel:
             os.chmod( path, os.stat( path ).st_mode | stat.S_IWRITE )
 
         # Unlock, then remove the panels
-        destPath = osDestPath + self.panelName
+        destPath = self.destPath()
+        print destPath
         if (os.path.exists( destPath )):
             print "# Removing " + destPath
             for df in [root + os.sep + f for root, dirs, files in os.walk(destPath) for f in files]:
@@ -95,7 +101,7 @@ class Panel:
 
     # Create the .debug file for enabling the remote debugger
     def debugFilename(self):
-        return os.path.join( osDestPath, self.panelName, ".debug" )
+        return os.path.join( self.destPath(), ".debug" )
 
     # Setup/remove remote debug config files
     def createRemoteDebugXML(self):
@@ -213,6 +219,8 @@ def getTargetFolder():
 #       ~/Library/Application Support/Adobe/CEP/extensions/ (for current user)
 # (Win) C:\Program Files\Common Files\Adobe\CEP\extensions\  (for all users)
 # 		C:\<username>\AppData\Roaming\Adobe\CEP\extensions\  (for current user)
+# Note the Adobe CC Panel deploys them to:
+# (Win) C:\Program Files(x86)\Common Files\Adobe\CEP\extensions\[extensionID]
 #
 
 argparser = argparse.ArgumentParser(description="Manage Photoshop CEP panels.  By default, installs the panels for debugging.")
