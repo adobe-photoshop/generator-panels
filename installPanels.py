@@ -31,7 +31,7 @@
 #
 # Other options:
 #  -d,--debug {on,off,status}   Set/check PanelDebugMode
-#  -a,--allusers		        Install panels for All users
+#  -a,--allusers                Install panels for All users
 #  -p,--package PASSWORD        Package the panels signed with a
 #                               private certificate, using the certificate's PASSWORD
 #  -i,--install                 Installs the signed panels created with -p into
@@ -179,33 +179,6 @@ class Panel:
             zf.write( f )
         zf.close()
 
-#
-# Find installable extensions.  Assumes this script is in
-# the top level folder containing the extension sources.
-#
-srcLocation = sys.path[0] + os.sep
-os.chdir(srcLocation)
-manifestFiles = glob.glob("*/CSXS/manifest.xml")
-
-if len(manifestFiles) == 0:
-    print "# Error - no extension manifests found"
-    sys.exit(-1)
-
-# Load the panel info from the extension
-panelList = [Panel(getExtensionInfo(f), f) for f in manifestFiles if getExtensionInfo(f)]
-
-# Location of the certificate file used to sign the package.
-certPath = os.path.join( srcLocation, "cert", "panelcert.p12" )
-
-# Base port number used for remote debugger (each extra panel increments it)
-portNumber = 8000
-
-def getTargetFolder():
-    targetFolder = os.path.abspath( os.path.join( srcLocation, "Targets" ) ) + os.sep
-    if (not os.path.exists( targetFolder )):
-        os.makedirs( targetFolder )
-    return targetFolder
-
 # For future reference, the Extension Manager stages the bundle in
 #
 # (Mac) /Library/Application Support/Adobe/Extension Manager CC/EM Store/Photoshop/
@@ -270,6 +243,34 @@ if (args.allusers):
         else:
            print "# Error - Unable to access %s" % osDestPath
         sys.exit(1)
+
+#
+# Find installable extensions.  Assumes this script is in
+# the top level folder containing the extension sources.
+#
+srcLocation = sys.path[0] + os.sep
+os.chdir(srcLocation)
+manifestFiles = glob.glob("*/CSXS/manifest.xml")
+
+if len(manifestFiles) == 0:
+    print "# Warning - no extension manifests found"
+    if (not args.debug):
+        sys.exit(-1)
+
+# Load the panel info from the extension
+panelList = [Panel(getExtensionInfo(f), f) for f in manifestFiles if getExtensionInfo(f)]
+
+# Location of the certificate file used to sign the package.
+certPath = os.path.join( srcLocation, "cert", "panelcert.p12" )
+
+# Base port number used for remote debugger (each extra panel increments it)
+portNumber = 8000
+
+def getTargetFolder():
+    targetFolder = os.path.abspath( os.path.join( srcLocation, "Targets" ) ) + os.sep
+    if (not os.path.exists( targetFolder )):
+        os.makedirs( targetFolder )
+    return targetFolder
 
 def erasePanels():
     # Unlock, then remove the panels
