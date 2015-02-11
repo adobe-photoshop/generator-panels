@@ -4,7 +4,7 @@
     <![CDATA[J. Peterson]]>
   </Author>
   <ExtensionList>
-    <Extension Id="com.photoshop.generatorconfig.extension" Version="1.5.3"/>
+    <Extension Id="com.photoshop.generatorconfig.extension" Version="1.5.4"/>
   </ExtensionList>
   <ExecutionEnvironment>
     <HostList>
