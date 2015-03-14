@@ -203,6 +203,8 @@ argparser.add_argument('--zip', '-z', action='store_true', default=False,
                        help="Create ZIP archives for BuildForge signing")
 argparser.add_argument('--debug', '-d', nargs='?', const='status', default=None, choices=['status', 'on', 'off'],
                        help="Enable panel without signing")
+argparser.add_argument('--version', '-v', default='5',
+                       help="CEP Version for setting PanelDebugMode")
 argparser.add_argument('--launch', '-l', action='store_true', default=False,
                        help="Launch Photoshop after copy")
 argparser.add_argument('--erase', '-e', action='store_true', default=False,
@@ -289,6 +291,7 @@ def erasePanels():
 #
 def panelExecutionState( debugKey, panelDebugValue=None ):
     oldPanelDebugValue = 'err'
+    CEPversion = 'CSXS.' + args.version
 
     # Windows: add HKEY_CURRENT_USER/Software/Adobe/CSXS.5 (add key) PlayerDebugMode [String] "1"
     if sys.platform == 'win32':
@@ -300,7 +303,8 @@ def panelExecutionState( debugKey, panelDebugValue=None ):
 
         access = _winreg.KEY_READ if (not panelDebugValue) else _winreg.KEY_ALL_ACCESS
 
-        ky = _winreg.OpenKey( _winreg.HKEY_CURRENT_USER, "Software\\Adobe\\CSXS.5", 0, access )
+        ky = _winreg.OpenKey( _winreg.HKEY_CURRENT_USER,
+                              "Software\\Adobe\\%s" % CEPversion, 0, access )
         keyValue = tryKey( ky )
         oldPanelDebugValue = '1' if keyValue and (keyValue[0] == '1') else '0'
 
@@ -314,7 +318,7 @@ def panelExecutionState( debugKey, panelDebugValue=None ):
     # Mac: ~/Library/Preferences/com.adobe.CSXS.5.plist (add row) PlayerDebugMode [String] "1"
     elif sys.platform == "darwin":
         import subprocess, plistlib
-        plistFile = os.path.expanduser( "~/Library/Preferences/com.adobe.CSXS.5.plist" )
+        plistFile = os.path.expanduser( "~/Library/Preferences/com.adobe.%s.plist" % CEPversion )
 
         # First, make sure the Plist is in text format
         subprocess.check_output( "plutil -convert xml1 " + plistFile, shell=True )
