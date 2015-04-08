@@ -92,7 +92,6 @@ class Panel:
 
         # Unlock, then remove the panels
         destPath = self.destPath()
-        print destPath
         if (os.path.exists( destPath )):
             print "# Removing " + destPath
             for df in [root + os.sep + f for root, dirs, files in os.walk(destPath) for f in files]:
