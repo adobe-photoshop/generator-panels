@@ -202,7 +202,7 @@ argparser.add_argument('--zip', '-z', action='store_true', default=False,
                        help="Create ZIP archives for BuildForge signing")
 argparser.add_argument('--debug', '-d', nargs='?', const='status', default=None, choices=['status', 'on', 'off'],
                        help="Enable panel without signing")
-argparser.add_argument('--version', '-v', default='5',
+argparser.add_argument('--version', '-v', default='6',
                        help="CEP Version for setting PanelDebugMode")
 argparser.add_argument('--launch', '-l', action='store_true', default=False,
                        help="Launch Photoshop after copy")
