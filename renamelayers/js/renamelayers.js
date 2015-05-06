@@ -259,4 +259,8 @@ $("#renamebutton").click( function() {
     csInterface.evalScript("layerOps.doRename(" + JSON.stringify( getParams() ) + ");");
 });
 
+$(".infolink").click( function() {
+    csInterface.openURLInDefaultBrowser("https://github.com/adobe-photoshop/generator-assets/wiki/Generate-Web-Assets-Functional-Spec");
+} );
+
 initialize();

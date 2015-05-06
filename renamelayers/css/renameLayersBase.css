@@ -60,6 +60,13 @@ option {            /* So text in popups is readable */
     bottom: 57px;
 }
 
+.infolink {
+    font-size: 8pt;
+    cursor: pointer;
+    text-decoration: underline;
+    text-align: center;
+}
+
 #sources {
     position: absolute;
     right: 10px;

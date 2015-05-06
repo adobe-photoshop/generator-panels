@@ -7,10 +7,10 @@ The **Generator Configuration** panel lets you easily change the [configuration 
 
 ![](https://github.com/adobe-photoshop/generator-panels/blob/master/screenshots/GeneratorConfig.png)
 
-The **Rename Layer Suffix** panel lets you easily change the suffix, scale, size and folder [parameters](https://github.com/adobe-photoshop/generator-assets/wiki/Generate-Web-Assets-Functional-Spec) of the selected layers in Photoshop.  This is an easy way to update existing Photoshop design files to take advantage of Generator to export assets.
+The **Generator Layer Names** panel lets you easily change the suffix, scale, size and folder [parameters](https://github.com/adobe-photoshop/generator-assets/wiki/Generate-Web-Assets-Functional-Spec) of the selected layers in Photoshop.  This is an easy way to update existing Photoshop design files to take advantage of Generator to export assets.
 
-![](https://github.com/adobe-photoshop/generator-panels/blob/master/screenshots/RenameLayers.png)
- 
+![](https://github.com/adobe-photoshop/generator-panels/blob/master/screenshots/GeneratorLayerNames.png)
+
 ### Installation
 
 The release version of the Generator Configuration panel is available directly for free from the [Adobe Add-ons site](https://creative.adobe.com/addons/products/2274).
