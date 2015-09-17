@@ -15,7 +15,7 @@
       <Locale Code="All"/>
     </LocaleList>
     <RequiredRuntimeList>
-      <RequiredRuntime Name="CSXS" Version="5.0"/>
+      <RequiredRuntime Name="CSXS" Version="6.1"/>
     </RequiredRuntimeList>
   </ExecutionEnvironment>
   <DispatchInfoList>
@@ -23,6 +23,9 @@
       <DispatchInfo>
         <Resources>
           <MainPath>./generatorconfig.html</MainPath>
+          <CEFCommandLine>
+            <Parameter>--enable-nodejs</Parameter>
+          </CEFCommandLine>
           <ScriptPath>./host/GeneratorConfig.jsx</ScriptPath>
         </Resources>
         <UI>
