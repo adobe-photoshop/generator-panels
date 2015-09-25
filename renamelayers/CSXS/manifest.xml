@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<ExtensionManifest ExtensionBundleId="com.photoshop.renamelayers" ExtensionBundleName="Generator Layer Names" ExtensionBundleVersion="1.9.4" Version="4.0">
+<ExtensionManifest ExtensionBundleId="com.photoshop.renamelayers" ExtensionBundleName="Generator Layer Names" ExtensionBundleVersion="1.9.4" Version="6.0">
   <Author>
     <![CDATA[J. Peterson]]>
   </Author>
@@ -15,7 +15,7 @@
       <Locale Code="All"/>
     </LocaleList>
     <RequiredRuntimeList>
-      <RequiredRuntime Name="CSXS" Version="5.0"/>
+      <RequiredRuntime Name="CSXS" Version="6.0"/>
     </RequiredRuntimeList>
   </ExecutionEnvironment>
   <DispatchInfoList>
@@ -23,6 +23,9 @@
       <DispatchInfo>
         <Resources>
           <MainPath>./renamelayers.html</MainPath>
+          <CEFCommandLine>
+            <Parameter>--enable-nodejs</Parameter>
+          </CEFCommandLine>
           <ScriptPath>./host/RenameLayers.jsx</ScriptPath>
         </Resources>
         <UI>
