@@ -31,6 +31,7 @@
 #
 # Other options:
 #  -d,--debug {on,off,status}   Set/check PanelDebugMode
+#  -l,--list                    List all panels installed
 #  -a,--allusers                Install panels for All users
 #  -p,--package PASSWORD        Package the panels signed with a
 #                               private certificate, using the certificate's PASSWORD
@@ -38,11 +39,11 @@
 #                               the user panel location.  Does not require debug mode.
 #  -z,--zip                     Package the panels as a ZIP archives
 #  -e,--erase                   Remove the panels from the debug location
-#  -l,--launch                  Launch Photoshop after copying.
+#  -r,--run                     Run Photoshop after copying.
 #
 #
 
-import os, sys, shutil, re, getpass, stat, datetime, platform, glob
+import os, sys, shutil, re, string, getpass, stat, datetime, platform, glob
 import argparse, subprocess, zipfile, ftplib, xml.dom.minidom
 if sys.platform == 'win32':
     import _winreg
@@ -204,8 +205,10 @@ argparser.add_argument('--debug', '-d', nargs='?', const='status', default=None,
                        help="Enable panel without signing")
 argparser.add_argument('--version', '-v', default='6',
                        help="CEP Version for setting PanelDebugMode")
-argparser.add_argument('--launch', '-l', action='store_true', default=False,
+argparser.add_argument('--run', '-r', action='store_true', default=False,
                        help="Launch Photoshop after copy")
+argparser.add_argument('--list', '-l', action='store_true', default=False,
+                       help="List all installed panels")
 argparser.add_argument('--erase', '-e', action='store_true', default=False,
                        help="Erase the panels from the debug install location")
 argparser.add_argument('--allusers', '-a', action='store_true', default=False,
@@ -222,11 +225,12 @@ if (sum([args.package!=None, args.zip, args.erase, args.install]) > 1):
 extensionSubpath = os.path.normpath("/Adobe/CEP/extensions") + os.path.sep
 winAppData = os.getenv("APPDATA") if (sys.platform == "win32") else ""
 winCommon = os.getenv("CommonProgramFiles(x86)") if (sys.platform == "win32") else ""
-osDestPath = { "win32": {False:winAppData + extensionSubpath,
-						 True:winCommon + extensionSubpath},
-               "darwin":{False:os.path.expanduser("~")+"/Library/Application Support" + extensionSubpath,
-               			 True:"/Library/Application Support" + extensionSubpath}
-             }[sys.platform][args.allusers]
+allDestPaths = { "win32": {False:winAppData + extensionSubpath,
+						   True:winCommon + extensionSubpath},
+                 "darwin":{False:os.path.expanduser("~")+"/Library/Application Support" + extensionSubpath,
+                           True:"/Library/Application Support" + extensionSubpath}
+               }[sys.platform]
+osDestPath = allDestPaths[args.allusers]
 
 # If writing to the system folders, make sure we actually can
 if (args.allusers):
@@ -283,6 +287,24 @@ def erasePanels():
     if os.path.exists(cachePath):
         shutil.rmtree(cachePath);
 
+def listInstalledPanels():
+    def displayPanelsInfo(panelList, title):
+        if len(panelList) == 0:
+            return
+        print "\n# (%s)\n# Panels in %s" % (title, os.path.dirname(panelList[0]))
+        for f in panelList:
+            # Fish the ID for each extension in the package out of the CSXS/manifest.xml file
+            manifestXML = xml.dom.minidom.parse( os.path.join( f, "CSXS", "manifest.xml" ) )
+            name = os.path.basename(f)
+            manifest = manifestXML.getElementsByTagName("ExtensionManifest")
+            # Only print the bundle (names) if they're different from the folder name
+            extNames = [x.getAttribute("ExtensionBundleName") for x in manifest if x.getAttribute("ExtensionBundleName") != name]
+            extNames = " (" + string.join(extNames) + ")" if len(extNames) > 0 else ""
+            print "  %s%s" % (name, extNames)
+
+    displayPanelsInfo( glob.glob(allDestPaths[True] + "*"), "for all users")
+    displayPanelsInfo( glob.glob(allDestPaths[False] + "*"), "for this user")
+    
 #
 # Examine the state of debugKey (either "Logging" or "PlayerDebugMode")
 # If panelDebugValue is not None, set the to that value.
@@ -422,6 +444,9 @@ elif (args.zip):
 
 elif (args.erase):
     erasePanels()
+
+elif (args.list):
+    listInstalledPanels()
 #
 # Default; copy the files directly into their debug locations
 #
@@ -433,5 +458,5 @@ else:
     setupRemoteDebugFiles()
 
 # Launch PS
-if (args.launch):
+if (args.run):
     os.execl(PSexePath, "Adobe Photoshop")
