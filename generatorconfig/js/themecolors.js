@@ -56,15 +56,16 @@ function grayToHex( gray )
 // hand-lifted off of the PS UI, because the CEP host environment doesn't
 // provide anything except for the background color.
 var colorTable = {
-    '#32':{ textfg:0xCE, textbg:0x22 },
-    '#53':{ textfg:0xE1, textbg:0x3A },
-    '#B8':{ textfg:0x18, textbg:0xEE },
-    '#F0':{ textfg:0x21, textbg:0xFF } };
+    '#32':{ textfg:0xCE, textbg:0x22, cssfile:'darker' },
+    '#53':{ textfg:0xE1, textbg:0x3A, cssfile:'dark' },
+    '#B8':{ textfg:0x18, textbg:0xEE, cssfile:'light' },
+    '#F0':{ textfg:0x21, textbg:0xFF, cssfile:'lighter' } };
+
 
 // This swaps the light/dark stylesheets for the control widgets
 // <link id="ccstyleTheme" href="css/ccstyle_D.css" rel="stylesheet" type="text/css" />
 
-function swapCSS( isDark )
+function swapCSS( cssfilename )
 {
     var panelName = "config";
     var themeID = panelName + "Theme";
@@ -72,8 +73,8 @@ function swapCSS( isDark )
     if ($("#ccstyleTheme").length)
         $("#ccstyleTheme").remove();
     var link = document.createElement('link');
-    $("head").append('<link id="ccstyleTheme" href="css/ccstyle'
-                     + (isDark ? '_D.css' : '_L.css') +'" rel="stylesheet" type="text/css" />');
+    $("head").append('<link id="ccstyleTheme" href="css/styles-'
+                     + cssfilename +'.css" rel="stylesheet" type="text/css" />');
 }
 
 function setupColors()
@@ -82,10 +83,11 @@ function setupColors()
     csInterface.hostEnvironment = JSON.parse(window.__adobe_cep__.getHostEnvironment());
     window.document.bgColor = colorToHex( csInterface.hostEnvironment.appSkinInfo.panelBackgroundColor );
 
-    var colors = colorTable[window.document.bgColor.slice(0,3)];
+    var bgcolorval = window.document.bgColor.slice(0,3);
+    var colors = colorTable[bgcolorval];
     window.document.fgColor = grayToHex( colors.textfg );
 
-    swapCSS(colors.textfg > 128);
+    swapCSS(colorTable[bgcolorval].cssfile);
 
     if (themeColorSetupHook)
         themeColorSetupHook();

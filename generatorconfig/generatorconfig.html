@@ -26,18 +26,18 @@
 <!-- Generator Configuration Panel -->
 <html>
 <meta charset="utf-8">
-<link id="configBase" href="css/configBase.css" rel="stylesheet" type="text/css" />
-<link id="ccstyleTheme" href="css/ccstyle_D.css" rel="stylesheet" type="text/css" />
+<link id="ccstyleTheme" href="css/styles-dark.css" rel="stylesheet" type="text/css" />
+<link href="css/configBase.css" rel="stylesheet" type="text/css" />
 
 <body enable-nodejs>
 
 <!-- Note: This code assumes the CSS IDs of the checkbox elements
      match the keys used by the generator-assets configuration file. -->
-<div>
+<div style="margin-left:14px;">
     <div id="checkboxes">
         <!-- Checkboxes will go here, created by generatorconfig.js -->
     </div>
-    <div style="margin-top:4px;">
+    <div style="margin-top:4px;font-size:12px;">
         <div style="margin-left:3px;" data-locale="interpolationtype">Interpolation: </div>
         <div style="margin-left:1px;">
         <select class="ccmenu" name="interpolation-type" id="interpolation-type">
@@ -55,9 +55,11 @@
 </div>
 
 <div align="center" style="margin-top:8px;">
-<button data-locale="save-button" class="ccstyle configbutton saverev" id="savebutton">Save</button>
-<button data-locale="revert-button" class="ccstyle configbutton saverev" id="revertbutton">Revert</button>
-<button data-locale="defaults-button" class="ccstyle configbutton" id="defaultbutton">Defaults</button>
+    <button data-locale="save-button" class="ccstyle configbutton saverev" id="savebutton">Save</button>
+    <button data-locale="revert-button" class="ccstyle configbutton saverev" id="revertbutton">Revert</button>
+</div>
+<div align="center" style="margin-top:8px;">
+    <button data-locale="defaults-button" class="ccstyle configbutton" id="defaultbutton">Defaults</button>
 </div>
 <div align="center" style="margin-top:5px">
     &nbsp;<span data-locale="restarting" style="display:none" id="restarting">Restarting Generator...</span>&nbsp;
