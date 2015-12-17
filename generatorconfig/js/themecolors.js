@@ -57,8 +57,10 @@ function grayToHex( gray )
 // provide anything except for the background color.
 var colorTable = {
     '#32':{ textfg:0xCE, textbg:0x22, cssfile:'darker' },
+    '#34':{ textfg:0xCE, textbg:0x22, cssfile:'darker' }, // CC 2014
     '#53':{ textfg:0xE1, textbg:0x3A, cssfile:'dark' },
     '#B8':{ textfg:0x18, textbg:0xEE, cssfile:'light' },
+    '#D6':{ textfg:0x21, textbg:0xFF, cssfile:'lighter' }, // CC 2014
     '#F0':{ textfg:0x21, textbg:0xFF, cssfile:'lighter' } };
 
 
