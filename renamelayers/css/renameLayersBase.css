@@ -55,6 +55,12 @@ input.chainlink[type="checkbox"]:checked {
   background: url("../Images/P_LinkHori_Sm_N.png");
 }
 
+/* The spacing for the checkboxes in the styles-xxx.css files
+ * are too loose.  Define our own here. */
+input[type="checkbox"] + label.rencheck:before {
+   margin-right: 0px;
+}
+
 .infolink {
     font-size: 8pt;
     cursor: pointer;
@@ -72,17 +78,17 @@ input.chainlink[type="checkbox"]:checked {
 #reload {
     position: absolute;
     right: 10px;
-    bottom: 78px;
+    top: 124px;
 }
 
 #debug {
     position: absolute;
     right: 10px;
-    bottom: 65px;
+    top: 137px;
 }
 
 #sources {
     position: absolute;
     right: 10px;
-    bottom: 52px;
+    top: 150px;
 }

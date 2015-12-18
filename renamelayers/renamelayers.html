@@ -28,25 +28,9 @@
 <meta charset="utf-8">
 <link id="ccstyleTheme" href="css/styles-dark.css" rel="stylesheet" type="text/css" />
 <link id="renameLayersBase" href="css/renameLayersBase.css" rel="stylesheet" type="text/css" />
-<!--
-<style  type="text/css">
-    label:before, input[type="checkbox"] {
-        margin-right: 0px;
-    }
-
-    .rencheck:before {
-        margin-right: 0px;
-    }
-
-    input[type="radio"] + label:before,
-    input[type="checkbox"] + label:before {
-        margin-right: 0px;
-    }
-</style>
--->
 
 <body>
-<div style="margin-left:18px;font-size:12px;margin-top:8px;">
+<div style="margin-left:12px;font-size:12px;margin-top:8px;">
     <span data-locale="rename-suffix-label">Suffix</span>
     <select name="suffix" id="suffixmenu" class="ccmenu">
         <option value=".jpg">.jpg</option>
@@ -76,34 +60,34 @@
     </select>
 </div>
 
-<div style="margin-left:18px; margin-bottom:0px; margin-top:4px">
+<div style="margin-left:12px; margin-bottom:0px; margin-top:4px">
     <div>
         <input type="checkbox" name="folder" id="folder" />
         <label id="folderchklabel" class="rencheck" for="folder">
             <span data-locale="rename-folder" id="fldspan">Folder</span>
         </label>
-        <input style="margin-left:18px;" id="foldervalue" class="ccstyle" type="text" size="11" role="textbox" />/
+        <input style="margin-left:10px;" id="foldervalue" class="ccstyle" type="text" size="11" role="textbox" />/
     </div>
     <div style="margin-top:3px">
        <input type="checkbox" name="scale" id="scale" class="rencheck" />
-       <label id="scalechklabel" for="scale">
+       <label id="scalechklabel" class="rencheck" for="scale">
              <span data-locale="rename-scale-checkbox" id="sclspan">Scale</span>
         </label>
-        <input style="margin-left:24px;" id="scalevalue" class="ccstyle" type="text" size="4" maxlength="4" role="textbox" value="100" disabled />%
+        <input style="margin-left:16px;" id="scalevalue" class="ccstyle" type="text" size="4" maxlength="4" role="textbox" value="100" disabled />%
     </div>
     <div style="margin-top:3px; margin-bottom:0px">
         <input type="checkbox" name="resize" id="resize" class="rencheck" />
-        <label id="resizechklabel" for="resize">
+        <label id="resizechklabel" class="rencheck" for="resize">
             <span data-locale="rename-resize-checkbox" id="rszspan">Resize</span>
         </label>
-        <input style="margin-left:18px;" id="resizeX" class="ccstyle" type="text" size="3" maxlength="4" role="textbox" disabled />x <input id="resizeY" class="ccstyle" type="text" size="3" maxlength="4" role="textbox" disabled />
+        <input style="margin-left:10px;" id="resizeX" class="ccstyle" type="text" size="3" maxlength="4" role="textbox" disabled />x <input id="resizeY" class="ccstyle" type="text" size="3" maxlength="4" role="textbox" disabled />
     </div>
     <div style="margin-top:-6px">
         <input style="margin-left:124px; margin-top:0px" class="chainlink" type="checkbox" name="locksize" id="locksize" checked />
     </div>
 </div>
 
-<div style="margin-bottom:0px; margin-left:18px; margin-top:16px;">
+<div style="margin-bottom:0px; margin-left:12px; margin-top:16px;">
     <button data-locale="rename-rename-button" class="btn-small ccstyle" id="renamebutton">Rename</button>
     <p>
         <div data-locale="rename-sample-name" id="samplename">layername</div>

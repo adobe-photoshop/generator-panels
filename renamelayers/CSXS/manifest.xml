@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<ExtensionManifest ExtensionBundleId="com.photoshop.renamelayers" ExtensionBundleName="Generator Layer Names" ExtensionBundleVersion="1.9.6" Version="5.0">
+<ExtensionManifest ExtensionBundleId="com.photoshop.renamelayers" ExtensionBundleName="Generator Layer Names" ExtensionBundleVersion="1.9.7" Version="5.0">
   <Author>
     <![CDATA[J. Peterson]]>
   </Author>
   <ExtensionList>
-    <Extension Id="com.photoshop.renamelayers.extension" Version="1.9.6"/>
+    <Extension Id="com.photoshop.renamelayers.extension" Version="1.9.7"/>
   </ExtensionList>
   <ExecutionEnvironment>
     <HostList>
@@ -32,11 +32,11 @@
           <Menu>%rename-panel-menu-name</Menu>
           <Geometry>
             <MinSize>
-              <Height>220</Height>
+              <Height>232</Height>
               <Width>216</Width>
             </MinSize>
             <Size>
-              <Height>220</Height>
+              <Height>232</Height>
               <Width>216</Width>
             </Size>
           </Geometry>
