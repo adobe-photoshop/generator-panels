@@ -3,35 +3,51 @@
 <!--
 /*
  * Copyright (c) 2013 Adobe Systems Incorporated. All rights reserved.
- *  
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
- * copy of this software and associated documentation files (the "Software"), 
- * to deal in the Software without restriction, including without limitation 
- * the rights to use, copy, modify, merge, publish, distribute, sublicense, 
- * and/or sell copies of the Software, and to permit persons to whom the 
+ * copy of this software and associated documentation files (the "Software"),
+ * to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense,
+ * and/or sell copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following conditions:
- *  
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- *  
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING 
- * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
- * 
+ *
  */
 -->
 <html>
 <meta charset="utf-8">
+<link id="ccstyleTheme" href="css/styles-dark.css" rel="stylesheet" type="text/css" />
 <link id="renameLayersBase" href="css/renameLayersBase.css" rel="stylesheet" type="text/css" />
-<link id="ccstyleTheme" href="css/ccstyle_D.css" rel="stylesheet" type="text/css" />
+<!--
+<style  type="text/css">
+    label:before, input[type="checkbox"] {
+        margin-right: 0px;
+    }
+
+    .rencheck:before {
+        margin-right: 0px;
+    }
+
+    input[type="radio"] + label:before,
+    input[type="checkbox"] + label:before {
+        margin-right: 0px;
+    }
+</style>
+-->
 
 <body>
-<div>
-	<span data-locale="rename-suffix-label">Suffix</span>
+<div style="margin-left:18px;font-size:12px;margin-top:8px;">
+    <span data-locale="rename-suffix-label">Suffix</span>
     <select name="suffix" id="suffixmenu" class="ccmenu">
         <option value=".jpg">.jpg</option>
         <option value=".png">.png</option>
@@ -39,7 +55,7 @@
         <option value=".svg">.svg</option>
         <option data-locale="suffix-menu-none" value="">None</option>
     </select>
-    
+
     <select class="ccmenu" name="pngdepth" id="pngdepth">
         <option data-locale="png-menu-depth" value="">Depth</option>
         <option value="8">8</option>
@@ -59,40 +75,40 @@
         <option value="10">10</option>
     </select>
 </div>
-    
-<div style="margin-bottom:0px; margin-top:10px">
-<div>
-    <label id="folderchklabel" for="folder">
-        <input type="checkbox" name="folder" id="folder">
-        <span data-locale="rename-folder" id="fldspan">Folder</span>
-    </label>
-    <input style="margin-left:18px;" id="foldervalue" class="ccstyle" type="text" size="11" role="textbox" />/
-</div>
-<div style="margin-top:3px">
-    <label id="scalechklabel" for="scale">
-        <input type="checkbox" name="scale" id="scale">
-        <span data-locale="rename-scale-checkbox" id="sclspan">Scale</span>
-    </label>
-    <input style="margin-left:24px;" id="scalevalue" class="ccstyle" type="text" size="4" maxlength="4" role="textbox" value="100" disabled />%
-</div>
-<div style="margin-top:3px; margin-bottom:0px">
-	<label id="resizechklabel" for="resize">
-    	<input type="checkbox" name="resize" id="resize">
-        <span data-locale="rename-resize-checkbox" id="rszspan">Resize</span>
-    </label>
-    <input style="margin-left:18px;" id="resizeX" class="ccstyle" type="text" size="3" maxlength="4" role="textbox" disabled />x <input id="resizeY" class="ccstyle" type="text" size="3" maxlength="4" role="textbox" disabled />
-</div>
-<div style="margin-top:-6px">
-	<input style="margin-left:124px; margin-top:0px" class="chainlink" type="checkbox" name="locksize" id="locksize" checked>
-</div>
+
+<div style="margin-left:18px; margin-bottom:0px; margin-top:4px">
+    <div>
+        <input type="checkbox" name="folder" id="folder" />
+        <label id="folderchklabel" class="rencheck" for="folder">
+            <span data-locale="rename-folder" id="fldspan">Folder</span>
+        </label>
+        <input style="margin-left:18px;" id="foldervalue" class="ccstyle" type="text" size="11" role="textbox" />/
+    </div>
+    <div style="margin-top:3px">
+       <input type="checkbox" name="scale" id="scale" class="rencheck" />
+       <label id="scalechklabel" for="scale">
+             <span data-locale="rename-scale-checkbox" id="sclspan">Scale</span>
+        </label>
+        <input style="margin-left:24px;" id="scalevalue" class="ccstyle" type="text" size="4" maxlength="4" role="textbox" value="100" disabled />%
+    </div>
+    <div style="margin-top:3px; margin-bottom:0px">
+        <input type="checkbox" name="resize" id="resize" class="rencheck" />
+        <label id="resizechklabel" for="resize">
+            <span data-locale="rename-resize-checkbox" id="rszspan">Resize</span>
+        </label>
+        <input style="margin-left:18px;" id="resizeX" class="ccstyle" type="text" size="3" maxlength="4" role="textbox" disabled />x <input id="resizeY" class="ccstyle" type="text" size="3" maxlength="4" role="textbox" disabled />
+    </div>
+    <div style="margin-top:-6px">
+        <input style="margin-left:124px; margin-top:0px" class="chainlink" type="checkbox" name="locksize" id="locksize" checked />
+    </div>
 </div>
 
-<div style="margin-bottom:0px">
-<button style="margin-top:-2px" data-locale="rename-rename-button" class="ccstyle" id="renamebutton">Rename</button>
+<div style="margin-bottom:0px; margin-left:18px; margin-top:16px;">
+    <button data-locale="rename-rename-button" class="btn-small ccstyle" id="renamebutton">Rename</button>
+    <p>
+        <div data-locale="rename-sample-name" id="samplename">layername</div>
+    </p>
 </div>
-<p>
-    <div data-locale="rename-sample-name" id="samplename">layername</div>
-</p>
 
 <div class="infolink" style="margin-top: 8px">
     <span class="infolink" data-locale="infolink">More information</span>

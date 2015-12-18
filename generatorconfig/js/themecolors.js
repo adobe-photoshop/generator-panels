@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013-2014 Adobe Systems Incorporated. All rights reserved.
+ * Copyright (c) 2013-2015 Adobe Systems Incorporated. All rights reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -79,6 +79,7 @@ function swapCSS( cssfilename )
                      + cssfilename +'.css" rel="stylesheet" type="text/css" />');
 }
 
+// Called by the theme color changed event.
 function setupColors()
 {
     // You need to reload the host environment; the csInterface object won't do it for you
