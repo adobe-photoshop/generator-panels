@@ -37,7 +37,7 @@ option {            /* So text in popups is readable */
 }
 
 /********Chain Checkbox**********/
-input.chainlink[type="checkbox"] {
+input#locksize[type="checkbox"] {
   -webkit-appearance: none;
   display: inline-block;
   width: 14px;
@@ -46,12 +46,14 @@ input.chainlink[type="checkbox"] {
   padding: 0px;
   height: 11px;
   margin-right: 0px;
-  margin-left: 0px;
+  margin-left: 120px;
   vertical-align: middle;
+  position: relative;
+  left: 0px;
   background: url("../Images/P_UnLinkHori_Sm_N.png");
 }
 
-input.chainlink[type="checkbox"]:checked {
+#locksize[type="checkbox"]:checked {
   background: url("../Images/P_LinkHori_Sm_N.png");
 }
 
