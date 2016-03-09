@@ -225,7 +225,7 @@ LayerOperations.prototype.setSelectedLayerSuffix = function( scale, resize, suff
             foundLeadingDigits = true;
         }
         if (foundLeadingDigits)
-            while ((i < s.length) && (isDigit(s[i]) || (s[i] in {'%':1, 'x':1, '%':1, ' ':1}))) {
+            while ((i < s.length) && (isDigit(s[i]) || (s[i] in {'.':1, '%':1, 'x':1, '%':1, ' ':1}))) {
                 i++;
                 foundScaleSize = true;
             }

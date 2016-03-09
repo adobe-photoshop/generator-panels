@@ -140,8 +140,9 @@ function getParams() {
     var suffix = $("#suffixmenu").val();
     if (suffix == ".png") suffix += $("#pngdepth").val();
     if (suffix == ".jpg") suffix += $("#jpgqual").val();
-    
-    var scaleTxt = (suffix != "") ? $("#scalevalue").val() + "%" : "100%";
+    var scaleNum = $("#scalevalue").val();
+    scaleNum = Math.round(scaleNum*100)/100;
+    var scaleTxt = (suffix != "") ? scaleNum + "%" : "100%";
     var resizeTxt = "";
     if ((suffix != "") && $("#resize").is(":checked")
         && hasText("#resizeX") && hasText("#resizeY"))
