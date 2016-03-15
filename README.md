@@ -1,3 +1,5 @@
+_*Note:* The [`spectrum_ui` branch](https://github.com/adobe-photoshop/generator-panels/tree/spectrum_ui) has a version of the panels updated with the new UI.  It hasn't been rolled into `master` yet pending further tests, but take a look if you want to see how to get your panels to match the new Photoshop UI look._
+
 generator-panels
 ================
 
