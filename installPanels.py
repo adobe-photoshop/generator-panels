@@ -44,9 +44,12 @@
 #
 
 import os, sys, shutil, re, string, getpass, stat, datetime, platform, glob
-import argparse, subprocess, zipfile, ftplib, xml.dom.minidom
+import argparse, subprocess, zipfile, ftplib, xml.dom.minidom, socket
 if sys.platform == 'win32':
     import _winreg
+
+# Some options only make sense for internal Adobe developers
+adobeDevMachine = socket.getfqdn().endswith('.adobe.com')
 
 # PS executable location, used just to launch PS
 PSexePath = {"win32":"C:\\Program Files\\Adobe\\Adobe Photoshop CC 2014\\Photoshop.exe",
@@ -209,10 +212,13 @@ argparser.add_argument('--run', '-r', action='store_true', default=False,
                        help="Launch Photoshop after copy")
 argparser.add_argument('--list', '-l', action='store_true', default=False,
                        help="List all installed panels")
+if (adobeDevMachine):
+    argparser.add_argument('--branch', '-b', nargs=1, metavar='branch_path', default=None,
+                           help='Path to branch for listing the extensions in that branch executable')
 argparser.add_argument('--erase', '-e', action='store_true', default=False,
                        help="Erase the panels from the debug install location")
 argparser.add_argument('--allusers', '-a', action='store_true', default=False,
-					   help="Install panel for all users")
+                       help="Install panel for all users")
 argparser.add_argument('--install', '-i', action='store_true', default=False,
                        help="Install the signed panels created with -p")
 args = argparser.parse_args( sys.argv[1:] )
@@ -226,10 +232,13 @@ extensionSubpath = os.path.normpath("/Adobe/CEP/extensions") + os.path.sep
 winAppData = os.getenv("APPDATA") if (sys.platform == "win32") else ""
 winCommon = os.getenv("CommonProgramFiles(x86)") if (sys.platform == "win32") else ""
 allDestPaths = { "win32": {False:winAppData + extensionSubpath,
-						   True:winCommon + extensionSubpath},
+                           True:winCommon + extensionSubpath},
                  "darwin":{False:os.path.expanduser("~")+"/Library/Application Support" + extensionSubpath,
                            True:"/Library/Application Support" + extensionSubpath}
                }[sys.platform]
+appExtensionPath = { "win32": "\\photoshop\\Targets\\x64\\Debug\\Required\\CEP\\extensions\\",
+                     "darwin": "/photoshop/Targets/Debug_x86_64/Adobe Photoshop CC 2015.5.app/Contents/Required/CEP/extensions/"
+                   }[sys.platform]
 osDestPath = allDestPaths[args.allusers]
 
 # If writing to the system folders, make sure we actually can
@@ -288,7 +297,8 @@ def erasePanels():
         shutil.rmtree(cachePath);
 
 def listInstalledPanels():
-    def displayPanelsInfo(panelList, title):
+    def displayPanelsInfo(panelPath, title):
+        panelList = glob.glob(panelPath + "*")
         if len(panelList) == 0:
             return
         print "\n# (%s)\n# Panels in %s" % (title, os.path.dirname(panelList[0]))
@@ -299,12 +309,18 @@ def listInstalledPanels():
             manifest = manifestXML.getElementsByTagName("ExtensionManifest")
             # Only print the bundle (names) if they're different from the folder name
             extNames = [x.getAttribute("ExtensionBundleName") for x in manifest if x.getAttribute("ExtensionBundleName") != name]
+            extVersions = [x.getAttribute("ExtensionBundleVersion") for x in manifest]
             extNames = " (" + string.join(extNames) + ")" if len(extNames) > 0 else ""
-            print "  %s%s" % (name, extNames)
+            extVersions = " [" + string.join(extVersions) + "]" if len(extVersions) > 0 else ""
+            print "  %s%s%s" % (name, extVersions, extNames)
 
-    displayPanelsInfo( glob.glob(allDestPaths[True] + "*"), "for all users")
-    displayPanelsInfo( glob.glob(allDestPaths[False] + "*"), "for this user")
-    
+    displayPanelsInfo( allDestPaths[True], "for all users")
+    displayPanelsInfo( allDestPaths[False], "for this user")
+
+    # For Adobe developers, also list extensions found in the specified debug branch
+    if (adobeDevMachine and args.branch):
+        displayPanelsInfo( args.branch[0] + appExtensionPath, "for branch %s debug app" % args.branch[0])
+
 #
 # Examine the state of debugKey (either "Logging" or "PlayerDebugMode")
 # If panelDebugValue is not None, set the to that value.
