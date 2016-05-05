@@ -56,7 +56,7 @@ function setupColorHook()
     function dimTxt(id) { dimTextValue( id, $(id).is(":disabled") ); }
     
     dimTxt( "#scalevalue" );
-	dimTxt( "#resizeX" );
+    dimTxt( "#resizeX" );
     dimTxt( "#resizeY" );
 }
 
@@ -88,24 +88,23 @@ function loadLayerInfo()
 
 // This handles events sent back by Photoshop
 // It *must* be named PhotoshopCallback.
-function PhotoshopCallback(csEvent)
+function PhotoshopCallbackJSON(csEvent)
 {
     try {
-        // Check to make sure it's for us.
-        if (csEvent.extensionId === csInterface.getExtensionID())
-        {
-            loadLayerInfo();
-            if (typeof csEvent.data != "undefined") {
-                // The returned event data is two comma separated
-                // numbers, the first is the PS event ID, the
-                // second is a number you can use with desc.fromID
-                // that's an argument of the event.
-                //console.log(csEvent.data);
-                
-                // In our case we don't really care what the
-                // event actually was, it's just a signal we need
-                // to go ask PS to update our layer information.
-            }
+        loadLayerInfo();
+        if (typeof csEvent.data != "undefined") {
+            // The returned event data is a string with
+            // vers,<json>, where JSON is the event data
+            //console.log(csEvent.data);
+            // Remove version tag hack
+            var evData = JSON.parse( csEvent.data.replace('ver1,','') );
+            // Now, evData.eventID has the eventID, and
+            // evData.eventData has the converted JSON actionDescriptor
+            //console.log("Event:"+evData.eventID+", Desc:"+JSON.stringify(evData.eventData));
+
+            // In our case we don't really care what the
+            // event actually was, it's just a signal we need
+            // to go ask PS to update our layer information.
         }
     } catch (err) {
         console.log("PSCallback error: " + err);
@@ -117,10 +116,12 @@ function initialize()
     initColors( setupColorHook );
     
     // Register callback for PS events
-    csInterface.addEventListener("PhotoshopCallback", PhotoshopCallback);
-    // Send an event to register for events
-    var event = new CSEvent("com.adobe.PhotoshopRegisterEvent", "APPLICATION");
-    event.extensionId = csInterface.getExtensionID();
+    var myID = csInterface.getExtensionID();
+    csInterface.addEventListener("com.adobe.PhotoshopJSONCallback" + myID, PhotoshopCallbackJSON)
+
+    // Send an event to register for PS events we want a callback for
+    var event = new CSEvent("com.adobe.PhotoshopRegisterJSONEvent", "APPLICATION");
+    event.extensionId = myID;
     event.data = PSEventIDs.join(", ");
     csInterface.dispatchEvent(event);
     
