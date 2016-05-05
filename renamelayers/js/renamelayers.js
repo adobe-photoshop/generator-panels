@@ -91,13 +91,12 @@ function loadLayerInfo()
 function PhotoshopCallbackJSON(csEvent)
 {
     try {
-        loadLayerInfo();
         if (typeof csEvent.data != "undefined") {
             // The returned event data is a string with
             // vers,<json>, where JSON is the event data
-            //console.log(csEvent.data);
-            // Remove version tag hack
+            // Remove version tag hack - this may go away soon
             var evData = JSON.parse( csEvent.data.replace('ver1,','') );
+
             // Now, evData.eventID has the eventID, and
             // evData.eventData has the converted JSON actionDescriptor
             //console.log("Event:"+evData.eventID+", Desc:"+JSON.stringify(evData.eventData));
@@ -106,6 +105,7 @@ function PhotoshopCallbackJSON(csEvent)
             // event actually was, it's just a signal we need
             // to go ask PS to update our layer information.
         }
+        loadLayerInfo();
     } catch (err) {
         console.log("PSCallback error: " + err);
     }
