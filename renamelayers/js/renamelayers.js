@@ -95,7 +95,7 @@ function PhotoshopCallbackJSON(csEvent)
             // The returned event data is a string with
             // vers,<json>, where JSON is the event data
             // Remove version tag hack - this may go away soon
-            var evData = JSON.parse( csEvent.data.replace('ver1,','') );
+            var evData = JSON.parse( csEvent.data.replace(/^ver1,/,'') );
 
             // Now, evData.eventID has the eventID, and
             // evData.eventData has the converted JSON actionDescriptor
@@ -120,7 +120,7 @@ function initialize()
     csInterface.addEventListener("com.adobe.PhotoshopJSONCallback" + myID, PhotoshopCallbackJSON)
 
     // Send an event to register for PS events we want a callback for
-    var event = new CSEvent("com.adobe.PhotoshopRegisterJSONEvent", "APPLICATION");
+    var event = new CSEvent("com.adobe.PhotoshopRegisterEvent", "APPLICATION");
     event.extensionId = myID;
     event.data = PSEventIDs.join(", ");
     csInterface.dispatchEvent(event);
