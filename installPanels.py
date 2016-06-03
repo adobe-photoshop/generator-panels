@@ -44,7 +44,7 @@
 #
 
 import os, sys, shutil, re, string, getpass, stat, datetime, platform, glob
-import argparse, subprocess, zipfile, ftplib, xml.dom.minidom, socket
+import argparse, subprocess, zipfile, ftplib, xml.dom.minidom, socket, errno
 if sys.platform == 'win32':
     import _winreg
 
@@ -88,6 +88,19 @@ class Panel:
         print "# Copying " + srcLocation + self.panelSrcFolder + "\n  to " + destPath
         shutil.copytree( srcLocation + self.panelSrcFolder, destPath )
 
+    def cleanCache(self):
+        cachePath = os.getenv('HOME') + {'win32':'\\AppData\\Local\\Temp\\cep_cache\\'}[sys.platform]
+        cacheFolders = glob.glob( cachePath + "*%s*" % self.fullPanelID )
+        for f in cacheFolders:
+            try:
+                shutil.rmtree( f )
+                print "# Removing cache folder " + f
+            except (OSError, IOError) as writeErr:
+                if (writeErr.errno == errno.EACCES):
+                    print "# PS still running? Unable to delete " + f
+                else:
+                    print "# Unable to remove cache folder " + f
+
     # Unlock, then remove the panels
     def erasePanel(self):
         # Because Perforce may leave them locked.
@@ -129,7 +142,7 @@ class Panel:
         try:
             file(self.debugFilename(), 'w' ).write(debugText)
         except IOError as writeErr:
-            if (writeErr.errno == 2):
+            if (writeErr.errno == errno.ENOENT):
                print "# Note: Panel %s is not installed" % self.panelName
 
     def setupRemoteDebugFile(self, debugEnabled):
@@ -217,6 +230,8 @@ if (adobeDevMachine):
                            help='Path to branch for listing the extensions in that branch executable')
 argparser.add_argument('--erase', '-e', action='store_true', default=False,
                        help="Erase the panels from the debug install location")
+argparser.add_argument('--clean', '-c', action='store_true', default=False,
+                       help="Clean CEP caches")
 argparser.add_argument('--allusers', '-a', action='store_true', default=False,
                        help="Install panel for all users")
 argparser.add_argument('--install', '-i', action='store_true', default=False,
@@ -252,7 +267,7 @@ if (args.allusers):
         f.close()
         os.remove(testfile)
     except (OSError, IOError) as writeErr:
-        if (writeErr.errno == 13):
+        if (writeErr.errno == errno.EACCES):
            print "# Error - Must run as admin to access %s" % osDestPath
         else:
            print "# Error - Unable to access %s" % osDestPath
@@ -460,6 +475,10 @@ elif (args.zip):
 
 elif (args.erase):
     erasePanels()
+
+elif (args.clean):
+    for p in panelList:
+        p.cleanCache()
 
 elif (args.list):
     listInstalledPanels()
