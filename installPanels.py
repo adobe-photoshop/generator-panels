@@ -89,7 +89,8 @@ class Panel:
         shutil.copytree( srcLocation + self.panelSrcFolder, destPath )
 
     def cleanCache(self):
-        cachePath = os.getenv('HOME') + {'win32':'\\AppData\\Local\\Temp\\cep_cache\\'}[sys.platform]
+        cachePath = os.getenv('HOME') + {'win32':'\\AppData\\Local\\Temp\\cep_cache\\',
+                                         'darwin':'/Library/Caches/CSXS/cep_cache/'}[sys.platform]
         cacheFolders = glob.glob( cachePath + "*%s*" % self.fullPanelID )
         for f in cacheFolders:
             try:
