@@ -47,10 +47,31 @@ var checkboxes = [
     [false, "usesmartobject", "use-psd-smart-object-pixel-scaling", "Smart Object Pixel Scaling"],
     [true,  "pngquant",       "use-pngquant",                       "Use pngquant for PNG-8"],
     [false, "convcolorspace", "convert-color-space",                "Color convert pixels"],
+    [false, "useflite",       "use-flite",                          "Use FLITE transcoder"],
+    [false, "embediccprofile","embed-icc-profile",                  "Output ICC profile from PSD"], // use-flite
+    [true,  "cliptodocbounds","clip-all-images-to-document-bounds", "Exports clipped to doc bounds"],
+    [true,  "cliptoabbounds", "clip-all-images-to-artboard-bounds", "Exports clipped to artboard"],
+    [true,  "maskaddspad",    "mask-adds-padding",                  "Masks add padding to export"],
+    [false, "expandmaxdim",   "expand-max-dimensions",              "Allow larger max dimensions"],
     // WebP must be last - it's only visible on the Mac
     [false, "webp",           "webp-enabled",                       "WebP Enabled"]];
 
 var defaultPSInterpolation = "bicubicAutomatic";
+var iccProfileList = [];
+
+// Manage control interdependencies here.
+function enableItems()
+{
+    // Some controls require FLITE transcoder
+    var usingFlite = $("#use-flite")[0].checked;
+    $("#embed-icc-profile").attr( "disabled", !usingFlite );
+//    $("#use-jpg-encoding").attr( "disabled", !usingFlite );
+
+    // Disable convert-color-space if an ICC profile is selected
+    var profileSelected = $("#icc-profile")[0].value !== "icc-unselected";
+    $("#convert-color-space").attr("disabled", profileSelected);
+    
+}
 
 // Disable/enable the Save & Revert buttons (class saverev)
 function saveDisable(flag)
@@ -87,6 +108,7 @@ function loadConfig()
 
     // Checkboxes now match config file on disk, so save/revert buttons disable.
     saveDisable( true );
+    enableItems();
     return currentConfig;
 }
 
@@ -114,6 +136,15 @@ function generateCheckboxes()
     }
 }
 
+function generateProfileMenu()
+{
+    // Rip out punctionuation to make an HTML tag
+    function tagify(s) { return s.replace(/[\s)(.-]+/g,""); };
+    for (var i in iccProfileList) {
+        $("#icc-profile").append("<option value='" + iccProfileList[i] +"'>"+iccProfileList[i] + "</option>");
+    }
+}
+
 // Called when the panel loads
 function initialize()
 {
@@ -123,8 +154,12 @@ function initialize()
     // a race condition when setting the control.
     csInterface.evalScript("DefaultInterpolationMethod();",
                             function( method ) { defaultPSInterpolation = method; } );
+    csInterface.evalScript("GetColorProfileList();",
+                           function(iccList) { iccProfileList = iccList.split(",");
+                                               generateProfileMenu(); } );
 
     generateCheckboxes();
+    generateProfileMenu();
     loadConfig();
 
     if (process.platform !== "darwin")
@@ -138,10 +173,12 @@ initialize();
 // Control state no longer matches file on disk, so enable save & revert
 $(".configchk").change( function() {
     saveDisable( false );
+    enableItems();
 });
 
 $(".ccmenu").change( function() {
     saveDisable( false );
+    enableItems();
 });
 
 $("#savebutton").click( function() {
@@ -153,6 +190,9 @@ $("#savebutton").click( function() {
     $(".ccmenu").each(function(i, menu) {
         genOpts["generator-assets"][menu.id] = menu.value;
     });
+
+    if ($("#icc-profile")[0].value === "icc-unselected")
+        delete genOpts['generator-assets']['icc-profile']
 
     // Save results and disable save/revert
     config.putConfig(genOpts);
