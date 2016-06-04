@@ -32,13 +32,14 @@
 # Other options:
 #  -d,--debug {on,off,status}   Set/check PanelDebugMode
 #  -l,--list                    List all panels installed
-#  -a,--allusers                Install panels for All users
+#  -a,--allusers                Install panels for All users (requires sudo/admin)
 #  -p,--package PASSWORD        Package the panels signed with a
 #                               private certificate, using the certificate's PASSWORD
 #  -i,--install                 Installs the signed panels created with -p into
 #                               the user panel location.  Does not require debug mode.
 #  -z,--zip                     Package the panels as a ZIP archives
 #  -e,--erase                   Remove the panels from the debug location
+#  -c,--clean                   Delete the CEP caches for the panels
 #  -r,--run                     Run Photoshop after copying.
 #
 #
@@ -234,7 +235,7 @@ argparser.add_argument('--erase', '-e', action='store_true', default=False,
 argparser.add_argument('--clean', '-c', action='store_true', default=False,
                        help="Clean CEP caches")
 argparser.add_argument('--allusers', '-a', action='store_true', default=False,
-                       help="Install panel for all users")
+                       help="Install/erase panel for all users (requires sudo/admin)")
 argparser.add_argument('--install', '-i', action='store_true', default=False,
                        help="Install the signed panels created with -p")
 args = argparser.parse_args( sys.argv[1:] )

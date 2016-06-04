@@ -87,7 +87,6 @@ function loadLayerInfo()
 }
 
 // This handles events sent back by Photoshop
-// It *must* be named PhotoshopCallback.
 function PhotoshopCallbackJSON(csEvent)
 {
     try {
