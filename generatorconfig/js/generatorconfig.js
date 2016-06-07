@@ -65,7 +65,7 @@ function enableItems()
     // Some controls require FLITE transcoder
     var usingFlite = $("#use-flite")[0].checked;
     $("#embed-icc-profile").attr( "disabled", !usingFlite );
-//    $("#use-jpg-encoding").attr( "disabled", !usingFlite );
+    $("#use-jpg-encoding").attr( "disabled", !usingFlite );
 
     // Disable convert-color-space if an ICC profile is selected
     var profileSelected = $("#icc-profile")[0].value !== "icc-unselected";
@@ -85,6 +85,8 @@ function setDefaultValues()
     for (var i in checkboxes)
         $("#" + checkboxes[i][2]).prop('checked', checkboxes[i][0]);
     $("#interpolation-type").val( defaultPSInterpolation );
+    $("#icc-profile").val( "icc-unselected" );
+    $("#use-jpg-encoding").val( "none" );
 }
 
 // Load the configuration and set the checkboxes.
@@ -192,7 +194,10 @@ $("#savebutton").click( function() {
     });
 
     if ($("#icc-profile")[0].value === "icc-unselected")
-        delete genOpts['generator-assets']['icc-profile']
+        delete genOpts['generator-assets']['icc-profile'];
+        
+    if ($("#use-jpg-encoding")[0].value === "none")
+        delete genOpts['generator-assets']['use-jpg-encoding'];
 
     // Save results and disable save/revert
     config.putConfig(genOpts);
