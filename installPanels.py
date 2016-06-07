@@ -164,7 +164,7 @@ class Panel:
         pkgTargetFolder = getTargetFolder()
         timestampURL = "http://tsa.starfieldtech.com"
 
-        pkgFile = pkgTargetFolder + self.panelName + ".zxp"
+        pkgFile = pkgTargetFolder + self.panelName + ".zip"
         # Must remove the file first, otherwise contents not updated.
         if os.path.exists( pkgFile ):
             os.remove( pkgFile )
@@ -179,7 +179,7 @@ class Panel:
                 print
                 print "## Signing package failed.  ZXPSignCmd is not installed?"
             else:
-                print "## Signing package %s failed." % (self.panelName + ".zxp")
+                print "## Signing package %s failed." % (self.panelName + ".zip")
             sys.exit(procErr.returncode)
         else:
             print result
@@ -447,9 +447,9 @@ elif (args.package):
 elif (args.install):
     erasePanels()
     if (not os.path.exists(osDestPath)):
-        os.mkdir(osDestPath)
+        os.makedirs(osDestPath)
     pkgTargetFolder = getTargetFolder()
-    zxpFiles = filter(os.path.exists, [pkgTargetFolder + p.panelName + ".zxp" for p in panelList])
+    zxpFiles = filter(os.path.exists, [pkgTargetFolder + p.panelName + ".zip" for p in panelList])
     if len(zxpFiles) > 0:
         for f in zxpFiles:
             zps = zipfile.ZipFile( f )
