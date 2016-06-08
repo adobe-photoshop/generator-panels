@@ -52,10 +52,16 @@ if sys.platform == 'win32':
 # Some options only make sense for internal Adobe developers
 adobeDevMachine = socket.getfqdn().endswith('.adobe.com')
 
+# Current version of Photoshop, for listing panels within the app
+psFolderName = "Adobe Photoshop CC 2015.5"
+
+psAppFolder = {"win32":"C:\\Program Files\\Adobe\\%s\\" % psFolderName,
+               "darwin": "/Applications/%s/%s.app/Contents/" % (psFolderName, psFolderName)
+              }[sys.platform]
+
 # PS executable location, used just to launch PS
-PSexePath = {"win32":"C:\\Program Files\\Adobe\\Adobe Photoshop CC 2014\\Photoshop.exe",
-             "darwin": "/Applications/Adobe Photoshop CC 2014/Adobe Photoshop CC 2014.app/Contents/MacOS/Adobe Photoshop CC 2014"
-             }[sys.platform]
+PSexePath = psAppFolder + {"win32":"Photoshop.exe",
+                           "darwin": "MacOS/%s" % (psFolderName)}[sys.platform]
 
 # Extract the panel ID and name from the Manifest file
 def getExtensionInfo(manifestPath):
@@ -253,8 +259,9 @@ allDestPaths = { "win32": {False:winAppData + extensionSubpath,
                  "darwin":{False:os.path.expanduser("~")+"/Library/Application Support" + extensionSubpath,
                            True:"/Library/Application Support" + extensionSubpath}
                }[sys.platform]
-appExtensionPath = { "win32": "\\photoshop\\Targets\\x64\\Debug\\Required\\CEP\\extensions\\",
-                     "darwin": "/photoshop/Targets/Debug_x86_64/Adobe Photoshop CC 2015.5.app/Contents/Required/CEP/extensions/"
+devExtensionPath = { "win32": "\\photoshop\\Targets\\x64\\Debug\\Required\\CEP\\extensions\\",
+                     "darwin": "/photoshop/Targets/Debug_x86_64/%s/Contents/Required/CEP/extensions/"
+                                % psFolderName
                    }[sys.platform]
 osDestPath = allDestPaths[args.allusers]
 
@@ -333,10 +340,14 @@ def listInstalledPanels():
 
     displayPanelsInfo( allDestPaths[True], "for all users")
     displayPanelsInfo( allDestPaths[False], "for this user")
+    
+    psAppPath = psAppFolder + "Required" + os.sep + "CEP" + os.sep + "extensions" + os.sep
+    
+    displayPanelsInfo( psAppPath, "installed with Photoshop")
 
     # For Adobe developers, also list extensions found in the specified debug branch
     if (adobeDevMachine and args.branch):
-        displayPanelsInfo( args.branch[0] + appExtensionPath, "for branch %s debug app" % args.branch[0])
+        displayPanelsInfo( args.branch[0] + devExtensionPath, "for branch %s debug app" % args.branch[0])
 
 #
 # Examine the state of debugKey (either "Logging" or "PlayerDebugMode")
