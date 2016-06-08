@@ -167,6 +167,11 @@ function initialize()
 
     if (process.platform !== "darwin")
         $("#webplabel").toggle(false);  // This option is Mac-only
+
+    // For some goofy reason, checkboxes are spaced out more on
+    // Windows then they are on Mac.  This hacks around that.
+    if (navigator.platform === "Win32")
+        $(".checkboxwrap").css("margin-bottom", "-2px");
 }
 
 // Initialize must be called -before- the change() callback is
