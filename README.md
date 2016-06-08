@@ -1,7 +1,7 @@
 generator-panels
 ================
 
-This repo contains the source for two extension panels for Photoshop, Generator Configuration and Rename Layer Suffix.  Both of these panels are implemented using the new [CEP5 Extension Framework](https://github.com/Adobe-CEP/CEP-Resources), and require Photoshop CC 2014 to run.
+This repo contains the source for two extension panels for Photoshop, Generator Configuration and Generator Layer Names.  Both of these panels are implemented using the new [CEP5 Extension Framework](https://github.com/Adobe-CEP/CEP-Resources), and require Photoshop CC 2014 to run.
 
 The **Generator Configuration** panel lets you easily change the [configuration options](https://github.com/adobe-photoshop/generator-assets/wiki/Configuration-Options) for the Generator Assets plugin that ships with Photoshop.
 
