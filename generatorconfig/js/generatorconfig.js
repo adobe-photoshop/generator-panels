@@ -120,10 +120,11 @@ function generateCheckboxes()
 {
     function addBox( tag, id, message )
     {
-        var boxContent = ['<input class="configchk" type="checkbox" name="#ID#" id="#ID#" />',
-                          '<label id="#TAG#label" for="#ID#">',
-                          '<span data-locale="#TAG#-checkbox" id="#TAG#span">#MESSAGE#</span>',
-                          '</label><br>'].join("\n");
+        var boxContent = ['<div class="checkboxwrap">',
+                          '  <input class="configchk" type="checkbox" name="#ID#" id="#ID#" />',
+                          '  <label id="#TAG#label" for="#ID#">',
+                          '  <span data-locale="#TAG#-checkbox" id="#TAG#span">#MESSAGE#</span>',
+                          '</label></div>'].join("\n");
 
         // Clever hack for search/replace - http://stackoverflow.com/a/1145525/105767
         boxContent = boxContent.split("#TAG#").join(tag);

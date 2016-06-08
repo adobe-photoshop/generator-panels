@@ -41,6 +41,10 @@ option {            /* So text in popups is readable */
     color: black;
 }
 
+.checkboxwrap {
+    margin-bottom: 3px;
+}
+
 .infolink {
     font-size: 8pt;
     cursor: pointer;
