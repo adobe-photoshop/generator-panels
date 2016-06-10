@@ -322,6 +322,8 @@ def erasePanels():
 
 def listInstalledPanels():
     def displayPanelsInfo(panelPath, title):
+        if (not os.path.exists(panelPath)):
+            return
         panelList = glob.glob(panelPath + "*")
         if len(panelList) == 0:
             return
