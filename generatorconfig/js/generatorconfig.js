@@ -132,10 +132,15 @@ function generateCheckboxes()
         boxContent = boxContent.split("#MESSAGE#").join(message);
         $("#checkboxes").append( boxContent );
     }
+    
+    // Lookup table of localized strings.  Need to look up translation
+    // on the fly, since we're generating the panel HTML on the fly.
+    var localeResources = csInterface.initResourceBundle();
 
     for (var i in checkboxes) {
         var box = checkboxes[i];
-        addBox( box[1], box[2], box[3] );
+        var localizedStr = localeResources[box[1] + "-checkbox"];
+        addBox( box[1], box[2], localizedStr ? localizedStr : box[3] );
     }
 }
 
@@ -151,6 +156,7 @@ function generateProfileMenu()
 // Called when the panel loads
 function initialize()
 {
+    csInterface.initResourceBundle();
     initColors();
 
     // Query the default interpolation now to avoid
