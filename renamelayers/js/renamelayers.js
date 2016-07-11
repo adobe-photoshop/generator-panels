@@ -87,7 +87,6 @@ function loadLayerInfo()
 }
 
 // This handles events sent back by Photoshop
-// It *must* be named PhotoshopCallback.
 function PhotoshopCallbackJSON(csEvent)
 {
     try {
@@ -132,6 +131,12 @@ function initialize()
     // Force one call so sample name and option pop-ups are initialized
     $("#suffixmenu").change();
     
+    // Ugh. With spectrum, some per-platform tweaking is required.
+    if (navigator.platform === "MacIntel") {
+        $("#resizeX").attr("size", "4");
+        $("#resizeY").attr("size", "4");
+        $("#locksize").css("margin-left", "110px");
+    }
 }
 
 // Get the current filename parameters from the panel's controls

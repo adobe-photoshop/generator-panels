@@ -1,23 +1,21 @@
-_*Note:* The [`spectrum_ui` branch](https://github.com/adobe-photoshop/generator-panels/tree/spectrum_ui) has a version of the panels updated with the new UI.  It hasn't been rolled into `master` yet pending further tests, but take a look if you want to see how to get your panels to match the new Photoshop UI look._
-
 generator-panels
 ================
 
-This repo contains the source for two extension panels for Photoshop, Generator Configuration and Rename Layer Suffix.  Both of these panels are implemented using the new [CEP5 Extension Framework](https://github.com/Adobe-CEP/CEP-Resources), and require Photoshop CC 2014 to run.
+This repo contains the source for two extension panels for Photoshop, Generator Configuration and Generator Layer Names.  Both of these panels are implemented using the new [CEP5 Extension Framework](https://github.com/Adobe-CEP/CEP-Resources), and require Photoshop CC 2015 to run.
 
 The **Generator Configuration** panel lets you easily change the [configuration options](https://github.com/adobe-photoshop/generator-assets/wiki/Configuration-Options) for the Generator Assets plugin that ships with Photoshop.
 
-![](https://github.com/adobe-photoshop/generator-panels/blob/master/screenshots/GeneratorConfig.png)
+![](https://github.com/adobe-photoshop/generator-panels/blob/master/screenshots/GeneratorConfig_mac.png)
 
 The **Generator Layer Names** panel lets you easily change the suffix, scale, size and folder [parameters](https://github.com/adobe-photoshop/generator-assets/wiki/Generate-Web-Assets-Functional-Spec) of the selected layers in Photoshop.  This is an easy way to update existing Photoshop design files to take advantage of Generator to export assets.
 
-![](https://github.com/adobe-photoshop/generator-panels/blob/master/screenshots/GeneratorLayerNames.png)
+![](https://github.com/adobe-photoshop/generator-panels/blob/master/screenshots/RenameLayers_mac.png)
 
 ### Installation
 
 The release version of the Generator Configuration panel is available directly for free from the [Adobe Add-ons site](https://creative.adobe.com/addons/products/2274).  The Generator Layer Names panel is also now [available from the Add-ons site](https://creative.adobe.com/addons/products/2365) as well.
 
-Full source code is provided for both panels.  At the top level, a Python script, [installPanels.py](https://github.com/adobe-photoshop/generator-panels/blob/master/installPanels.py) provides tools for installing, testing and packaging the panels.  Windows users will need to install [Python 2.7](http://www.python.org/download/).  Packaging the panels into installable .ZXP files requires installing the ZXPSignCmd command-line tool.  This is found on the [Extension Builder Toolkit download](http://labs.adobe.com/downloads/extensionbuilder3.html) page, near the bottom under the "Download CC Extensions for Signing" links.
+Full source code is provided for both panels.  At the top level, a Python script, [installPanels.py](https://github.com/adobe-photoshop/generator-panels/blob/master/installPanels.py) provides tools for installing, testing and packaging the panels.  Windows users will need to install [Python 2.7](http://www.python.org/download/).  Packaging the panels into signed `.zip` files requires installing the ZXPSignCmd command-line tool.  This is found on the [Extension Builder Toolkit download](http://labs.adobe.com/downloads/extensionbuilder3.html) page, near the bottom under the "Download CC Extensions for Signing" links.
 
 The simplest way to start using the panels from the source code is to run:
 

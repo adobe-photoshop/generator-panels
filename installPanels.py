@@ -32,29 +32,36 @@
 # Other options:
 #  -d,--debug {on,off,status}   Set/check PanelDebugMode
 #  -l,--list                    List all panels installed
-#  -a,--allusers                Install panels for All users
+#  -a,--allusers                Install panels for All users (requires sudo/admin)
 #  -p,--package PASSWORD        Package the panels signed with a
 #                               private certificate, using the certificate's PASSWORD
 #  -i,--install                 Installs the signed panels created with -p into
 #                               the user panel location.  Does not require debug mode.
 #  -z,--zip                     Package the panels as a ZIP archives
 #  -e,--erase                   Remove the panels from the debug location
+#  -c,--clean                   Delete the CEP caches for the panels
 #  -r,--run                     Run Photoshop after copying.
 #
 #
 
 import os, sys, shutil, re, string, getpass, stat, datetime, platform, glob
-import argparse, subprocess, zipfile, ftplib, xml.dom.minidom, socket
+import argparse, subprocess, zipfile, ftplib, xml.dom.minidom, socket, errno
 if sys.platform == 'win32':
     import _winreg
 
 # Some options only make sense for internal Adobe developers
 adobeDevMachine = socket.getfqdn().endswith('.adobe.com')
 
+# Current version of Photoshop, for listing panels within the app
+psFolderName = "Adobe Photoshop CC 2015.5"
+
+psAppFolder = {"win32":"C:\\Program Files\\Adobe\\%s\\" % psFolderName,
+               "darwin": "/Applications/%s/%s.app/Contents/" % (psFolderName, psFolderName)
+              }[sys.platform]
+
 # PS executable location, used just to launch PS
-PSexePath = {"win32":"C:\\Program Files\\Adobe\\Adobe Photoshop CC 2014\\Photoshop.exe",
-             "darwin": "/Applications/Adobe Photoshop CC 2014/Adobe Photoshop CC 2014.app/Contents/MacOS/Adobe Photoshop CC 2014"
-             }[sys.platform]
+PSexePath = psAppFolder + {"win32":"Photoshop.exe",
+                           "darwin": "MacOS/%s" % (psFolderName)}[sys.platform]
 
 # Extract the panel ID and name from the Manifest file
 def getExtensionInfo(manifestPath):
@@ -87,6 +94,20 @@ class Panel:
         destPath = self.destPath()
         print "# Copying " + srcLocation + self.panelSrcFolder + "\n  to " + destPath
         shutil.copytree( srcLocation + self.panelSrcFolder, destPath )
+
+    def cleanCache(self):
+        cachePath = os.getenv('HOME') + {'win32':'\\AppData\\Local\\Temp\\cep_cache\\',
+                                         'darwin':'/Library/Caches/CSXS/cep_cache/'}[sys.platform]
+        cacheFolders = glob.glob( cachePath + "*%s*" % self.fullPanelID )
+        for f in cacheFolders:
+            try:
+                shutil.rmtree( f )
+                print "# Removing cache folder " + f
+            except (OSError, IOError) as writeErr:
+                if (writeErr.errno == errno.EACCES):
+                    print "# PS still running? Unable to delete " + f
+                else:
+                    print "# Unable to remove cache folder " + f
 
     # Unlock, then remove the panels
     def erasePanel(self):
@@ -129,7 +150,7 @@ class Panel:
         try:
             file(self.debugFilename(), 'w' ).write(debugText)
         except IOError as writeErr:
-            if (writeErr.errno == 2):
+            if (writeErr.errno == errno.ENOENT):
                print "# Note: Panel %s is not installed" % self.panelName
 
     def setupRemoteDebugFile(self, debugEnabled):
@@ -149,7 +170,7 @@ class Panel:
         pkgTargetFolder = getTargetFolder()
         timestampURL = "http://tsa.starfieldtech.com"
 
-        pkgFile = pkgTargetFolder + self.panelName + ".zxp"
+        pkgFile = pkgTargetFolder + self.panelName + ".zip"
         # Must remove the file first, otherwise contents not updated.
         if os.path.exists( pkgFile ):
             os.remove( pkgFile )
@@ -164,7 +185,7 @@ class Panel:
                 print
                 print "## Signing package failed.  ZXPSignCmd is not installed?"
             else:
-                print "## Signing package %s failed." % (self.panelName + ".zxp")
+                print "## Signing package %s failed." % (self.panelName + ".zip")
             sys.exit(procErr.returncode)
         else:
             print result
@@ -206,7 +227,7 @@ argparser.add_argument('--zip', '-z', action='store_true', default=False,
                        help="Create ZIP archives for BuildForge signing")
 argparser.add_argument('--debug', '-d', nargs='?', const='status', default=None, choices=['status', 'on', 'off'],
                        help="Enable panel without signing")
-argparser.add_argument('--version', '-v', default='6',
+argparser.add_argument('--version', '-v', default='7',
                        help="CEP Version for setting PanelDebugMode")
 argparser.add_argument('--run', '-r', action='store_true', default=False,
                        help="Launch Photoshop after copy")
@@ -217,8 +238,10 @@ if (adobeDevMachine):
                            help='Path to branch for listing the extensions in that branch executable')
 argparser.add_argument('--erase', '-e', action='store_true', default=False,
                        help="Erase the panels from the debug install location")
+argparser.add_argument('--clean', '-c', action='store_true', default=False,
+                       help="Clean CEP caches")
 argparser.add_argument('--allusers', '-a', action='store_true', default=False,
-                       help="Install panel for all users")
+                       help="Install/erase panel for all users (requires sudo/admin)")
 argparser.add_argument('--install', '-i', action='store_true', default=False,
                        help="Install the signed panels created with -p")
 args = argparser.parse_args( sys.argv[1:] )
@@ -236,8 +259,9 @@ allDestPaths = { "win32": {False:winAppData + extensionSubpath,
                  "darwin":{False:os.path.expanduser("~")+"/Library/Application Support" + extensionSubpath,
                            True:"/Library/Application Support" + extensionSubpath}
                }[sys.platform]
-appExtensionPath = { "win32": "\\photoshop\\Targets\\x64\\Debug\\Required\\CEP\\extensions\\",
-                     "darwin": "/photoshop/Targets/Debug_x86_64/Adobe Photoshop CC 2015.5.app/Contents/Required/CEP/extensions/"
+devExtensionPath = { "win32": "\\photoshop\\Targets\\x64\\Debug\\Required\\CEP\\extensions\\",
+                     "darwin": "/photoshop/Targets/Debug_x86_64/%s/Contents/Required/CEP/extensions/"
+                                % psFolderName
                    }[sys.platform]
 osDestPath = allDestPaths[args.allusers]
 
@@ -252,7 +276,7 @@ if (args.allusers):
         f.close()
         os.remove(testfile)
     except (OSError, IOError) as writeErr:
-        if (writeErr.errno == 13):
+        if (writeErr.errno == errno.EACCES):
            print "# Error - Must run as admin to access %s" % osDestPath
         else:
            print "# Error - Unable to access %s" % osDestPath
@@ -298,6 +322,8 @@ def erasePanels():
 
 def listInstalledPanels():
     def displayPanelsInfo(panelPath, title):
+        if (not os.path.exists(panelPath)):
+            return
         panelList = glob.glob(panelPath + "*")
         if len(panelList) == 0:
             return
@@ -316,10 +342,14 @@ def listInstalledPanels():
 
     displayPanelsInfo( allDestPaths[True], "for all users")
     displayPanelsInfo( allDestPaths[False], "for this user")
+    
+    psAppPath = psAppFolder + "Required" + os.sep + "CEP" + os.sep + "extensions" + os.sep
+    
+    displayPanelsInfo( psAppPath, "installed with Photoshop")
 
     # For Adobe developers, also list extensions found in the specified debug branch
     if (adobeDevMachine and args.branch):
-        displayPanelsInfo( args.branch[0] + appExtensionPath, "for branch %s debug app" % args.branch[0])
+        displayPanelsInfo( args.branch[0] + devExtensionPath, "for branch %s debug app" % args.branch[0])
 
 #
 # Examine the state of debugKey (either "Logging" or "PlayerDebugMode")
@@ -430,9 +460,9 @@ elif (args.package):
 elif (args.install):
     erasePanels()
     if (not os.path.exists(osDestPath)):
-        os.mkdir(osDestPath)
+        os.makedirs(osDestPath)
     pkgTargetFolder = getTargetFolder()
-    zxpFiles = filter(os.path.exists, [pkgTargetFolder + p.panelName + ".zxp" for p in panelList])
+    zxpFiles = filter(os.path.exists, [pkgTargetFolder + p.panelName + ".zip" for p in panelList])
     if len(zxpFiles) > 0:
         for f in zxpFiles:
             zps = zipfile.ZipFile( f )
@@ -460,6 +490,10 @@ elif (args.zip):
 
 elif (args.erase):
     erasePanels()
+
+elif (args.clean):
+    for p in panelList:
+        p.cleanCache()
 
 elif (args.list):
     listInstalledPanels()

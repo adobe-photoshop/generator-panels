@@ -55,6 +55,38 @@ function DefaultInterpolationMethod()
     return app.typeIDToStringID( v );
 }
 
+// Return a list of color profile names corresponding to a given
+// OSCode tag for the ACE_SelectorCode (defined in ACETypes.h)
+// From StackSupport.jsx
+function GetColorProfileList()
+{
+    function S(x) { return stringIDToTypeID(x); }
+    function osTypeToInt(os)
+    {
+        var n = 0;
+        for (i = 0; i < os.length; i++)
+            n |= os.charCodeAt(i) << ((3-i)*8);
+        return n;
+    }
+     var profileTagStr = 'rStd';
+	var profileTag = osTypeToInt( profileTagStr );
+	var args = new ActionDescriptor();
+	ref = new ActionReference();
+	ref.putProperty( S("property"), S("colorProfileList") );
+	ref.putEnumerated( S("application"), S("ordinal"), profileTag );
+	args.putReference( S("null"), ref );
+	args.putInteger( S("profile"), profileTag );
+
+	var resultDesc = executeAction( S("get"), args, DialogModes.NO );
+	var profileList = resultDesc.getList( S("colorProfileList") );
+	var i, profileStrings = [];
+	for (i = 0; i < profileList.count; ++i)
+		profileStrings.push( profileList.getString(i) );
+	
+//	return "[" + profileStrings.join(",") + "]";
+    return profileStrings;
+}
+
 function IsGeneratorRunning()
 {
     var desc = GetApplicationAttr( kgeneratorStatusStr );
@@ -82,3 +114,4 @@ function EnableGenerator( flag )
 // EnableGenerator( false ); $.sleep(2000); EnableGenerator( true );
 //$.writeln("Gen running: " + IsGeneratorRunning () );
 //$.writeln("Interp: " + DefaultInterpolationMethod() );
+//$.writeln("Profiles: " + GetColorProfileList() );
