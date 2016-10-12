@@ -65,10 +65,10 @@ PSexePath = psAppFolder + {"win32":"Photoshop.exe",
 
 # Extract the panel ID and name from the Manifest file
 def getExtensionInfo(manifestPath):
-    extInfo = [s for s in open(manifestPath,'r').readlines() if re.match("^<ExtensionManifest.*", s)]
-    if (len(extInfo) > 0):
-        extInfo = extInfo[0]
-        return extInfo
+    extensionManifest = xml.dom.minidom.parse(manifestPath).getElementsByTagName("ExtensionManifest")[0]
+
+    if extensionManifest:
+        return ''.join('{}="{}" '.format(key, val) for key, val in extensionManifest.attributes.items())
     else:
         print "# No ExtensionManifest for %s" % manifestPath
         return None
