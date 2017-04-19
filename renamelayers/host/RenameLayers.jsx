@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright (c) 2013-2014 Adobe Systems Incorporated. All rights reserved.
  *  
  * Permission is hereby granted, free of charge, to any person obtaining a
@@ -164,7 +164,7 @@ LayerOperations.prototype.activeLayerInfo = function()
 	var result = {folder:"", baseName:name, genPrefix:"", suffix:""};
 
 	// Break apart generator info from the name
-	var m = name.match(/([\dx% ]*)([\w \/]+)([.]\w+)*$/);
+	var m = name.match(/(\d+x\d+|\d+%)*([\w \/]+)([.]\w+)*$/);
 	if (m)
 	{
 		var compName = m[2].split("/");
@@ -217,34 +217,8 @@ LayerOperations.prototype.setSelectedLayerSuffix = function( scale, resize, suff
     // is broken in the ExtendScript implementation (works w/ other JavaScript interpreters).
     function parseName( s )
     {
-        function isDigit(c) { return (c >= '0' && c <= '9'); }
-        
-        var i = 0, foundLeadingDigits = false, foundScaleSize = false;
-        while ((i < s.length) && (isDigit(s[i]))) {
-            i++;
-            foundLeadingDigits = true;
-        }
-        if (foundLeadingDigits)
-            while ((i < s.length) && (isDigit(s[i]) || (s[i] in {'.':1, '%':1, 'x':1, '%':1, ' ':1}))) {
-                i++;
-                foundScaleSize = true;
-            }
-        if ((i < s.length) && (i > 0) && foundScaleSize)
-            // Make sure foundScaleSize pattern ends with a space.
-            if (s[i-1] !== ' ') {
-                var j = 1;
-                while ((j < i) && (s[i-j] !== ' '))
-                    j++;
-                if (s[i-j] === ' ') {
-                    i = i-j+1;
-                }
-                else {
-                    foundScaleSize = false;
-                    i = 0;  // pattern for the scale/size did not match, start over
-                }
-            }
-         if (foundLeadingDigits && !foundScaleSize)
-            i = 0;
+         var m = s.match(/^(\d+x\d+ |\d+% )/);
+         var i = m ? m[0].length : 0;
          var start = i;
          while ((i < s.length) && !(s[i] in {'.':1, ',':1}))
              i++;
