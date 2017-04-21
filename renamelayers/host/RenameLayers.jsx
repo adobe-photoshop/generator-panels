@@ -164,7 +164,12 @@ LayerOperations.prototype.activeLayerInfo = function()
 	var result = {folder:"", baseName:name, genPrefix:"", suffix:""};
 
 	// Break apart generator info from the name
-	var m = name.match(/(\d+x\d+|\d+%)*([\w \/]+)([.]\w+)*$/);
+//	var m = name.match(/(\d+x\d+|\d+%)*([\w \/]+)([.]\w+)*$/);
+// The above RegEx properly handles names w/leading digits, but runs the risk
+// of freezing Photoshop if multiple filenames with scale & size are used, due to an 
+// ES regular expression bug.
+
+	var m = name.match(/([\dx% ]*)([\w \/]+)([.]\w+)*$/);
 	if (m)
 	{
 		var compName = m[2].split("/");
