@@ -292,7 +292,7 @@ manifestFiles = glob.glob("*/CSXS/manifest.xml")
 
 if len(manifestFiles) == 0:
     print "# Warning - no extension manifests found"
-    if (not args.debug):
+    if (not (args.debug or args.list)):
         sys.exit(-1)
 
 # Load the panel info from the extension
