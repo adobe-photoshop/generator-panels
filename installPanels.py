@@ -33,6 +33,8 @@
 #  -d,--debug {on,off,status}   Set/check PanelDebugMode
 #  -l,--list                    List all panels installed
 #  -a,--allusers                Install panels for All users (requires sudo/admin)
+#  -v,--version                 Set the CEP version used for registry/plist keys
+#  -c,--clean                   Clean the CEP caches
 #  -p,--package PASSWORD        Package the panels signed with a
 #                               private certificate, using the certificate's PASSWORD
 #  -i,--install                 Installs the signed panels created with -p into
@@ -227,7 +229,7 @@ argparser.add_argument('--zip', '-z', action='store_true', default=False,
                        help="Create ZIP archives for BuildForge signing")
 argparser.add_argument('--debug', '-d', nargs='?', const='status', default=None, choices=['status', 'on', 'off'],
                        help="Enable panel without signing")
-argparser.add_argument('--version', '-v', default='7',
+argparser.add_argument('--version', '-v', default='8',
                        help="CEP Version for setting PanelDebugMode")
 argparser.add_argument('--run', '-r', action='store_true', default=False,
                        help="Launch Photoshop after copy")
