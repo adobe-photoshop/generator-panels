@@ -55,7 +55,7 @@ if sys.platform == 'win32':
 adobeDevMachine = socket.getfqdn().endswith('.adobe.com')
 
 # Current version of Photoshop, for listing panels within the app
-psFolderName = "Adobe Photoshop CC 2015.5"
+psFolderName = "Adobe Photoshop CC 2018"
 
 psAppFolder = {"win32":"C:\\Program Files\\Adobe\\%s\\" % psFolderName,
                "darwin": "/Applications/%s/%s.app/Contents/" % (psFolderName, psFolderName)
