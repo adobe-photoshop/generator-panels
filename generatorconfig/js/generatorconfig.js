@@ -27,8 +27,12 @@
 // John Peterson - May 2014
 //
 
+// Get the platform location (required in CEP 8)
+var loc = window.location.pathname;
+var dir = decodeURI(loc.substring((cep_node.process.platform === 'win32') ? 1 : 0, loc.lastIndexOf('/')));
+
 // Configuration code (taken from Generator)
-var config = require("./js/config");
+var config = cep_node.require(dir + "/js/config");
 
 // Hard-coded defaults.  These should match the defaults
 // from the Generator code.
@@ -171,7 +175,7 @@ function initialize()
     generateProfileMenu();
     loadConfig();
 
-    if (process.platform !== "darwin")
+    if (cep_node.process.platform !== "darwin")
         $("#webplabel").toggle(false);  // This option is Mac-only
 
     // For some goofy reason, checkboxes are spaced out more on

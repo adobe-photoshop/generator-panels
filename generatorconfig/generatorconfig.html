@@ -94,8 +94,22 @@
 </body>
 
 <!-- Scripts at the end so everything's in place before access -->
+<script tye="text/javascript">
+	//-- CEP 8 *broke* the local folder for the files, so we have to put it back...
+	var _pnl_loc = window.location.pathname;
+	var _pnl_dir = decodeURI(_pnl_loc.substring((cep_node.process.platform === 'win32') ? 1 : 0, _pnl_loc.lastIndexOf('/')));
+	cep_node.process.chdir(_pnl_dir);
+</script>
+<!-- Stuff to avoid breaking jQuery's use of "module" and "exports" -->
+<script>if (typeof module === 'object') {window.module = module; module = undefined;}</script>
+<script>if (typeof exports === 'object') {window.exports = exports; exports = undefined;}</script>
+<!-- extension's imports -->
 <script src="js/libs/jquery-2.0.2.min.js"></script>
 <script src="js/libs/CSInterface.js"></script>
+<!-- Insert this line after script imports -->
+<script>if (window.module) module = window.module;</script>
+<script>if (window.exports) exports = window.exports;</script>
+
 <script src="js/themecolors.js"></script>
 <script src="js/generatorconfig.js"></script>
 

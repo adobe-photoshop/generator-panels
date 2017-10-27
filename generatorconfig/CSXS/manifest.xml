@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<ExtensionManifest ExtensionBundleId="com.photoshop.generatorconfig" ExtensionBundleName="Generator Config" ExtensionBundleVersion="1.7.1" Version="5.0">
+<ExtensionManifest ExtensionBundleId="com.photoshop.generatorconfig" ExtensionBundleName="Generator Config" ExtensionBundleVersion="1.8.0" Version="5.0">
   <Author>
     <![CDATA[J. Peterson]]>
   </Author>
   <ExtensionList>
-    <Extension Id="com.photoshop.generatorconfig.extension" Version="1.7.1"/>
+    <Extension Id="com.photoshop.generatorconfig.extension" Version="1.8.0"/>
   </ExtensionList>
   <ExecutionEnvironment>
     <HostList>
-      <Host Name="PHXS" Version="[15.0,18.9]"/>
-      <Host Name="PHSP" Version="[15.0,18.9]"/>
+      <Host Name="PHXS" Version="[19.0,19.9]"/>
+      <Host Name="PHSP" Version="[19.0,19.9]"/>
     </HostList>
     <LocaleList>
       <Locale Code="All"/>
@@ -21,10 +21,10 @@
     <Extension Id="com.photoshop.generatorconfig.extension">
       <DispatchInfo>
         <Resources>
-          <MainPath>./generatorconfig.html</MainPath>
           <CEFCommandLine>
             <Parameter>--enable-nodejs</Parameter>
           </CEFCommandLine>
+          <MainPath>./generatorconfig.html</MainPath>
           <ScriptPath>./host/GeneratorConfig.jsx</ScriptPath>
         </Resources>
         <UI>
@@ -32,11 +32,11 @@
           <Menu>%config-panel-menu-name</Menu>
           <Geometry>
             <MinSize>
-              <Height>595</Height>
+              <Height>605</Height>
               <Width>216</Width>
             </MinSize>
             <Size>
-              <Height>595</Height>
+              <Height>605</Height>
               <Width>216</Width>
             </Size>
           </Geometry>
