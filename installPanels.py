@@ -33,6 +33,8 @@
 #  -d,--debug {on,off,status}   Set/check PanelDebugMode
 #  -l,--list                    List all panels installed
 #  -a,--allusers                Install panels for All users (requires sudo/admin)
+#  -v,--version                 Set the CEP version used for registry/plist keys
+#  -c,--clean                   Clean the CEP caches
 #  -p,--package PASSWORD        Package the panels signed with a
 #                               private certificate, using the certificate's PASSWORD
 #  -i,--install                 Installs the signed panels created with -p into
@@ -53,7 +55,7 @@ if sys.platform == 'win32':
 adobeDevMachine = socket.getfqdn().endswith('.adobe.com')
 
 # Current version of Photoshop, for listing panels within the app
-psFolderName = "Adobe Photoshop CC 2015.5"
+psFolderName = "Adobe Photoshop CC 2018"
 
 psAppFolder = {"win32":"C:\\Program Files\\Adobe\\%s\\" % psFolderName,
                "darwin": "/Applications/%s/%s.app/Contents/" % (psFolderName, psFolderName)
@@ -70,7 +72,7 @@ def getExtensionInfo(manifestPath):
     if extensionManifest:
         return ''.join('{}="{}" '.format(key, val) for key, val in extensionManifest.attributes.items())
     else:
-        print "# No ExtensionManifest for %s" % manifestPath
+        print("# No ExtensionManifest for %s" % manifestPath)
         return None
 
 class Panel:
@@ -92,7 +94,7 @@ class Panel:
     # Copy panel source to the deployment folder
     def copyPanel(self):
         destPath = self.destPath()
-        print "# Copying " + srcLocation + self.panelSrcFolder + "\n  to " + destPath
+        print( "# Copying " + srcLocation + self.panelSrcFolder + "\n  to " + destPath )
         shutil.copytree( srcLocation + self.panelSrcFolder, destPath )
 
     def cleanCache(self):
@@ -102,12 +104,12 @@ class Panel:
         for f in cacheFolders:
             try:
                 shutil.rmtree( f )
-                print "# Removing cache folder " + f
+                print( "# Removing cache folder " + f )
             except (OSError, IOError) as writeErr:
                 if (writeErr.errno == errno.EACCES):
-                    print "# PS still running? Unable to delete " + f
+                    print( "# PS still running? Unable to delete " + f )
                 else:
-                    print "# Unable to remove cache folder " + f
+                    print( "# Unable to remove cache folder " + f )
 
     # Unlock, then remove the panels
     def erasePanel(self):
@@ -118,7 +120,7 @@ class Panel:
         # Unlock, then remove the panels
         destPath = self.destPath()
         if (os.path.exists( destPath )):
-            print "# Removing " + destPath
+            print( "# Removing " + destPath )
             for df in [root + os.sep + f for root, dirs, files in os.walk(destPath) for f in files]:
                 makeWritable( df )
             shutil.rmtree( destPath )
@@ -144,14 +146,14 @@ class Panel:
         for ext in extensions:
             extName = ext.getAttribute("Id")
             debugText += extensionTemplate % (extName, portNumber)
-            print "# Remote Debug %s at http://localhost:%d" % (extName, portNumber)
+            print( "# Remote Debug %s at http://localhost:%d" % (extName, portNumber) )
             portNumber += 1
         debugText += "</ExtensionList>\n"
         try:
             file(self.debugFilename(), 'w' ).write(debugText)
         except IOError as writeErr:
             if (writeErr.errno == errno.ENOENT):
-               print "# Note: Panel %s is not installed" % self.panelName
+               print( "# Note: Panel %s is not installed" % self.panelName )
 
     def setupRemoteDebugFile(self, debugEnabled):
         if debugEnabled:
@@ -159,7 +161,7 @@ class Panel:
         else:
             if (os.path.exists( self.debugFilename() )):
                 os.remove( self.debugFilename() )
-                print "# Removing debug file for %s" % self.panelName
+                print( "# Removing debug file for %s" % self.panelName )
 
     #
     # Create a signed double-clickable install package
@@ -174,7 +176,7 @@ class Panel:
         # Must remove the file first, otherwise contents not updated.
         if os.path.exists( pkgFile ):
             os.remove( pkgFile )
-        print "# Creating package: '%s'" % pkgFile
+        print( "# Creating package: '%s'" % pkgFile )
         result = ""
         try:
             result = subprocess.check_output('ZXPSignCmd -sign %s "%s" %s %s -tsa %s'
@@ -182,20 +184,20 @@ class Panel:
                                                 certPath, args.package[0], timestampURL), shell=True)
         except subprocess.CalledProcessError as procErr:
             if (procErr.returncode == 1):
-                print
-                print "## Signing package failed.  ZXPSignCmd is not installed?"
+                print()
+                print( "## Signing package failed.  ZXPSignCmd is not installed?" )
             else:
-                print "## Signing package %s failed." % (self.panelName + ".zip")
+                print( "## Signing package %s failed." % (self.panelName + ".zip") )
             sys.exit(procErr.returncode)
         else:
-            print result
+            print( result )
 
     # Make the zip of the panel source
     def zipPanel(self):
         zipTargetFolder = getTargetFolder()
 
         zipTargetFile = zipTargetFolder + self.panelID + ".zip"
-        print "# Creating archive: " + zipTargetFile
+        print( "# Creating archive: " + zipTargetFile )
         zf = zipfile.ZipFile( zipTargetFile, 'w', zipfile.ZIP_DEFLATED )
         os.chdir( srcLocation + self.panelSrcFolder )
         fileList = [root + os.sep + f for root, dirs, files in os.walk(".") for f in files]
@@ -227,7 +229,7 @@ argparser.add_argument('--zip', '-z', action='store_true', default=False,
                        help="Create ZIP archives for BuildForge signing")
 argparser.add_argument('--debug', '-d', nargs='?', const='status', default=None, choices=['status', 'on', 'off'],
                        help="Enable panel without signing")
-argparser.add_argument('--version', '-v', default='7',
+argparser.add_argument('--version', '-v', default='8',
                        help="CEP Version for setting PanelDebugMode")
 argparser.add_argument('--run', '-r', action='store_true', default=False,
                        help="Launch Photoshop after copy")
@@ -247,7 +249,7 @@ argparser.add_argument('--install', '-i', action='store_true', default=False,
 args = argparser.parse_args( sys.argv[1:] )
 
 if (sum([args.package!=None, args.zip, args.erase, args.install]) > 1):
-    print "# Error: Only one of -p, -z, -e or -i is allowed"
+    print( "# Error: Only one of -p, -z, -e or -i is allowed" )
     sys.exit(0)
 
 # Where to place the panel.
@@ -277,9 +279,9 @@ if (args.allusers):
         os.remove(testfile)
     except (OSError, IOError) as writeErr:
         if (writeErr.errno == errno.EACCES):
-           print "# Error - Must run as admin to access %s" % osDestPath
+           print( "# Error - Must run as admin to access %s" % osDestPath )
         else:
-           print "# Error - Unable to access %s" % osDestPath
+           print( "# Error - Unable to access %s" % osDestPath )
         sys.exit(1)
 
 #
@@ -291,7 +293,7 @@ os.chdir(srcLocation)
 manifestFiles = glob.glob("*/CSXS/manifest.xml")
 
 if len(manifestFiles) == 0:
-    print "# Warning - no extension manifests found"
+    print( "# Warning - no extension manifests found" )
     if (not (args.debug or args.list)):
         sys.exit(-1)
 
@@ -327,7 +329,7 @@ def listInstalledPanels():
         panelList = glob.glob(panelPath + "*")
         if len(panelList) == 0:
             return
-        print "\n# (%s)\n# Panels in %s" % (title, os.path.dirname(panelList[0]))
+        print( "\n# (%s)\n# Panels in %s" % (title, os.path.dirname(panelList[0])) )
         for f in panelList:
             # Fish the ID for each extension in the package out of the CSXS/manifest.xml file
             manifestXML = xml.dom.minidom.parse( os.path.join( f, "CSXS", "manifest.xml" ) )
@@ -338,7 +340,7 @@ def listInstalledPanels():
             extVersions = [x.getAttribute("ExtensionBundleVersion") for x in manifest]
             extNames = " (" + string.join(extNames) + ")" if len(extNames) > 0 else ""
             extVersions = " [" + string.join(extVersions) + "]" if len(extVersions) > 0 else ""
-            print "  %s%s%s" % (name, extVersions, extNames)
+            print( "  %s%s%s" % (name, extVersions, extNames) )
 
     displayPanelsInfo( allDestPaths[True], "for all users")
     displayPanelsInfo( allDestPaths[False], "for this user")
@@ -390,7 +392,7 @@ def panelExecutionState( debugKey, panelDebugValue=None ):
         # First, make sure the Plist is in text format
         subprocess.check_output( "plutil -convert xml1 " + plistFile, shell=True )
         plist = plistlib.readPlist( plistFile )
-        oldPanelDebugValue = '1' if (plist.has_key( debugKey )) and (plist[debugKey] == '1') else '0'
+        oldPanelDebugValue = '1' if ((debugKey in plist) and (plist[debugKey] == '1')) else '0'
 
         if (panelDebugValue):
             plist[debugKey] = panelDebugValue
@@ -402,16 +404,16 @@ def panelExecutionState( debugKey, panelDebugValue=None ):
             if (macOSVer[0] == 10) and (macOSVer[1] >= 9):
                 proc = subprocess.Popen("ps ax | grep cfprefsd | grep -v grep", shell=True,
                                         stdout=subprocess.PIPE).stdout.read()
-                procID = re.findall("^\s*(\d+)", proc, re.MULTILINE)
+                procID = re.findall("^\s*(\d+)", proc.decode('utf-8'), re.MULTILINE)
                 if (procID):
                     for p in procID:
-                        print "# MacOS 10.9: Killing cfprefsd process ID: " + p
+                        print( "# MacOS 10.9: Killing cfprefsd process ID: " + p )
                     os.system( "kill -HUP " + p )
                 else:
-                    print "# MacOS 10.9: No cfprefsd process"
+                    print( "# MacOS 10.9: No cfprefsd process" )
 
     else:
-        print "Error: Unsupported platform: " + sys.platform
+        print( "Error: Unsupported platform: " + sys.platform )
         sys.exit(0)
 
     return oldPanelDebugValue
@@ -435,14 +437,14 @@ if (args.debug):
 
     if (args.debug == 'status'):
         if oldPanelDebugValue == '1':
-            print "# Debug enabled - panel will run without signing"
+            print( "# Debug enabled - panel will run without signing" )
         else:
-            print "# Panel only runs if a signed package is installed"
+            print( "# Panel only runs if a signed package is installed" )
     else:
         # Only report if the value actually changed, so you can verify
         # the change actually "stuck"
         if panelDebugValue != oldPanelDebugValue:
-            print "# Panel debug mode " + ("enabled" if panelDebugValue=='1' else "disabled")
+            print( "# Panel debug mode " + ("enabled" if panelDebugValue=='1' else "disabled") )
             setupRemoteDebugFiles()
 
 #
@@ -467,7 +469,7 @@ elif (args.install):
         for f in zxpFiles:
             zps = zipfile.ZipFile( f )
             destFolder = osDestPath + os.path.splitext(os.path.basename(f))[0]
-            print "# Extracting %s \n   to %s" % (f, destFolder)
+            print( "# Extracting %s \n   to %s" % (f, destFolder) )
             os.mkdir( destFolder )
             os.chdir( destFolder )
 
@@ -479,7 +481,7 @@ elif (args.install):
                     file( os.path.normpath(n), 'wb' ).write(zps.read(n))
             zps.close()
     else:
-        print "# No packaged panels to install, use --package first"
+        print( "# No packaged panels to install, use --package first" )
         sys.exit(0)
 #
 # Create a .zip archive

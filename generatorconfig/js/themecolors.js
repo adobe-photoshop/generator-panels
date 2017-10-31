@@ -108,8 +108,8 @@ function initColors( setupHook )
 
     // Look for the debug control file, and if it exists,
     // enable debugging controls
-    var path = require("path");
-    var fs = require("fs");
+    var path = cep_node.require("path");
+    var fs = cep_node.require("fs");
     var debugPath = path.join(csInterface.getSystemPath( SystemPath.EXTENSION ), ".debug");
     if (fs.existsSync(debugPath)) {
         $(".debuglink").toggle( true );
