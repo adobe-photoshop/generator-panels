@@ -27,12 +27,8 @@
 // John Peterson - May 2014
 //
 
-// Get the platform location (required in CEP 8)
-var loc = window.location.pathname;
-var dir = decodeURI(loc.substring((cep_node.process.platform === 'win32') ? 1 : 0, loc.lastIndexOf('/')));
-
 // Configuration code (taken from Generator)
-var config = cep_node.require(dir + "/js/config");
+var config = cep_node.require(__dirname + "/js/config");
 
 // Hard-coded defaults.  These should match the defaults
 // from the Generator code.
