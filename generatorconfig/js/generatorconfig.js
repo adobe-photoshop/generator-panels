@@ -47,7 +47,7 @@ var checkboxes = [
     [false, "usesmartobject", "use-psd-smart-object-pixel-scaling", "Smart Object Pixel Scaling"],
     [true,  "pngquant",       "use-pngquant",                       "Use pngquant for PNG-8"],
     [false, "convcolorspace", "convert-color-space",                "Color convert pixels"],
-    [false, "useflite",       "use-flite",                          "Use FLITE transcoder"],
+    [true,  "useflite",       "use-flite",                          "Use FLITE transcoder"],
     [false, "embediccprofile","embed-icc-profile",                  "Output ICC profile from PSD"], // use-flite
     [true,  "cliptodocbounds","clip-all-images-to-document-bounds", "Exports clipped to doc bounds"],
     [true,  "cliptoabbounds", "clip-all-images-to-artboard-bounds", "Exports clipped to artboard"],
