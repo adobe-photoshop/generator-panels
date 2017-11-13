@@ -112,9 +112,7 @@
 	if (typeof cep_node === 'undefined')
 		var cep_node = {'process':process, 'require':require}
 	//-- CEP 8 *broke* the local folder for the files, so we have to put it back...
-	var _pnl_loc = window.location.pathname;
-	var _pnl_dir = decodeURI(_pnl_loc.substring((cep_node.process.platform === 'win32') ? 1 : 0, _pnl_loc.lastIndexOf('/')));
-	cep_node.process.chdir(_pnl_dir);
+	cep_node.process.chdir(__dirname);
 </script>
 <!-- Stuff to avoid breaking jQuery's use of "module" and "exports" -->
 <script>if (typeof module === 'object') {window.module = module; module = undefined;}</script>
