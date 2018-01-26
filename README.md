@@ -22,7 +22,7 @@ The simplest way to start using the panels from the source code is to run:
     installPanels.py
     installPanels.py -d on
 
-to run the panels in debug mode.  After you re-launch Photoshop, the panels should appear in the Windows > Extensions menu.
+to run the panels in debug mode. Turning on debug mode allows unsigned panels to run. After you re-launch Photoshop, the panels should appear in the Windows > Extensions menu.
 
 ### Third-Party Code
 
