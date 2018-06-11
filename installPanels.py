@@ -170,7 +170,8 @@ class Panel:
     #
     def packagePanel(self):
         pkgTargetFolder = getTargetFolder()
-        timestampURL = "http://tsa.starfieldtech.com"
+        timestampURL = "http://timestamp.digicert.com"
+#        timestampURL = "http://tsa.starfieldtech.com"
 
         pkgFile = pkgTargetFolder + self.panelName + ".zip"
         # Must remove the file first, otherwise contents not updated.
