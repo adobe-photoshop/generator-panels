@@ -267,7 +267,7 @@ $("#renamebutton").click( function() {
 });
 
 $(".infolink").click( function() {
-    csInterface.openURLInDefaultBrowser("https://github.com/adobe-photoshop/generator-assets/wiki/Generate-Web-Assets-Functional-Spec");
+    csInterface.openURLInDefaultBrowser("https://helpx.adobe.com/photoshop/using/generate-assets-layers.html");
 } );
 
 initialize();

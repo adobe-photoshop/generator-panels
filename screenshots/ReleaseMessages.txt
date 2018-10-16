@@ -1,0 +1,5 @@
+The extension should be installed automatically if you have Creative Cloud file sharing enabled.  The extension is found in the Windows > Extensions menu.
+
+Now works with Photoshop 2015.5.  Adds new options for the updated version of Generator.  Updated with the Photoshop 2015 look and feel.
+
+This version works with Photoshop 2015.5.  The look and feel is updated to match Photoshop 2015.
