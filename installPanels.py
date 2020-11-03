@@ -55,7 +55,7 @@ if sys.platform == 'win32':
 adobeDevMachine = socket.getfqdn().endswith('.adobe.com')
 
 # Current version of Photoshop, for listing panels within the app
-psFolderName = "Adobe Photoshop CC 2018"
+psFolderName = "Adobe Photoshop CC 2021"
 
 psAppFolder = {"win32":"C:\\Program Files\\Adobe\\%s\\" % psFolderName,
                "darwin": "/Applications/%s/%s.app/Contents/" % (psFolderName, psFolderName)
@@ -230,7 +230,7 @@ argparser.add_argument('--zip', '-z', action='store_true', default=False,
                        help="Create ZIP archives for BuildForge signing")
 argparser.add_argument('--debug', '-d', nargs='?', const='status', default=None, choices=['status', 'on', 'off'],
                        help="Enable panel without signing")
-argparser.add_argument('--version', '-v', default='9',
+argparser.add_argument('--version', '-v', default='10',
                        help="CEP Version for setting PanelDebugMode")
 argparser.add_argument('--run', '-r', action='store_true', default=False,
                        help="Launch Photoshop after copy")
