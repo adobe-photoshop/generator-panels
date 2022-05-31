@@ -36,7 +36,7 @@ These panels were implemented with CEP, which is now deprecated for extending Ad
 
 (MIT License)
 
-Copyright (c) 2013-2014 Adobe Systems Incorporated. All rights reserved.
+Copyright (c) 2013-2022 Adobe Systems Incorporated. All rights reserved.
 
 Permission is hereby granted, free of charge, to any person obtaining a
 copy of this software and associated documentation files (the "Software"),
