@@ -24,6 +24,9 @@ The simplest way to start using the panels from the source code is to run:
 
 to run the panels in debug mode. Turning on debug mode allows unsigned panels to run. After you re-launch Photoshop, the panels should appear in the Windows > Extensions menu.
 
+### Note about this implementation
+These panels were implemented with CEP, which is now deprecated for extending Adobe Creative Cloud applications. If you're interested in creating extensions for Adobe CC products, please look at the documentation for [UXP](https://developer.adobe.com/photoshop/uxp/). This is the recommended extension framework for Photoshop v22 and beyond.
+
 ### Third-Party Code
 
 * [jQuery](http://jQuery.com), version 2.0.2 provided under the [terms of the MIT license](https://jquery.org/license/), found in [generatorconfig/js/libs/](https://github.com/adobe-photoshop/generator-panels/tree/master/generatorconfig/js/libs) and [renamelayers/js/libs](https://github.com/adobe-photoshop/generator-panels/tree/master/renamelayers/js/libs)
