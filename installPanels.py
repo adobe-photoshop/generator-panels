@@ -173,7 +173,7 @@ class Panel:
         timestampURL = "http://timestamp.digicert.com"
 #        timestampURL = "http://tsa.starfieldtech.com"
 
-        pkgFile = pkgTargetFolder + self.panelName + ".zip"
+        pkgFile = pkgTargetFolder + self.fullPanelID + ".zip"
         # Must remove the file first, otherwise contents not updated.
         if os.path.exists( pkgFile ):
             os.remove( pkgFile )
@@ -197,7 +197,7 @@ class Panel:
     def zipPanel(self):
         zipTargetFolder = getTargetFolder()
 
-        zipTargetFile = zipTargetFolder + self.panelID + ".zip"
+        zipTargetFile = zipTargetFolder + self.fullPanelID + ".zip"
         print( "# Creating archive: " + zipTargetFile )
         zf = zipfile.ZipFile( zipTargetFile, 'w', zipfile.ZIP_DEFLATED )
         os.chdir( srcLocation + self.panelSrcFolder )
@@ -469,7 +469,7 @@ elif (args.install):
     if (not os.path.exists(osDestPath)):
         os.makedirs(osDestPath)
     pkgTargetFolder = getTargetFolder()
-    zxpFiles = list(filter(os.path.exists, [pkgTargetFolder + p.panelName + ".zip" for p in panelList]))
+    zxpFiles = list(filter(os.path.exists, [pkgTargetFolder + p.fullPanelID + ".zip" for p in panelList]))
     if len(zxpFiles) > 0:
         for f in zxpFiles:
             zps = zipfile.ZipFile( f )
