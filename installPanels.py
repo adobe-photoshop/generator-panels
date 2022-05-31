@@ -49,13 +49,13 @@
 import os, sys, shutil, re, string, getpass, stat, datetime, platform, glob
 import argparse, subprocess, zipfile, ftplib, xml.dom.minidom, socket, errno
 if sys.platform == 'win32':
-    import _winreg
+    import winreg
 
 # Some options only make sense for internal Adobe developers
 adobeDevMachine = socket.getfqdn().endswith('.adobe.com')
 
 # Current version of Photoshop, for listing panels within the app
-psFolderName = "Adobe Photoshop CC 2021"
+psFolderName = "Adobe Photoshop 2022"
 
 psAppFolder = {"win32":"C:\\Program Files\\Adobe\\%s\\" % psFolderName,
                "darwin": "/Applications/%s/%s.app/Contents/" % (psFolderName, psFolderName)
@@ -89,7 +89,7 @@ class Panel:
         self.panelSrcFolder = manifestPath.split(os.sep)[0]
 
     def destPath(self):
-        return osDestPath + (self.fullPanelID if args.allusers else self.panelName)
+        return osDestPath + self.fullPanelID # (self.fullPanelID if args.allusers else self.panelName)
 
     # Copy panel source to the deployment folder
     def copyPanel(self):
@@ -150,7 +150,7 @@ class Panel:
             portNumber += 1
         debugText += "</ExtensionList>\n"
         try:
-            file(self.debugFilename(), 'w' ).write(debugText)
+            open(self.debugFilename(), 'w' ).write(debugText)
         except IOError as writeErr:
             if (writeErr.errno == errno.ENOENT):
                print( "# Note: Panel %s is not installed" % self.panelName )
@@ -256,7 +256,7 @@ if (sum([args.package!=None, args.zip, args.erase, args.install]) > 1):
 # Where to place the panel.
 extensionSubpath = os.path.normpath("/Adobe/CEP/extensions") + os.path.sep
 winAppData = os.getenv("APPDATA") if (sys.platform == "win32") else ""
-winCommon = os.getenv("CommonProgramFiles(x86)") if (sys.platform == "win32") else ""
+winCommon = os.getenv("CommonProgramFiles") if (sys.platform == "win32") else ""
 allDestPaths = { "win32": {False:winAppData + extensionSubpath,
                            True:winCommon + extensionSubpath},
                  "darwin":{False:os.path.expanduser("~")+"/Library/Application Support" + extensionSubpath,
@@ -274,7 +274,7 @@ if (args.allusers):
         if (not os.path.exists(osDestPath)):
            os.makedirs(osDestPath)
         testfile = osDestPath + os.sep + "test.txt"
-        f = file( testfile, 'w')
+        f = open( testfile, 'w')
         f.write("test")
         f.close()
         os.remove(testfile)
@@ -333,14 +333,18 @@ def listInstalledPanels():
         print( "\n# (%s)\n# Panels in %s" % (title, os.path.dirname(panelList[0])) )
         for f in panelList:
             # Fish the ID for each extension in the package out of the CSXS/manifest.xml file
-            manifestXML = xml.dom.minidom.parse( os.path.join( f, "CSXS", "manifest.xml" ) )
+            panelManifest = os.path.join( f, "CSXS", "manifest.xml" )
+            if not os.path.exists(panelManifest):
+                print("## Manifest missing: %s" % panelManifest)
+                continue
+            manifestXML = xml.dom.minidom.parse( panelManifest )
             name = os.path.basename(f)
             manifest = manifestXML.getElementsByTagName("ExtensionManifest")
             # Only print the bundle (names) if they're different from the folder name
             extNames = [x.getAttribute("ExtensionBundleName") for x in manifest if x.getAttribute("ExtensionBundleName") != name]
             extVersions = [x.getAttribute("ExtensionBundleVersion") for x in manifest]
-            extNames = " (" + string.join(extNames) + ")" if len(extNames) > 0 else ""
-            extVersions = " [" + string.join(extVersions) + "]" if len(extVersions) > 0 else ""
+            extNames = " (" + ",".join(extNames) + ")" if len(extNames) > 0 else ""
+            extVersions = " [" + ",".join(extVersions) + "]" if len(extVersions) > 0 else ""
             print( "  %s%s%s" % (name, extVersions, extNames) )
 
     displayPanelsInfo( allDestPaths[True], "for all users")
@@ -367,23 +371,23 @@ def panelExecutionState( debugKey, panelDebugValue=None ):
     if sys.platform == 'win32':
         def tryKey(key):
             try:
-                return _winreg.QueryValueEx( key, debugKey )
+                return winreg.QueryValueEx( key, debugKey )
             except:
                 return None
 
-        access = _winreg.KEY_READ if (not panelDebugValue) else _winreg.KEY_ALL_ACCESS
+        access = winreg.KEY_READ if (not panelDebugValue) else winreg.KEY_ALL_ACCESS
 
-        ky = _winreg.OpenKey( _winreg.HKEY_CURRENT_USER,
+        ky = winreg.OpenKey( winreg.HKEY_CURRENT_USER,
                               "Software\\Adobe\\%s" % CEPversion, 0, access )
         keyValue = tryKey( ky )
         oldPanelDebugValue = '1' if keyValue and (keyValue[0] == '1') else '0'
 
         if (panelDebugValue):
             if not keyValue:
-                _winreg.CreateKey( ky, debugKey )
-            _winreg.SetValueEx( ky, debugKey, 0, _winreg.REG_SZ, panelDebugValue );
+                winreg.CreateKey( ky, debugKey )
+            winreg.SetValueEx( ky, debugKey, 0, winreg.REG_SZ, panelDebugValue );
 
-        _winreg.CloseKey( ky )
+        winreg.CloseKey( ky )
 
     # Mac: ~/Library/Preferences/com.adobe.CSXS.5.plist (add row) PlayerDebugMode [String] "1"
     elif sys.platform == "darwin":
@@ -465,7 +469,7 @@ elif (args.install):
     if (not os.path.exists(osDestPath)):
         os.makedirs(osDestPath)
     pkgTargetFolder = getTargetFolder()
-    zxpFiles = filter(os.path.exists, [pkgTargetFolder + p.panelName + ".zip" for p in panelList])
+    zxpFiles = list(filter(os.path.exists, [pkgTargetFolder + p.panelName + ".zip" for p in panelList]))
     if len(zxpFiles) > 0:
         for f in zxpFiles:
             zps = zipfile.ZipFile( f )
@@ -479,7 +483,7 @@ elif (args.install):
                 if (n[-1] == '/'):
                     os.mkdir( os.path.normpath( n ))
                 else:
-                    file( os.path.normpath(n), 'wb' ).write(zps.read(n))
+                    open( os.path.normpath(n), 'wb' ).write(zps.read(n))
             zps.close()
     else:
         print( "# No packaged panels to install, use --package first" )
