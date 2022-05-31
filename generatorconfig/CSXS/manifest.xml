@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<ExtensionManifest ExtensionBundleId="com.photoshop.generatorconfig" ExtensionBundleName="Generator Config" ExtensionBundleVersion="1.8.4" Version="9.0">
+<ExtensionManifest ExtensionBundleId="com.adobe.generatorconfig" ExtensionBundleName="Generator Config" ExtensionBundleVersion="1.8.4" Version="10.0">
   <Author>
     <![CDATA[J. Peterson]]>
   </Author>
   <ExtensionList>
-    <Extension Id="com.photoshop.generatorconfig.extension" Version="1.8.4"/>
+    <Extension Id="com.adobe.generatorconfig.extension" Version="1.8.4"/>
   </ExtensionList>
   <ExecutionEnvironment>
     <HostList>
-      <Host Name="PHXS" Version="[15.0,24.9]"/>
-      <Host Name="PHSP" Version="[15.0,24.9]"/>
+      <Host Name="PHXS" Version="[15.0]"/>
+      <Host Name="PHSP" Version="[15.0]"/>
     </HostList>
     <LocaleList>
       <Locale Code="All"/>
@@ -18,7 +18,7 @@
     </RequiredRuntimeList>
   </ExecutionEnvironment>
   <DispatchInfoList>
-    <Extension Id="com.photoshop.generatorconfig.extension">
+    <Extension Id="com.adobe.generatorconfig.extension">
       <DispatchInfo>
         <Resources>
           <CEFCommandLine>

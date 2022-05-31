@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<ExtensionManifest ExtensionBundleId="com.photoshop.renamelayers" ExtensionBundleName="Generator Layer Names" ExtensionBundleVersion="2.1.3" Version="9.0">
+<ExtensionManifest xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ExtensionBundleId="com.adobe.renamelayers" ExtensionBundleName="Generator Layer Names" ExtensionBundleVersion="2.1.3" Version="10.0">
   <Author>
     <![CDATA[J. Peterson]]>
   </Author>
   <ExtensionList>
-    <Extension Id="com.photoshop.renamelayers.extension" Version="2.1.3"/>
+    <Extension Id="com.adobe.renamelayers.extension" Version="2.1.3"/>
   </ExtensionList>
   <ExecutionEnvironment>
     <HostList>
-      <Host Name="PHXS" Version="[15.0,24.9]"/>
-      <Host Name="PHSP" Version="[15.0,24.9]"/>
+      <Host Name="PHXS" Version="[15.0]"/>
+      <Host Name="PHSP" Version="[15.0]"/>
     </HostList>
     <LocaleList>
       <Locale Code="All"/>
@@ -18,7 +18,7 @@
     </RequiredRuntimeList>
   </ExecutionEnvironment>
   <DispatchInfoList>
-    <Extension Id="com.photoshop.renamelayers.extension">
+    <Extension Id="com.adobe.renamelayers.extension">
       <DispatchInfo>
         <Resources>
           <MainPath>./renamelayers.html</MainPath>
