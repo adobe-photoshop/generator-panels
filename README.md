@@ -11,11 +11,13 @@ The **Generator Layer Names** panel lets you easily change the suffix, scale, si
 
 ![](https://github.com/adobe-photoshop/generator-panels/blob/master/screenshots/RenameLayers_mac.png)
 
+**NOTE** The CEP extension framework these panels run under is no longer supported on M1 Macs or Window ARM versions of Photoshop. In order to access these plugins, you will need to run the x86 version of Photoshop (e.g., via Rosetta on the Mac).
+
 ### Installation
 
 The release version of the Generator Configuration panel is available directly for free from the [Adobe Add-ons site](https://creative.adobe.com/addons/products/2274).  The Generator Layer Names panel is also now [available from the Add-ons site](https://creative.adobe.com/addons/products/2365) as well.
 
-Full source code is provided for both panels.  At the top level, a Python script, [installPanels.py](https://github.com/adobe-photoshop/generator-panels/blob/master/installPanels.py) provides tools for installing, testing and packaging the panels.  Windows users will need to install [Python 2.7](http://www.python.org/download/).  Packaging the panels into signed `.zip` files requires installing the ZXPSignCmd command-line tool.  This is found on the [Extension Builder Toolkit download](http://labs.adobe.com/downloads/extensionbuilder3.html) page, near the bottom under the "Download CC Extensions for Signing" links.
+Full source code is provided for both panels.  At the top level, a Python script, [installPanels.py](https://github.com/adobe-photoshop/generator-panels/blob/master/installPanels.py) provides tools for installing, testing and packaging the panels.  Windows users will need to install [Python 3](http://www.python.org/download/).  Packaging the panels into signed `.zip` files requires installing the ZXPSignCmd command-line tool.  This is found on the [Extension Builder Toolkit download](http://labs.adobe.com/downloads/extensionbuilder3.html) page, near the bottom under the "Download CC Extensions for Signing" links.
 
 The simplest way to start using the panels from the source code is to run:
 
@@ -25,7 +27,7 @@ The simplest way to start using the panels from the source code is to run:
 to run the panels in debug mode. Turning on debug mode allows unsigned panels to run. After you re-launch Photoshop, the panels should appear in the Windows > Extensions menu.
 
 ### Note about this implementation
-These panels were implemented with CEP, which is now deprecated for extending Adobe Creative Cloud applications. If you're interested in creating extensions for Adobe CC products, please look at the documentation for [UXP](https://developer.adobe.com/photoshop/uxp/). This is the recommended extension framework for Photoshop v22 and beyond.
+These panels were implemented with CEP, which is now deprecated for extending Adobe Creative Cloud applications. This framework no longer operates on M1 or ARM versions of Photoshop. If you're interested in creating extensions for Adobe CC products, please look at the documentation for [UXP](https://developer.adobe.com/photoshop/uxp/). This is the recommended extension framework for Photoshop v22 and beyond.
 
 ### Third-Party Code
 
